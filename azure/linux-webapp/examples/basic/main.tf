@@ -2,31 +2,20 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "${var.resource_prefix}-rg"
-  location = var.location
-  tags     = var.tags
+locals {
+  location = "uksouth"
+  tags = {
+    module  = "linux-webapp"
+    example = "basic"
+    usage   = "demo"
+  }
+  resource_prefix = "tfmex-basic-lwa"
 }
 
-module "example" {
+module "webapp" {
   source = "../../"
 
-  name                = "${var.resource_prefix}-as"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
-  tags                = var.tags
-
-  plan = {
-    name = "${var.resource_prefix}-sp"
-  }
-
-  application_stack = {
-    docker_image     = "mcr.microsoft.com/appsvc/staticsite"
-    docker_image_tag = "latest"
-  }
-
-  app_settings = {
-    DOCKER_ENABLE_CI           = true
-    DOCKER_REGISTRY_SERVER_URL = "https://mcr.microsoft.com"
-  }
+  name     = "${local.resource_prefix}-wa"
+  location = local.location
+  tags     = local.tags
 }

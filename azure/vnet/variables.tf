@@ -11,6 +11,7 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the resource group this module will use."
   type        = string
+  default     = null
 }
 
 variable "tags" {
@@ -28,7 +29,7 @@ variable "name" {
   type        = string
 }
 
-variable "address_space" {
+variable "address_spaces" {
   description = "The address spaces of the virtual network."
   type        = list(string)
   default     = ["10.0.0.0/16"]
@@ -50,6 +51,33 @@ variable "bgp_community" {
   description = "The BGP Community for this virtual network."
   type        = string
   default     = null
+}
+
+variable "peer_networks" {
+  description = "Networks to peer to this virtual network."
+  type = list(
+    object({
+      name                         = string
+      id                           = string
+      allow_virtual_network_access = optional(bool, true)
+      allow_forwarded_traffic      = optional(bool, true)
+      allow_gateway_transit        = optional(bool)
+      use_remote_gateways          = optional(bool)
+    })
+  )
+  default = []
+}
+
+variable "private_dns_zones" {
+  description = "Private DNS Zones to link to this virtual network."
+  type = list(
+    object({
+      name                 = string
+      resource_group_name  = string
+      registration_enabled = optional(bool)
+    })
+  )
+  default = []
 }
 
 variable "subnets" {

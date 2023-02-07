@@ -3,12 +3,12 @@ terraform {
   required_providers {
     github = {
       source  = "integrations/github"
-      version = ">= 4.26.1"
+      version = "~> 5.0"
     }
   }
 }
 
-module "example" {
+module "repository" {
   source = "../../"
 
   name               = "terraform-module-example-advanced-repository"
@@ -25,47 +25,27 @@ module "example" {
   has_projects = true
   has_wiki     = true
 
-  deploy_keys = {
-    "example" = {
-      name       = "example"
-      public_key = file("${path.module}/files/example.pub")
-      read_only  = true
-    }
-  }
+  deploy_keys = [{
+    name       = "example"
+    public_key = file("${path.module}/files/example.pub")
+  }]
 
-  webhooks = {
-    "example" = {
-      url          = "https://www.example.com"
-      content_type = "json"
-      insecure_ssl = false
-      events       = ["push"]
-    }
-  }
+  webhooks = [{
+    url          = "https://www.example.com"
+    content_type = "json"
+    events       = ["push"]
+  }]
 
-  issue_labels = {
-    "example" = {
-      name        = "example"
-      color       = "00FF00"
-      description = "Example issue label."
-    }
-  }
-
-  projects = {
-    "avocado" = {
-      name = "avocado"
-      body = ""
-    }
-    "melon" = {
-      name = "melon"
-      body = "foo"
-    }
-  }
+  issue_labels = [{
+    name        = "example"
+    description = "Example issue label."
+  }]
 }
 
 resource "github_repository_file" "example" {
   # Creating a file requires the repository to be created and initialised.
   # If the file exists, overwrite_on_create needs to be true.
-  repository = module.example.name
+  repository = module.repository.name
   file       = "example.md"
 
   content             = "Hello (advanced)."

@@ -17,12 +17,14 @@ resource "github_repository" "main" {
 
   vulnerability_alerts = var.vunlerability_alerts
   is_template          = var.is_template
-  has_issues           = var.has_issues
-  has_projects         = var.has_projects
-  has_wiki             = var.has_wiki
+
+  has_issues      = var.has_issues
+  has_projects    = var.has_projects
+  has_wiki        = var.has_wiki
+  has_discussions = var.has_discussions
 
   dynamic "pages" {
-    for_each = var.pages_branch != null ? [true] : []
+    for_each = var.pages_branch != null ? [1] : []
 
     content {
       cname = var.pages_cname
@@ -35,10 +37,10 @@ resource "github_repository" "main" {
 
   dynamic "template" {
     # Return empty set if var.template is null.
-    for_each = var.template == null ? [] : [true]
+    for_each = var.template == null ? [] : [1]
 
     content {
-      # Split owner/repository from the var.template value.
+      # Split owner/repository from the var.template value[""]
       owner      = split("/", var.template)[0]
       repository = split("/", var.template)[1]
     }
@@ -55,7 +57,7 @@ resource "github_branch_default" "main" {
 ##############
 
 resource "github_repository_collaborator" "main" {
-  for_each = var.collaborators
+  for_each = { for c in var.collaborators : c.username => c }
 
   repository = github_repository.main.name
 
@@ -64,7 +66,7 @@ resource "github_repository_collaborator" "main" {
 }
 
 resource "github_team_repository" "main" {
-  for_each = var.teams
+  for_each = { for t in var.teams : t.team_id => t }
 
   repository = github_repository.main.name
 
@@ -77,7 +79,7 @@ resource "github_team_repository" "main" {
 ##############
 
 resource "github_repository_deploy_key" "main" {
-  for_each = var.deploy_keys
+  for_each = { for d in var.deploy_keys : d.name => d }
 
   repository = github_repository.main.name
 
@@ -91,11 +93,12 @@ resource "github_repository_deploy_key" "main" {
 ###########
 
 resource "github_repository_webhook" "main" {
-  for_each = var.webhooks
+  for_each = { for w in var.webhooks : w.url => w }
 
   repository = github_repository.main.name
 
-  events = each.value.events
+  active = each.value["active"]
+  events = each.value["events"]
 
   configuration {
     url          = each.value["url"]
@@ -109,7 +112,7 @@ resource "github_repository_webhook" "main" {
 ###############
 
 resource "github_issue_label" "main" {
-  for_each = var.issue_labels
+  for_each = { for i in var.issue_labels : i.name => i }
 
   repository = github_repository.main.name
 
@@ -123,7 +126,7 @@ resource "github_issue_label" "main" {
 ###########
 
 resource "github_repository_project" "project" {
-  for_each = var.projects
+  for_each = { for p in var.projects : p.name => p }
 
   repository = github_repository.main.name
 

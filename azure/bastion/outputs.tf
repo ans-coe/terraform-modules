@@ -9,6 +9,6 @@ output "name" {
 }
 
 output "resource_group_name" {
-  description = "Resource group name of the bastion."
-  value       = azurerm_bastion_host.main.resource_group_name
+  description = "Name of the resource group."
+  value       = local.resource_group_name
 }

@@ -7,7 +7,7 @@ This example is used to create a simple repository with a file in it.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_github"></a> [github](#requirement\_github) | >= 4.26.1 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
 
 ## Inputs
 
@@ -27,5 +27,5 @@ No outputs.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_example"></a> [example](#module\_example) | ../../ | n/a |
+| <a name="module_repository"></a> [repository](#module\_repository) | ../../ | n/a |
 <!-- END_TF_DOCS -->

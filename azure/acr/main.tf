@@ -1,7 +1,27 @@
+#################
+# Resource Group
+#################
+
+resource "azurerm_resource_group" "main" {
+  count = var.resource_group_name == null ? 1 : 0
+
+  name     = "${var.name}-rg"
+  location = var.location
+  tags     = var.tags
+}
+
+locals {
+  resource_group_name = coalesce(one(azurerm_resource_group.main[*].name), var.resource_group_name)
+}
+
+#####################
+# Container Registry
+#####################
+
 resource "azurerm_container_registry" "main" {
   name                = var.name
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.resource_group_name
   tags                = var.tags
 
   sku = var.sku
@@ -25,38 +45,44 @@ resource "azurerm_container_registry" "main" {
 
   network_rule_bypass_option = "AzureServices"
 
-  network_rule_set {
-    default_action = length(var.allowed_cidrs) + length(var.allowed_subnet_ids) == 0 ? "Allow" : "Deny"
+  dynamic "network_rule_set" {
+    for_each = length(var.allowed_cidrs) + length(var.allowed_subnet_ids) == 0 ? [] : [1]
 
-    ip_rule = [for cidr in var.allowed_cidrs : {
-      action   = "Allow"
-      ip_range = cidr
-    }]
+    content {
+      default_action = "Deny"
 
-    virtual_network = [for subnet_id in var.allowed_subnet_ids : {
-      action    = "Allow"
-      subnet_id = subnet_id
-    }]
+      ip_rule = [for cidr in var.allowed_cidrs : {
+        action   = "Allow"
+        ip_range = cidr
+      }]
+
+      virtual_network = [for subnet_id in var.allowed_subnet_ids : {
+        action    = "Allow"
+        subnet_id = subnet_id
+      }]
+    }
   }
 
   dynamic "georeplications" {
-    for_each = { for georeplication in var.georeplications : georeplication.location => georeplication }
+    for_each = { for g in var.georeplications : g.location => g }
+    iterator = g
 
     content {
-      location                  = georeplications.value.location
-      regional_endpoint_enabled = georeplications.value.enable_regional_endpoint
-      zone_redundancy_enabled   = georeplications.value.enable_zone_redundancy
+      location                  = g.value["location"]
+      regional_endpoint_enabled = g.value["enable_regional_endpoint"]
+      zone_redundancy_enabled   = g.value["enable_zone_redundancy"]
       tags                      = var.tags
     }
   }
 
   dynamic "encryption" {
-    for_each = toset(var.encryption == null ? [] : [1])
+    for_each = toset(var.encryption == null ? [] : [var.encryption])
+    iterator = e
 
     content {
       enabled            = true
-      key_vault_key_id   = var.encryption.vault_key_id
-      identity_client_id = var.encryption.identity_client_id
+      key_vault_key_id   = e["vault_key_id"]
+      identity_client_id = e["identity_client_id"]
     }
   }
 
@@ -69,7 +95,7 @@ resource "azurerm_container_registry" "main" {
 resource "azurerm_role_assignment" "main_acr_pull" {
   for_each = toset(var.pull_object_ids)
 
-  description          = "Allows the principal ${each.value} to pull images from the ACR ${azurerm_container_registry.main.id}."
+  description          = format("Allows the principal %s to pull images from the ACR %s.", each.value, azurerm_container_registry.main.id)
   principal_id         = each.value
   scope                = azurerm_container_registry.main.id
   role_definition_name = "AcrPull"
@@ -78,7 +104,7 @@ resource "azurerm_role_assignment" "main_acr_pull" {
 resource "azurerm_role_assignment" "main_acr_push" {
   for_each = toset(var.push_object_ids)
 
-  description          = "Allows the principal ${each.value} to push images from the ACR ${azurerm_container_registry.main.id}."
+  description          = format("Allows the principal %s to push images from the ACR %s.", each.value, azurerm_container_registry.main.id)
   principal_id         = each.value
   scope                = azurerm_container_registry.main.id
   role_definition_name = "AcrPush"
@@ -89,19 +115,19 @@ resource "azurerm_role_assignment" "main_acr_push" {
 ###########
 
 resource "azurerm_container_registry_webhook" "main" {
-  for_each = { for webhook in var.webhooks : webhook.name => webhook }
+  for_each = { for w in var.webhooks : w.name => w }
 
-  name                = each.value.name
+  name                = each.value["name"]
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.resource_group_name
 
   registry_name = azurerm_container_registry.main.name
 
-  service_uri    = each.value.uri
-  actions        = each.value.actions
-  status         = each.value.enabled ? "enabled" : "disabled"
-  scope          = each.value.scope
-  custom_headers = each.value.headers
+  service_uri    = each.value["uri"]
+  actions        = each.value["actions"]
+  status         = each.value["enabled"] ? "enabled" : "disabled"
+  scope          = each.value["scope"]
+  custom_headers = each.value["headers"]
 }
 
 ##############
@@ -109,17 +135,17 @@ resource "azurerm_container_registry_webhook" "main" {
 ##############
 
 resource "azurerm_container_registry_agent_pool" "main" {
-  for_each = { for agent_pool in var.agent_pools : agent_pool.name => agent_pool }
+  for_each = { for p in var.agent_pools : p.name => p }
 
-  name                = each.value.name
+  name                = each.value["name"]
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.resource_group_name
   tags                = var.tags
 
   container_registry_name   = azurerm_container_registry.main.name
-  instance_count            = each.value.instances
-  tier                      = each.value.tier
-  virtual_network_subnet_id = each.value.subnet_id
+  instance_count            = each.value["instances"]
+  tier                      = each.value["tier"]
+  virtual_network_subnet_id = each.value["subnet_id"]
 }
 
 #############
@@ -127,12 +153,12 @@ resource "azurerm_container_registry_agent_pool" "main" {
 #############
 
 resource "azurerm_container_registry_scope_map" "main" {
-  for_each = { for scope_map in var.scope_maps : scope_map.name => scope_map }
+  for_each = { for m in var.scope_maps : m.name => m }
 
-  name                = each.value.name
-  resource_group_name = var.resource_group_name
+  name                = each.value["name"]
+  resource_group_name = local.resource_group_name
 
   container_registry_name = azurerm_container_registry.main.name
 
-  actions = each.value.actions
+  actions = each.value["actions"]
 }

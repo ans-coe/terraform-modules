@@ -8,10 +8,7 @@ locals {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
     WEBSITE_RUN_FROM_PACKAGE            = var.zip_deploy_file == null ? 0 : 1
   }
-  app_settings = merge(
-    local.default_app_settings,
-    var.app_settings
-  )
+  app_settings = merge(local.default_app_settings, var.app_settings)
 
   allowed_subnet_ids = [
     for id in var.allowed_subnet_ids
@@ -123,7 +120,7 @@ locals {
   ]
 
   scm_access_rules = concat(
-    local.allowed_subnet_ids, local.allowed_service_tags,
-    local.allowed_ips
+    local.allowed_scm_subnet_ids, local.allowed_scm_service_tags,
+    local.allowed_scm_ips
   )
 }

@@ -11,6 +11,7 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the resource group this module will use."
   type        = string
+  default     = null
 }
 
 variable "tags" {
@@ -24,46 +25,48 @@ variable "tags" {
 ##############
 
 variable "name" {
-  description = "The name of the Azure App Service."
+  description = "The name of the app service."
   type        = string
-}
-
-variable "plan_id" {
-  description = "The ID of the app service plan, if using an existing one."
-  type        = string
-  default     = null
 }
 
 variable "plan" {
   description = "Object detailing the plan, if creating one with this module."
   type = object({
-    name           = string
+    create         = optional(bool, true)
+    id             = optional(string)
+    name           = optional(string)
     sku_name       = optional(string, "B1")
     zone_balancing = optional(bool, false)
   })
-  default = null
+  default = {}
+}
+
+variable "subnet_id" {
+  description = "The subnet to deploy this app service to."
+  type        = string
+  default     = null
 }
 
 variable "zip_deploy_file" {
-  description = "Path to a zip file to deploy to the webapp."
+  description = "Path to a zip file to deploy to the app service."
   type        = string
   default     = null
 }
 
 variable "app_settings" {
-  description = "Map of app settings."
+  description = "A map of app settings."
   type        = map(string)
   default     = {}
 }
 
 variable "site_config" {
-  description = "Map with site config values."
+  description = "A map with site config values."
   type        = map(any)
   default     = {}
 }
 
 variable "application_stack" {
-  description = "Map detailing the application stack."
+  description = "A map detailing the application stack."
   type        = map(string)
   default = {
     docker_image     = "mcr.microsoft.com/appsvc/staticsite"
@@ -74,53 +77,53 @@ variable "application_stack" {
 variable "identity_ids" {
   description = "A list of user identity IDs to use for the app service."
   type        = list(string)
-  default     = null
+  default     = []
 }
 
 variable "key_vault_identity_id" {
-  description = "The user managed identity used for Key Vault."
+  description = "The user managed identity used for key vault."
   type        = string
   default     = null
 }
 
 variable "allowed_ips" {
-  description = "List of allowed CIDR ranges."
+  description = "A list of allowed CIDR ranges."
   type        = list(string)
   default     = []
 }
 
 variable "allowed_subnet_ids" {
-  description = "List of allowed subnet IDs."
+  description = "A list of allowed subnet IDs."
   type        = list(string)
   default     = []
 }
 
 variable "allowed_service_tags" {
-  description = "List of allowed service tags."
+  description = "A list of allowed service tags."
   type        = list(string)
   default     = []
 }
 
 variable "allowed_frontdoor_ids" {
-  description = "List of allowed frontdoor IDs."
+  description = "A list of allowed frontdoor IDs."
   type        = list(string)
   default     = []
 }
 
 variable "allowed_scm_ips" {
-  description = "List of SCM allowed CIDR ranges."
+  description = "A list of SCM allowed CIDR ranges."
   type        = list(string)
   default     = []
 }
 
 variable "allowed_scm_subnet_ids" {
-  description = "List of SCM allowed subnet IDs."
+  description = "A list of SCM allowed subnet IDs."
   type        = list(string)
   default     = []
 }
 
 variable "allowed_scm_service_tags" {
-  description = "List of SCM allowed service tags."
+  description = "A list of SCM allowed service tags."
   type        = list(string)
   default     = []
 }
@@ -136,7 +139,7 @@ variable "connection_strings" {
 }
 
 variable "log_level" {
-  description = "Log level."
+  description = "The log level to use with this app service."
   type        = string
   default     = "Error"
 
@@ -147,7 +150,7 @@ variable "log_level" {
 }
 
 variable "log_config" {
-  description = "Log configuration."
+  description = "The log configuration to use with this app service."
   type = object({
     detailed_error_messages = optional(bool, false)
     failed_request_tracing  = optional(bool, false)
@@ -160,10 +163,4 @@ variable "log_config" {
     failed_request_tracing  = false
     retention_in_days       = 7
   }
-}
-
-variable "subnet_id" {
-  description = "The subnet to deploy this app service to."
-  type        = string
-  default     = null
 }

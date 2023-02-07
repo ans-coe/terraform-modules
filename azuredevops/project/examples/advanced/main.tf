@@ -12,7 +12,7 @@ data "azuredevops_users" "users" {
   subject_types = ["aad", "msa"]
 }
 
-module "example" {
+module "project" {
   source = "../../"
 
   name        = "terraform-module-example-advanced-project"
@@ -23,8 +23,8 @@ module "example" {
     {
       name           = "app1"
       description    = "Application 1"
-      administrators = data.azuredevops_users.users.users.*.descriptor
-      members        = [data.azuredevops_users.users.users.*.descriptor[0]]
+      administrators = data.azuredevops_users.users.users[*].descriptor
+      members        = [data.azuredevops_users.users.users[*].descriptor[0]]
     },
     {
       name        = "app2"
@@ -33,7 +33,7 @@ module "example" {
     {
       name           = "app3"
       description    = "Application 3"
-      administrators = data.azuredevops_users.users.users.*.descriptor
+      administrators = data.azuredevops_users.users.users[*].descriptor
     }
   ]
   teams_membership_mode = "add"
@@ -109,6 +109,6 @@ module "example" {
 
 output "repositories" {
   description = "Output of repositories."
-  value       = module.example.repositories
+  value       = module.project.repositories
   sensitive   = true # Setting to sensitive as output is large.
 }

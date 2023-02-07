@@ -1,3 +1,12 @@
+#################
+# Resource Group
+#################
+
+output "resource_group_name" {
+  description = "Name of the resource group."
+  value       = local.resource_group_name
+}
+
 ###############
 # Log Analytics
 ###############
@@ -5,36 +14,6 @@
 output "log_analytics_id" {
   description = "ID of the log analytics."
   value       = local.log_analytics_id
-}
-
-#####################
-# Container Registry
-#####################
-
-output "acr_id" {
-  description = "Resource ID of the container registry."
-  value       = try(one(azurerm_container_registry.main).id, null)
-}
-
-output "acr_name" {
-  description = "Name of the container registry."
-  value       = try(one(azurerm_container_registry.main).name, null)
-}
-
-output "acr_login_server" {
-  description = "Login server of the container registry."
-  value       = try(one(azurerm_container_registry.main).login_server, null)
-}
-
-output "acr_admin_user" {
-  description = "Admin user for the container registry."
-  value       = try(one(azurerm_container_registry.main).admin_username, null)
-}
-
-output "acr_admin_password" {
-  description = "Admin password for the container registry."
-  value       = try(one(azurerm_container_registry.main).admin_password, null)
-  sensitive   = true
 }
 
 ##############

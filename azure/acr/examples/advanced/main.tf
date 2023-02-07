@@ -2,46 +2,56 @@ provider "azurerm" {
   features {}
 }
 
-data "azurerm_client_config" "current" {}
-
-resource "azurerm_resource_group" "example" {
-  name     = "${var.resource_prefix}-rg"
-  location = var.location
-  tags     = var.tags
+locals {
+  location = "uksouth"
+  tags = {
+    module  = "acr"
+    example = "advanced"
+    usage   = "demo"
+  }
+  resource_prefix = "tfmex-adv-acr"
 }
 
-resource "azurerm_virtual_network" "example" {
-  name                = "${var.resource_prefix}-vnet"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
-  tags                = var.tags
+data "azurerm_client_config" "current" {}
+
+resource "azurerm_resource_group" "acr" {
+  name     = "${local.resource_prefix}-rg"
+  location = local.location
+  tags     = local.tags
+}
+
+resource "azurerm_virtual_network" "acr" {
+  name                = "${local.resource_prefix}-vnet"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.acr.name
+  tags                = local.tags
 
   address_space = ["10.126.0.0/24"]
 }
 
-resource "azurerm_subnet" "example" {
+resource "azurerm_subnet" "acr" {
   name                 = "acr"
-  resource_group_name  = azurerm_resource_group.example.name
-  virtual_network_name = azurerm_virtual_network.example.name
+  resource_group_name  = azurerm_resource_group.acr.name
+  virtual_network_name = azurerm_virtual_network.acr.name
 
   address_prefixes  = ["10.126.0.0/25"]
   service_endpoints = ["Microsoft.ContainerRegistry"]
 }
 
-resource "azurerm_user_assigned_identity" "example" {
-  name                = "${var.resource_prefix}-msi"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
-  tags                = var.tags
+resource "azurerm_user_assigned_identity" "acr" {
+  name                = "${local.resource_prefix}-msi"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.acr.name
+  tags                = local.tags
 }
 
-module "example" {
+module "acr" {
   source = "../../"
 
-  name                = lower(replace("${var.resource_prefix}acr", "/[-_]/", ""))
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
-  tags                = var.tags
+  name                = lower(replace("${local.resource_prefix}acr", "/[-_]/", ""))
+  location            = local.location
+  resource_group_name = azurerm_resource_group.acr.name
+  tags                = local.tags
 
   sku = "Premium"
 
@@ -54,13 +64,13 @@ module "example" {
   enable_trust_policy      = false # Disabled to enable encryption.
   enable_retention_policy  = true
 
-  allowed_subnet_ids = [azurerm_subnet.example.id]
+  allowed_subnet_ids = [azurerm_subnet.acr.id]
 
   georeplications = [{
-    location = "northeurope"
+    location = "ukwest"
   }]
 
-  identity_ids = [azurerm_user_assigned_identity.example.id]
+  identity_ids = [azurerm_user_assigned_identity.acr.id]
 
   webhooks = [{
     name    = "example"
@@ -71,7 +81,7 @@ module "example" {
 
   agent_pools = [{
     name      = "default"
-    subnet_id = azurerm_subnet.example.id
+    subnet_id = azurerm_subnet.acr.id
   }]
 
   scope_maps = [{

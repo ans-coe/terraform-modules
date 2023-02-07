@@ -11,6 +11,7 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the resource group this module will use."
   type        = string
+  default     = null
 }
 
 variable "tags" {
@@ -56,58 +57,17 @@ variable "aad_admin_group_object_ids" {
   default     = []
 }
 
-variable "aks_enable_public_access" {
-  description = "Enable public access to the cluster."
-  type        = bool
-  default     = true
-}
-
-variable "api_server_authorized_ranges" {
+variable "authorized_ip_ranges" {
   description = "CIDRs authorized to communicate with the API Server."
   type        = list(string)
   default     = ["0.0.0.0/0"]
-}
-
-variable "disable_local_account" {
-  description = "Whether to disable the local AKS account."
-  type        = bool
-  default     = false
 }
 
 ##########
 # Storage
 ##########
 
-variable "create_acr" {
-  description = "Create the ACR."
-  type        = bool
-  default     = false
-}
-
-variable "acr_sku" {
-  description = "SKU of the ACR."
-  type        = string
-  default     = "Basic"
-
-  validation {
-    condition     = contains(["Basic", "Standard", "Premium"], var.acr_sku)
-    error_message = "The acr_sku must be 'Basic', 'Standard' or 'Premium'."
-  }
-}
-
-variable "acr_enable_admin" {
-  description = "Enable ACR admin access user."
-  type        = bool
-  default     = false
-}
-
-variable "acr_enable_public_access" {
-  description = "Enable public access to ACR."
-  type        = bool
-  default     = true
-}
-
-variable "acr_registry_ids" {
+variable "registry_ids" {
   description = "List of registry IDs to give this cluster AcrPull access to."
   type        = list(string)
   default     = []
@@ -271,7 +231,7 @@ variable "node_config" {
 variable "auto_scaler_profile" {
   description = "Autoscaler config."
   type        = map(any)
-  default     = null
+  default     = {}
 }
 
 variable "kubelet_identity" {

@@ -1,9 +1,29 @@
-resource "azurerm_service_plan" "main" {
-  count = var.plan != null ? 1 : 0
+#################
+# Resource Group
+#################
 
-  name                = var.plan["name"]
+resource "azurerm_resource_group" "main" {
+  count = var.resource_group_name == null ? 1 : 0
+
+  name     = "${var.name}-rg"
+  location = var.location
+  tags     = var.tags
+}
+
+locals {
+  resource_group_name = coalesce(one(azurerm_resource_group.main[*].name), var.resource_group_name)
+}
+
+###############
+# Service Plan
+###############
+
+resource "azurerm_service_plan" "main" {
+  count = var.plan["create"] ? 1 : 0
+
+  name                = var.plan["name"] == null ? "${var.name}-sp" : var.plan["name"]
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.resource_group_name
   tags                = var.tags
 
   sku_name = var.plan["sku_name"]
@@ -12,8 +32,16 @@ resource "azurerm_service_plan" "main" {
   zone_balancing_enabled = var.plan["zone_balancing"]
 }
 
+locals {
+  plan_id = coalesce(one(azurerm_service_plan.main[*].id), var.plan["id"])
+}
+
+##########
+# Storage
+##########
+
 data "azurerm_storage_account" "logs" {
-  count = var.log_config["storage_account_name"] != null ? 1 : 0
+  count = var.log_config["storage_account_name"] == null ? 0 : 1
 
   name                = var.log_config["storage_account_name"]
   resource_group_name = var.log_config["storage_account_rg"]
@@ -25,7 +53,7 @@ resource "azurerm_storage_account" "logs" {
 
   name                = lower(replace("${var.name}lsa", "/[-_]/", ""))
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.resource_group_name
   tags                = var.tags
 
   account_tier             = "Standard"
@@ -74,13 +102,17 @@ data "azurerm_storage_account_blob_container_sas" "logs" {
   }
 }
 
+#########
+# Webapp
+#########
+
 resource "azurerm_linux_web_app" "main" {
   name                = var.name
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.resource_group_name
   tags                = var.tags
 
-  service_plan_id           = coalesce(one(azurerm_service_plan.main[*].id), var.plan_id)
+  service_plan_id           = local.plan_id
   virtual_network_subnet_id = var.subnet_id
 
   https_only                      = true
@@ -110,6 +142,7 @@ resource "azurerm_linux_web_app" "main" {
       worker_count             = lookup(site_config.value, "worker_count", 1)
       local_mysql_enabled      = lookup(site_config.value, "local_mysql_enabled", false)
       remote_debugging_enabled = lookup(site_config.value, "remote_debugging_enabled", false)
+      remote_debugging_version = lookup(site_config.value, "remote_debugging_version", null)
 
       container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
       container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
@@ -133,9 +166,9 @@ resource "azurerm_linux_web_app" "main" {
     for_each = var.connection_strings
 
     content {
-      name  = connection_string.value.name
-      type  = connection_string.value.type
-      value = connection_string.value.value
+      name  = connection_string.value["name"]
+      type  = connection_string.value["type"]
+      value = connection_string.value["value"]
     }
   }
 
@@ -152,25 +185,37 @@ resource "azurerm_linux_web_app" "main" {
         azure_blob_storage {
           level             = var.log_level
           retention_in_days = var.log_config["retention_in_days"]
-          sas_url           = "https://${local.logs_storage_account.name}.blob.core.windows.net/${local.logs_storage_account.name}${data.azurerm_storage_account_blob_container_sas.logs.sas}"
+          sas_url = format(
+            "https://%s.blob.core.windows.net/%s%s",
+            local.logs_storage_account.name,
+            local.logs_storage_account.name,
+            data.azurerm_storage_account_blob_container_sas.logs.sas
+          )
         }
       }
 
       http_logs {
         azure_blob_storage {
           retention_in_days = var.log_config["retention_in_days"]
-          sas_url           = "https://${local.logs_storage_account.name}.blob.core.windows.net/${local.logs_storage_account.name}${data.azurerm_storage_account_blob_container_sas.logs.sas}"
+          sas_url = format(
+            "https://%s.blob.core.windows.net/%s%s",
+            local.logs_storage_account.name,
+            local.logs_storage_account.name,
+            data.azurerm_storage_account_blob_container_sas.logs.sas
+          )
         }
       }
     }
   }
 
   identity {
-    type         = var.identity_ids == null ? "SystemAssigned" : "SystemAssigned, UserAssigned"
+    type         = length(var.identity_ids) == 0 ? "SystemAssigned" : "SystemAssigned, UserAssigned"
     identity_ids = var.identity_ids
   }
 
   lifecycle {
-    ignore_changes = [site_config[0].application_stack[0].docker_image_tag]
+    ignore_changes = [
+      site_config[0].application_stack[0].docker_image_tag
+    ]
   }
 }

@@ -1,3 +1,19 @@
+#################
+# Resource Group
+#################
+
+resource "azurerm_resource_group" "main" {
+  count = var.resource_group_name == null ? 1 : 0
+
+  name     = "${var.name}-rg"
+  location = var.location
+  tags     = var.tags
+}
+
+locals {
+  resource_group_name = coalesce(one(azurerm_resource_group.main[*].name), var.resource_group_name)
+}
+
 ########################
 # Power Management Role
 ########################
@@ -39,23 +55,21 @@ resource "azurerm_role_definition" "power_management" {
 resource "azurerm_automation_account" "main" {
   name                = var.name
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.resource_group_name
   tags                = var.tags
 
   sku_name = "Basic"
 
-  identity {
-    type = "SystemAssigned"
-  }
+  identity { type = "SystemAssigned" }
 }
 
 resource "azurerm_automation_schedule" "weekdays" {
   for_each = toset(var.scheduled_hours)
 
   name                    = "weekdays-${each.value}"
-  resource_group_name     = var.resource_group_name
+  resource_group_name     = local.resource_group_name
   automation_account_name = azurerm_automation_account.main.name
-  description             = "This schedule runs once a day at ${each.value} every day in ${var.timezone}."
+  description             = format("This schedule runs once a day at %s every day in %s.", each.value, var.timezone)
 
   timezone = var.timezone
   # Ugly logic, but pull tomorrow from locals and substring the 24 hour date formatted date.
@@ -67,9 +81,7 @@ resource "azurerm_automation_schedule" "weekdays" {
   week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
   interval  = 1
 
-  lifecycle {
-    ignore_changes = [start_time]
-  }
+  lifecycle { ignore_changes = [start_time] }
 }
 
 resource "azurerm_role_assignment" "power_management" {
@@ -92,14 +104,14 @@ resource "azurerm_automation_runbook" "power_management" {
 
   name                    = "ManagePower-${each.value}"
   location                = var.location
-  resource_group_name     = var.resource_group_name
+  resource_group_name     = local.resource_group_name
   automation_account_name = azurerm_automation_account.main.name
   tags                    = var.tags
   description             = "This runbook is used to manage power state for ${each.value} resources."
 
   runbook_type = "PowerShellWorkflow"
   content = templatefile(
-    "${path.module}/files/ManagePower-${each.value}.ps1",
+    format("%s/files/ManagePower-%s.ps1", path.module, each.value),
     {
       subscription_id = data.azurerm_subscription.current.subscription_id
     }

@@ -1,9 +1,15 @@
 provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
+  features {}
+}
+
+locals {
+  location = "uksouth"
+  tags = {
+    module  = "aks"
+    example = "adv"
+    usage   = "demo"
   }
+  resource_prefix = "tfmex-adv-aks"
 }
 
 data "http" "my_ip" {
@@ -17,46 +23,74 @@ data "http" "my_ip" {
   }
 }
 
-resource "azurerm_resource_group" "main" {
-  name     = "${var.resource_prefix}-rg"
-  location = var.location
-  tags     = var.tags
+resource "azurerm_resource_group" "aks" {
+  name     = "${local.resource_prefix}-rg"
+  location = local.location
+  tags     = local.tags
 }
 
-resource "azurerm_virtual_network" "main" {
-  name                = "${var.resource_prefix}-vnet"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.main.name
-  tags                = var.tags
+resource "azurerm_container_registry" "aks" {
+  name                = lower(replace("${local.resource_prefix}acr", "/[-_]/", ""))
+  location            = local.location
+  resource_group_name = azurerm_resource_group.aks.name
+  tags                = local.tags
+
+  sku = "Basic"
+}
+
+resource "azurerm_virtual_network" "aks" {
+  name                = "${local.resource_prefix}-vnet"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.aks.name
+  tags                = local.tags
 
   address_space = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "aks" {
   name                 = "aks-default"
-  resource_group_name  = azurerm_virtual_network.main.resource_group_name
-  virtual_network_name = azurerm_virtual_network.main.name
+  resource_group_name  = azurerm_virtual_network.aks.resource_group_name
+  virtual_network_name = azurerm_virtual_network.aks.name
 
-  address_prefixes = ["10.0.0.0/20"]
+  address_prefixes  = ["10.0.0.0/20"]
+  service_endpoints = ["Microsoft.ContainerRegistry"]
+}
+
+resource "azurerm_user_assigned_identity" "aks" {
+  name                = "${local.resource_prefix}-msi"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.aks.name
+  tags                = local.tags
+}
+
+resource "azurerm_user_assigned_identity" "aks_nodepool" {
+  name                = "${local.resource_prefix}-nodepool-msi"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.aks.name
+  tags                = local.tags
+}
+
+resource "azurerm_role_assignment" "aks_nodepool_identity" {
+  description                      = "Assign the AKS identity Contributor rights to the Nodepool identity."
+  principal_id                     = azurerm_user_assigned_identity.aks.principal_id
+  skip_service_principal_aad_check = true
+
+  role_definition_name = "Contributor"
+  scope                = azurerm_user_assigned_identity.aks_nodepool.id
 }
 
 module "aks" {
   source = "../../"
 
-  name                = "${var.resource_prefix}-aks"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.main.name
-  tags                = var.tags
+  name                = "${local.resource_prefix}-aks"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.aks.name
+  tags                = local.tags
 
-  create_acr       = true
-  acr_enable_admin = true
-  acr_sku          = "Basic"
+  authorized_ip_ranges       = ["${data.http.my_ip.response_body}/32"]
+  aad_admin_group_object_ids = []
 
-  api_server_authorized_ranges = ["${data.http.my_ip.response_body}/32"]
-  aad_admin_group_object_ids   = var.admin_object_ids
-  disable_local_account        = false
-
-  # cluster_identity and kubelet_identity variable
+  # cluster_identity and kubelet_identity
   # supports directly passing in identity resource
   cluster_identity = azurerm_user_assigned_identity.aks
   kubelet_identity = azurerm_user_assigned_identity.aks_nodepool
@@ -91,10 +125,52 @@ module "aks" {
       day   = "Saturday"
       hours = [22, 23, 0]
     },
-    {
-      day = "Sunday"
-    }
+    { day = "Sunday" }
   ]
 
+  registry_ids = [azurerm_container_registry.aks.id]
+
   depends_on = [azurerm_role_assignment.aks_nodepool_identity]
+}
+
+provider "kubernetes" {
+  host                   = module.aks.host
+  cluster_ca_certificate = module.aks.ca_certificate
+  client_certificate     = module.aks.client_certificate
+  client_key             = module.aks.client_key
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = module.aks.host
+    cluster_ca_certificate = module.aks.ca_certificate
+    client_certificate     = module.aks.client_certificate
+    client_key             = module.aks.client_key
+  }
+}
+
+resource "helm_release" "ingress_nginx" {
+  name       = "ingress-nginx"
+  chart      = "ingress-nginx"
+  repository = "https://kubernetes.github.io/ingress-nginx"
+  version    = "4.0.18"
+
+  create_namespace = true
+  namespace        = "ingress-nginx"
+
+  values = [
+    file("${path.module}/files/helm/values/ingress-nginx.yaml")
+  ]
+}
+
+data "kubernetes_service" "ingress_nginx" {
+  metadata {
+    name      = "ingress-nginx-controller"
+    namespace = helm_release.ingress_nginx.namespace
+  }
+}
+
+output "ingress_ip" {
+  description = "IP address of the ingress."
+  value       = data.kubernetes_service.ingress_nginx.status[0].load_balancer[0].ingress[0].ip
 }

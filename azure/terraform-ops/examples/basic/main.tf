@@ -10,6 +10,15 @@ provider "azurerm" {
   storage_use_azuread = true
 }
 
+locals {
+  location = "uksouth"
+  tags = {
+    module  = "terraform-ops"
+    example = "basic"
+    usage   = "demo"
+  }
+}
+
 data "http" "my_ip" {
   url = "https://api.ipify.org"
 
@@ -20,20 +29,14 @@ data "http" "my_ip" {
     }
   }
 }
+
 data "azurerm_subscription" "current" {}
 
-resource "azurerm_resource_group" "example" {
-  name     = "tfm-ex-basic-tfo-rg"
-  location = var.location
-  tags     = var.tags
-}
-
-module "example" {
+module "terraform_ops" {
   source = "../../"
 
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
-  tags                = var.tags
+  location = local.location
+  tags     = local.tags
 
   application_name     = "Terraform Example"
   storage_account_name = "tfmexbasictfotfsa"

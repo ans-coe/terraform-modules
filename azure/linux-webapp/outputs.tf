@@ -4,13 +4,18 @@ output "id" {
 }
 
 output "name" {
-  description = "Name  of the app service."
+  description = "Name of the app service."
   value       = azurerm_linux_web_app.main.name
+}
+
+output "resource_group_name" {
+  description = "Name of the resource group."
+  value       = local.resource_group_name
 }
 
 output "identity" {
   description = "Identity of the app service."
-  value       = one(azurerm_linux_web_app.main.identity[*])
+  value       = one(azurerm_linux_web_app.main.identity)
 }
 
 output "app_service_plan_id" {
