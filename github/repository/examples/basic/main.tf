@@ -3,12 +3,12 @@ terraform {
   required_providers {
     github = {
       source  = "integrations/github"
-      version = ">= 4.26.1"
+      version = "~> 5.0"
     }
   }
 }
 
-module "example" {
+module "repository" {
   source = "../../"
 
   name               = "terraform-module-example-basic-repository"
@@ -20,7 +20,7 @@ module "example" {
 resource "github_repository_file" "example" {
   # Creating a file requires the repository to be created and initialised.
   # If the file exists, overwrite_on_create needs to be true.
-  repository = module.example.name
+  repository = module.repository.name
   file       = "example.md"
 
   content             = "Hello."

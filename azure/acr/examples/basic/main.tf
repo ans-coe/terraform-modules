@@ -2,17 +2,20 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "${var.resource_prefix}-rg"
-  location = var.location
-  tags     = var.tags
+locals {
+  location = "uksouth"
+  tags = {
+    module  = "acr"
+    example = "basic"
+    usage   = "demo"
+  }
+  resource_prefix = "tfmex-basic-acr"
 }
 
-module "example" {
+module "acr" {
   source = "../../"
 
-  name                = lower(replace("${var.resource_prefix}acr", "/[-_]/", ""))
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
-  tags                = var.tags
+  name     = lower(replace("${local.resource_prefix}acr", "/[-_]/", ""))
+  location = local.location
+  tags     = local.tags
 }

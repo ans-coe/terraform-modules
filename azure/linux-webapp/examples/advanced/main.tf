@@ -2,17 +2,38 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "${var.resource_prefix}-rg"
-  location = var.location
-  tags     = var.tags
+locals {
+  location = "uksouth"
+  tags = {
+    module  = "linux-webapp"
+    example = "advanced"
+    usage   = "demo"
+  }
+  resource_prefix = "tfmex-adv-lwa"
 }
 
-resource "azurerm_storage_account" "logs" {
-  name                = lower(replace("${var.resource_prefix}lsa", "/[-_]/", ""))
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
-  tags                = var.tags
+resource "azurerm_resource_group" "webapp" {
+  name     = "${local.resource_prefix}-rg"
+  location = local.location
+  tags     = local.tags
+}
+
+resource "azurerm_service_plan" "webapp" {
+  name                = "${local.resource_prefix}-sp"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.webapp.name
+  tags                = local.tags
+
+  sku_name = "S1"
+
+  os_type = "Linux"
+}
+
+resource "azurerm_storage_account" "webapp" {
+  name                = lower(replace("${local.resource_prefix}lsa", "/[-_]/", ""))
+  location            = local.location
+  resource_group_name = azurerm_resource_group.webapp.name
+  tags                = local.tags
 
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -21,19 +42,19 @@ resource "azurerm_storage_account" "logs" {
   account_kind    = "BlobStorage"
 }
 
-resource "azurerm_virtual_network" "example" {
-  name                = "${var.resource_prefix}-vnet"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
-  tags                = var.tags
+resource "azurerm_virtual_network" "webapp" {
+  name                = "${local.resource_prefix}-vnet"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.webapp.name
+  tags                = local.tags
 
   address_space = ["10.0.0.0/24"]
 }
 
-resource "azurerm_subnet" "example" {
+resource "azurerm_subnet" "webapp" {
   name                 = "app"
-  resource_group_name  = azurerm_resource_group.example.name
-  virtual_network_name = azurerm_virtual_network.example.name
+  resource_group_name  = azurerm_resource_group.webapp.name
+  virtual_network_name = azurerm_virtual_network.webapp.name
 
   address_prefixes = ["10.0.0.0/25"]
   delegation {
@@ -46,21 +67,20 @@ resource "azurerm_subnet" "example" {
   }
 }
 
-module "example" {
+module "webapp" {
   source = "../../"
 
-  name                = "${var.resource_prefix}-wa"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.example.name
-  tags                = var.tags
+  name                = "${local.resource_prefix}-wa"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.webapp.name
+  tags                = local.tags
 
   plan = {
-    name           = "${var.resource_prefix}-sp"
-    sku_name       = "S1"
-    zone_balancing = false
+    create = false
+    id     = azurerm_service_plan.webapp.id
   }
 
-  subnet_id = azurerm_subnet.example.id
+  subnet_id = azurerm_subnet.webapp.id
 
   site_config = {
     container_registry_use_managed_identity = true
@@ -82,9 +102,12 @@ module "example" {
     detailed_error_messages = false
     failed_request_tracing  = false
     retention_in_days       = 7
-    storage_account_name    = azurerm_storage_account.logs.name
-    storage_account_rg      = azurerm_storage_account.logs.resource_group_name
+    storage_account_name    = azurerm_storage_account.webapp.name
+    storage_account_rg      = azurerm_storage_account.webapp.resource_group_name
   }
 
-  depends_on = [azurerm_storage_account.logs]
+  depends_on = [
+    # included to prevent the data source for this querying too early
+    azurerm_storage_account.webapp
+  ]
 }

@@ -19,8 +19,8 @@ Things to update:
 - Update [terraform.tf](terraform.tf) required_versions
 - Add a LICENSE to this module
 - Update .tflint.hcl plugins if necessary
-- If you are not using pre-commit/this module won't have a dedicated repository, remove [.pre-commit-config.yaml](./.pre-commit-config.yaml)
-  - If you are keeping this, make sure you have installed [pre-commit](https://pre-commit.com/), [terraform-docs](https://terraform-docs.io/), [tfsec](https://github.com/aquasecurity/tfsec) and [tflint](https://github.com/terraform-linters/tflint) or have removed those specific hooks.
+- If this module is to be created for use with Terraform Registry, ensure the repository itself is called `terraform-PROVIDER-NAME` for the publish step
+- If this module is going to be a part of a monorepo, remove [.pre-commit-config.yaml](./.pre-commit-config.yaml)
 - If using this for Terraform Configurations, optionally remove [examples](./examples/) and remove `.terraform.lock.hcl` from the [.gitignore](./.gitignore)
 
 <!-- BEGIN_TF_DOCS -->

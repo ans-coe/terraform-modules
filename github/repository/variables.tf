@@ -95,6 +95,12 @@ variable "has_wiki" {
   default     = false
 }
 
+variable "has_discussions" {
+  description = "Has Discussions feature activated."
+  type        = bool
+  default     = false
+}
+
 variable "vunlerability_alerts" {
   description = "Has Vulnerability Alerts feature activated."
   type        = bool
@@ -124,25 +130,26 @@ variable "pages_cname" {
 ##############
 
 variable "collaborators" {
-  description = "Map containing collaborators and their permissions. Valid permissions are pull, push, triage, maintain and admin."
-  type = map(
+  description = "List of objects containing collaborators and their permissions. Valid permissions are pull, push, triage, maintain and admin."
+  type = list(
     object({
-      username   = string
-      permission = string
+      username         = string
+      permission       = optional(string)
+      diff_suppression = optional(bool)
     })
   )
-  default = {}
+  default = []
 }
 
 variable "teams" {
-  description = "Map containing teams and their permissions. Valid permissions are pull, push, triage, maintain and admin."
-  type = map(
+  description = "List of objects containing teams and their permissions. Valid permissions are pull, push, triage, maintain and admin."
+  type = list(
     object({
       team_id    = string
-      permission = string
+      permission = optional(string)
     })
   )
-  default = {}
+  default = []
 }
 
 ##############
@@ -150,15 +157,15 @@ variable "teams" {
 ##############
 
 variable "deploy_keys" {
-  description = "Map containing deploy keys and their read_only status."
-  type = map(
+  description = "List of objects containing deploy keys and their read_only status."
+  type = list(
     object({
       name       = string
       public_key = string
-      read_only  = bool
+      read_only  = optional(bool, true)
     })
   )
-  default = {}
+  default = []
 }
 
 ###########
@@ -166,16 +173,18 @@ variable "deploy_keys" {
 ###########
 
 variable "webhooks" {
-  description = "Map containing webhooks and their configuration. See github_repository_webhook documentation for more."
-  type = map(
+  description = "List of objects containing webhooks and their configuration. See github_repository_webhook documentation for more."
+  type = list(
     object({
       url          = string
-      content_type = string
-      insecure_ssl = bool
+      active       = optional(bool, true)
       events       = list(string)
+      content_type = optional(string, "json")
+      insecure_ssl = optional(bool, false)
+      secret       = optional(string)
     })
   )
-  default = {}
+  default = []
 }
 
 ###############
@@ -183,15 +192,15 @@ variable "webhooks" {
 ###############
 
 variable "issue_labels" {
-  description = "Map containing issue labels. Color is in hex format."
-  type = map(
+  description = "List of objects containing issue labels. Color is in hex format without leading #."
+  type = list(
     object({
       name        = string
-      color       = string
-      description = string
+      color       = optional(string, "00FF00")
+      description = optional(string)
     })
   )
-  default = {}
+  default = []
 }
 
 ###########
@@ -199,12 +208,12 @@ variable "issue_labels" {
 ###########
 
 variable "projects" {
-  description = "Map containing projects."
-  type = map(
+  description = "List of objects containing projects."
+  type = list(
     object({
       name = string
-      body = string
+      body = optional(string)
     })
   )
-  default = {}
+  default = []
 }

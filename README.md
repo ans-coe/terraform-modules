@@ -22,9 +22,9 @@ Below is a list of available modules linking directly to the root README.md.
 |[acr](./azure/acr/README.md)|azure|
 |[aks](./azure/aks/README.md)|azure|
 |[bastion](./azure/bastion/README.md)|azure|
+|[linux-functionapp](./azure/linux-functionapp/README.md)|azure|
 |[linux-webapp](./azure/linux-webapp/README.md)|azure|
-|[policy-allowed-locations](./azure/policy-allowed-locations/README.md)|azure|
-|[policy-required-tags](./azure/policy-required-tags/README.md)|azure|
+|[policy-baseline](./azure/policy-baseline/README.md)|azure|
 |[power-management](./azure/power-management/README.md)|azure|
 |[terraform-ops](./azure/terraform-ops/README.md)|azure|
 |[vnet](./azure/vnet/README.md)|azure|

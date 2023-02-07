@@ -9,9 +9,12 @@ output "service_principal" {
 
 output "group" {
   description = "Group details."
-  value = {
-    object_id = azuread_group.main.object_id
-  }
+  value       = { object_id = azuread_group.main.object_id }
+}
+
+output "resource_group_name" {
+  description = "Name of the resource group."
+  value       = local.resource_group_name
 }
 
 output "storage_account" {

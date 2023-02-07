@@ -19,14 +19,13 @@ This module will deploy an Azure Container Registry with access to options relat
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 3.0.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.0 |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_name"></a> [name](#input\_name) | Name of the ACR. | `string` | n/a | yes |
-| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | n/a | yes |
 | <a name="input_agent_pools"></a> [agent\_pools](#input\_agent\_pools) | Definitions for agent pools to create for this ACR. | <pre>list(object({<br>    name      = string<br>    instances = optional(number, 1)<br>    tier      = optional(string, "S1")<br>    subnet_id = optional(string)<br>  }))</pre> | `[]` | no |
 | <a name="input_allowed_cidrs"></a> [allowed\_cidrs](#input\_allowed\_cidrs) | CIDR ranges allowed access to this ACR. | `set(string)` | `[]` | no |
 | <a name="input_allowed_subnet_ids"></a> [allowed\_subnet\_ids](#input\_allowed\_subnet\_ids) | Subnet IDs allowed access to this ACR. | `set(string)` | `[]` | no |
@@ -45,6 +44,7 @@ This module will deploy an Azure Container Registry with access to options relat
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_pull_object_ids"></a> [pull\_object\_ids](#input\_pull\_object\_ids) | Object IDs to grant the pull permission to. | `list(string)` | `[]` | no |
 | <a name="input_push_object_ids"></a> [push\_object\_ids](#input\_push\_object\_ids) | Object IDs to grant the push permission to. | `list(string)` | `[]` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | `null` | no |
 | <a name="input_retention_policy_days"></a> [retention\_policy\_days](#input\_retention\_policy\_days) | Days to retain untagged manifests. | `number` | `7` | no |
 | <a name="input_scope_maps"></a> [scope\_maps](#input\_scope\_maps) | Scope maps to create for this ACR. | <pre>list(object({<br>    name    = string<br>    actions = set(string)<br>  }))</pre> | `[]` | no |
 | <a name="input_sku"></a> [sku](#input\_sku) | SKU of the ACR. | `string` | `"Basic"` | no |
@@ -60,6 +60,7 @@ This module will deploy an Azure Container Registry with access to options relat
 | <a name="output_id"></a> [id](#output\_id) | Resource ID of the container registry. |
 | <a name="output_login_server"></a> [login\_server](#output\_login\_server) | Login server of the container registry. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the container registry. |
+| <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | Name of the resource group. |
 | <a name="output_scope_maps"></a> [scope\_maps](#output\_scope\_maps) | Scope maps created with this module. |
 
 ## Resources
@@ -70,6 +71,7 @@ This module will deploy an Azure Container Registry with access to options relat
 | [azurerm_container_registry_agent_pool.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_agent_pool) | resource |
 | [azurerm_container_registry_scope_map.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_scope_map) | resource |
 | [azurerm_container_registry_webhook.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_registry_webhook) | resource |
+| [azurerm_resource_group.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_role_assignment.main_acr_pull](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_role_assignment.main_acr_push](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 

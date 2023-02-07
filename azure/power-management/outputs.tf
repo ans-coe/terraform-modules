@@ -9,8 +9,13 @@ output "name" {
 }
 
 output "resource_group_name" {
-  description = "Resource group name."
-  value       = azurerm_automation_account.main.resource_group_name
+  description = "Name of the resource group."
+  value       = local.resource_group_name
+}
+
+output "identity" {
+  description = "Automation account identity."
+  value       = one(azurerm_automation_account.main.identity)
 }
 
 output "main_runbooks" {
@@ -24,9 +29,4 @@ output "main_runbooks" {
 output "schedules" {
   description = "Output of created weekdays schedules."
   value       = azurerm_automation_schedule.weekdays
-}
-
-output "automation_account_identity" {
-  description = "Automation account identity."
-  value       = one(azurerm_automation_account.main.identity)
 }

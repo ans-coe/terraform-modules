@@ -38,7 +38,7 @@ resource "azuread_group" "main" {
 resource "azurerm_role_assignment" "main_owner" {
   for_each = var.managed_scopes
 
-  description          = "Allow group ${azuread_group.main.object_id} to own scope ${each.value}."
+  description          = format("Allow group %s to own scope %s.", azuread_group.main.object_id, each.value)
   principal_id         = azuread_group.main.object_id
   scope                = each.value
   role_definition_name = "Owner"
@@ -63,6 +63,22 @@ resource "azuread_group_member" "main_users" {
   member_object_id = each.value
 }
 
+#################
+# Resource Group
+#################
+
+resource "azurerm_resource_group" "main" {
+  count = var.resource_group_name == null ? 1 : 0
+
+  name     = "terraform-ops-rg"
+  location = var.location
+  tags     = var.tags
+}
+
+locals {
+  resource_group_name = coalesce(one(azurerm_resource_group.main[*].name), var.resource_group_name)
+}
+
 ######################
 # Resource Management
 ######################
@@ -70,7 +86,7 @@ resource "azuread_group_member" "main_users" {
 resource "azurerm_role_assignment" "resource_group_contributor" {
   description          = "Provide group ${azuread_group.main.object_id} contributor access to this resource scope."
   principal_id         = azuread_group.main.object_id
-  scope                = "${data.azurerm_subscription.current.id}/resourceGroups/${var.resource_group_name}"
+  scope                = format("%s/resourceGroups/%s", data.azurerm_subscription.current.id, local.resource_group_name)
   role_definition_name = "Contributor"
 
   skip_service_principal_aad_check = false
@@ -83,7 +99,7 @@ resource "azurerm_role_assignment" "resource_group_contributor" {
 #tfsec:ignore:azure-storage-queue-services-logging-enabled
 resource "azurerm_storage_account" "main" {
   name                = var.storage_account_name
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.resource_group_name
   location            = var.location
   tags                = var.tags
 
@@ -113,7 +129,7 @@ resource "azurerm_storage_account_network_rules" "main" {
 }
 
 resource "azurerm_role_assignment" "main_group_blob_owner" {
-  description          = "Provide group ${azuread_group.main.object_id} Storage Blob Data Owner access to ${azurerm_storage_account.main.name}."
+  description          = format("Provide group %s Storage Blob Data Owner access to %s.", azuread_group.main.object_id, azurerm_storage_account.main.name)
   principal_id         = azuread_group.main.object_id
   scope                = azurerm_storage_account.main.id
   role_definition_name = "Storage Blob Data Owner"
@@ -133,7 +149,7 @@ resource "azurerm_storage_container" "main_state" {
 #tfsec:ignore:azure-keyvault-specify-network-acl tfsec:ignore:azure-keyvault-no-purge
 resource "azurerm_key_vault" "main" {
   name                = var.key_vault_name
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.resource_group_name
   location            = var.location
   tags                = var.tags
 
@@ -152,7 +168,7 @@ resource "azurerm_key_vault" "main" {
 }
 
 resource "azurerm_role_assignment" "main_kv_admin" {
-  description          = "Provide group ${azuread_group.main.object_id} Key Vault Administrator access to ${azurerm_key_vault.main.name}."
+  description          = format("Provide group %s Key Vault Administrator access to %s.", azuread_group.main.object_id, azurerm_key_vault.main.name)
   principal_id         = azuread_group.main.object_id
   scope                = azurerm_key_vault.main.id
   role_definition_name = "Key Vault Administrator"

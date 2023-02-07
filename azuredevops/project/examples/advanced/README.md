@@ -29,5 +29,5 @@ No inputs.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_example"></a> [example](#module\_example) | ../../ | n/a |
+| <a name="module_project"></a> [project](#module\_project) | ../../ | n/a |
 <!-- END_TF_DOCS -->

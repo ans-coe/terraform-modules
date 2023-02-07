@@ -27,22 +27,18 @@ resource "azuredevops_git_repository" "main" {
 
   project_id = azuredevops_project.main.id
   name       = each.value
-  initialization {
-    init_type = var.repository_initialization_type
-  }
+  initialization { init_type = var.repository_initialization_type }
 
-  lifecycle {
-    # Ignore changes to initialization, ensuring imported repositories are not recreated.
-    ignore_changes = [initialization, ]
-  }
+  # Ignore changes to initialization, ensuring imported repositories are not recreated.
+  lifecycle { ignore_changes = [initialization] }
 }
 
 resource "azuredevops_team" "main" {
   for_each = { for s in var.teams : s.name => s }
 
   project_id  = azuredevops_project.main.id
-  name        = each.value.name
-  description = each.value.description
+  name        = each.value["name"]
+  description = each.value["description"]
 }
 
 resource "azuredevops_team_administrators" "main" {
@@ -73,8 +69,8 @@ resource "azuredevops_environment" "main" {
   for_each = local.environments
 
   project_id  = azuredevops_project.main.id
-  name        = each.value.name
-  description = each.value.description
+  name        = each.value["name"]
+  description = each.value["description"]
 }
 
 #####################

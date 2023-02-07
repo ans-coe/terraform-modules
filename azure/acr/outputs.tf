@@ -8,6 +8,11 @@ output "name" {
   value       = azurerm_container_registry.main.name
 }
 
+output "resource_group_name" {
+  description = "Name of the resource group."
+  value       = local.resource_group_name
+}
+
 output "login_server" {
   description = "Login server of the container registry."
   value       = azurerm_container_registry.main.login_server

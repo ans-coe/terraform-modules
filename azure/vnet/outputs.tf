@@ -9,8 +9,8 @@ output "name" {
 }
 
 output "resource_group_name" {
-  description = "Resource group name of the virtual network."
-  value       = azurerm_virtual_network.main.resource_group_name
+  description = "Name of the resource group."
+  value       = local.resource_group_name
 }
 
 output "address_space" {

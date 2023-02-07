@@ -8,7 +8,7 @@ terraform {
   }
 }
 
-module "example" {
+module "project" {
   source = "../../"
 
   name        = "terraform-module-example-basic-project"
@@ -19,6 +19,6 @@ module "example" {
 
 output "repositories" {
   description = "Output of repositories."
-  value       = module.example.repositories
+  value       = module.project.repositories
   sensitive   = true # Setting to sensitive as output is large.
 }

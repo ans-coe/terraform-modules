@@ -9,10 +9,7 @@ No requirements.
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_location"></a> [location](#input\_location) | The location of this deployment. | `string` | `"uksouth"` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | Tags given to the resources created by this template. | `map(string)` | <pre>{<br>  "example": "basic",<br>  "module": "terraform-ops",<br>  "usage": "demo"<br>}</pre> | no |
+No inputs.
 
 ## Outputs
 
@@ -22,7 +19,6 @@ No outputs.
 
 | Name | Type |
 |------|------|
-| [azurerm_resource_group.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
 | [http_http.my_ip](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
 
@@ -30,5 +26,5 @@ No outputs.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_example"></a> [example](#module\_example) | ../../ | n/a |
+| <a name="module_terraform_ops"></a> [terraform\_ops](#module\_terraform\_ops) | ../../ | n/a |
 <!-- END_TF_DOCS -->
