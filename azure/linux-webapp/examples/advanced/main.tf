@@ -87,6 +87,10 @@ module "webapp" {
     health_check_path                       = "/health"
   }
 
+  cors = {
+    allowed_origins = ["http://www.example.com"]
+  }
+
   application_stack = {
     docker_image     = "containous/whoami"
     docker_image_tag = "v1.5.0"

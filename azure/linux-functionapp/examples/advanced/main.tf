@@ -77,6 +77,10 @@ module "functionapp" {
     container_registry_use_managed_identity = true
   }
 
+  cors = {
+    allowed_origins = ["http://www.example.com"]
+  }
+
   functions_extension_version = "~3"
   application_stack = {
     docker_registry  = "mcr.microsoft.com"

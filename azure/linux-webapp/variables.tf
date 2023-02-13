@@ -65,6 +65,15 @@ variable "site_config" {
   default     = {}
 }
 
+variable "cors" {
+  description = "Cross origin resource sharing configuration."
+  type = object({
+    allowed_origins     = list(string)
+    support_credentials = optional(bool, null)
+  })
+  default = null
+}
+
 variable "application_stack" {
   description = "A map detailing the application stack."
   type        = map(string)

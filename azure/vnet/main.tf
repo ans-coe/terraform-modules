@@ -24,7 +24,7 @@ resource "azurerm_virtual_network" "main" {
   resource_group_name = local.resource_group_name
   tags                = var.tags
 
-  address_space = var.address_spaces
+  address_space = var.address_space
   dns_servers   = var.dns_servers
 
   bgp_community = var.bgp_community

@@ -38,6 +38,7 @@ Once deployed, management is expected to be through another medium, so changes t
 | <a name="input_app_settings"></a> [app\_settings](#input\_app\_settings) | A map of app settings. | `map(string)` | `{}` | no |
 | <a name="input_application_stack"></a> [application\_stack](#input\_application\_stack) | A map detailing the application stack. | `map(string)` | <pre>{<br>  "python_version": "3.10"<br>}</pre> | no |
 | <a name="input_connection_strings"></a> [connection\_strings](#input\_connection\_strings) | A list of connection string objects. | <pre>list(object({<br>    name  = string<br>    type  = string<br>    value = string<br>  }))</pre> | `[]` | no |
+| <a name="input_cors"></a> [cors](#input\_cors) | Cross origin resource sharing configuration. | <pre>object({<br>    allowed_origins     = list(string)<br>    support_credentials = optional(bool, null)<br>  })</pre> | `null` | no |
 | <a name="input_daily_memory_time_quota_gs"></a> [daily\_memory\_time\_quota\_gs](#input\_daily\_memory\_time\_quota\_gs) | Daily memory time quota in gigabyte-seconds. | `string` | `null` | no |
 | <a name="input_functions_extension_version"></a> [functions\_extension\_version](#input\_functions\_extension\_version) | Functions extension version to use on this function app. | `string` | `null` | no |
 | <a name="input_identity_ids"></a> [identity\_ids](#input\_identity\_ids) | A list of user identity IDs to use for the function app. | `list(string)` | `[]` | no |

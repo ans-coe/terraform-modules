@@ -74,13 +74,9 @@ Examples can be found under the [examples](./examples/) directory.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_ca_certificate"></a> [ca\_certificate](#output\_ca\_certificate) | AKS Cluster CA Certificate. |
-| <a name="output_client_certificate"></a> [client\_certificate](#output\_client\_certificate) | AKS Cluster Client Certificate. |
-| <a name="output_client_key"></a> [client\_key](#output\_client\_key) | AKS Cluster Client Key. |
-| <a name="output_host"></a> [host](#output\_host) | AKS Cluster Host. |
 | <a name="output_id"></a> [id](#output\_id) | Resource ID of the AKS Cluster. |
 | <a name="output_identity"></a> [identity](#output\_identity) | AKS Cluster identity. |
-| <a name="output_kubeconfig"></a> [kubeconfig](#output\_kubeconfig) | Kubeconfig for the AKS Cluster. |
+| <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | AKS Cluster Host. |
 | <a name="output_kubelet_identity"></a> [kubelet\_identity](#output\_kubelet\_identity) | AKS Cluster kubelet identity. |
 | <a name="output_log_analytics_id"></a> [log\_analytics\_id](#output\_log\_analytics\_id) | ID of the log analytics. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the AKS Cluster. |

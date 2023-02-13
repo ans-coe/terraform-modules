@@ -20,7 +20,7 @@ output "identity" {
 
 output "app_service_plan_id" {
   description = "ID of the service plan."
-  value       = one(azurerm_service_plan.main[*].id)
+  value       = local.plan_id
 }
 
 output "fqdn" {
