@@ -26,7 +26,7 @@ module "vnet" {
   resource_group_name = azurerm_resource_group.vnet.name
   tags                = local.tags
 
-  address_spaces = ["10.0.0.0/16"]
+  address_space = ["10.0.0.0/16"]
   # ddos_protection_plan_id = azurerm_network_ddos_protection_plan.vnet.id
   subnets = [
     {
@@ -92,7 +92,7 @@ module "vnet_peer" {
   resource_group_name = azurerm_resource_group.vnet.name
   tags                = local.tags
 
-  address_spaces = ["10.1.0.0/16"]
+  address_space = ["10.1.0.0/16"]
   subnets = [{
     name   = "default"
     prefix = "10.1.0.0/24"

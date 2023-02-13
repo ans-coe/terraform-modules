@@ -125,27 +125,38 @@ resource "azurerm_linux_web_app" "main" {
     for_each = local.site_config
 
     content {
-      always_on                         = lookup(site_config.value, "always_on", false)
-      default_documents                 = lookup(site_config.value, "default_documents", null)
+      worker_count           = lookup(site_config.value, "worker_count", 1)
+      use_32_bit_worker      = lookup(site_config.value, "use_32_bit_worker", true)
+      local_mysql_enabled    = lookup(site_config.value, "local_mysql_enabled", false)
+      always_on              = lookup(site_config.value, "always_on", false)
+      vnet_route_all_enabled = lookup(site_config.value, "vnet_route_all_enabled", false)
+      load_balancing_mode    = lookup(site_config.value, "load_balancing_mode", null)
+
+      minimum_tls_version = lookup(site_config.value, "minimum_tls_version", "1.2")
+      http2_enabled       = lookup(site_config.value, "http2_enabled", false)
+      websockets_enabled  = lookup(site_config.value, "websockets_enabled", false)
+      default_documents   = lookup(site_config.value, "default_documents", null)
+
+      api_definition_url    = lookup(site_config.value, "api_definition_url", null)
+      api_management_api_id = lookup(site_config.value, "api_management_api_id", null)
+
       health_check_path                 = lookup(site_config.value, "health_check_path", null)
       health_check_eviction_time_in_min = lookup(site_config.value, "health_check_eviction_time_in_min", null)
-      load_balancing_mode               = lookup(site_config.value, "load_balancing_mode", null)
-      ip_restriction                    = local.access_rules
-      scm_ip_restriction                = local.scm_access_rules
 
-      minimum_tls_version    = lookup(site_config.value, "minimum_tls_version", "1.2")
-      http2_enabled          = lookup(site_config.value, "http2_enabled", false)
-      websockets_enabled     = lookup(site_config.value, "websockets_enabled", false)
-      vnet_route_all_enabled = lookup(site_config.value, "vnet_route_all_enabled", false)
-
-      use_32_bit_worker        = lookup(site_config.value, "use_32_bit_worker", true)
-      worker_count             = lookup(site_config.value, "worker_count", 1)
-      local_mysql_enabled      = lookup(site_config.value, "local_mysql_enabled", false)
-      remote_debugging_enabled = lookup(site_config.value, "remote_debugging_enabled", false)
-      remote_debugging_version = lookup(site_config.value, "remote_debugging_version", null)
-
+      ip_restriction                                = local.access_rules
+      scm_ip_restriction                            = local.scm_access_rules
       container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
       container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
+      remote_debugging_enabled                      = lookup(site_config.value, "remote_debugging_enabled", false)
+      remote_debugging_version                      = lookup(site_config.value, "remote_debugging_version", null)
+
+      dynamic "cors" {
+        for_each = var.cors == null ? [] : [1]
+        content {
+          allowed_origins     = lookup(var.cors, "allowed_origins", null)
+          support_credentials = lookup(var.cors, "support_credentials", null)
+        }
+      }
 
       application_stack {
         docker_image        = lookup(var.application_stack, "docker_image", null)

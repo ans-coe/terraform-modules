@@ -41,7 +41,7 @@ resource "azurerm_private_dns_zone" "webapp" {
   tags                = local.tags
 }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "app" {
+resource "azurerm_private_dns_zone_virtual_network_link" "webapp" {
   name                  = format("%s_to_%s", azurerm_private_dns_zone.webapp.name, azurerm_virtual_network.webapp.name)
   resource_group_name   = azurerm_resource_group.webapp.name
   private_dns_zone_name = azurerm_private_dns_zone.webapp.name

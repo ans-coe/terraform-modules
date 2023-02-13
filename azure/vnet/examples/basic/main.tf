@@ -19,7 +19,7 @@ module "vnet" {
   location = local.location
   tags     = local.tags
 
-  address_spaces = ["10.0.0.0/16"]
+  address_space = ["10.0.0.0/16"]
   subnets = [
     {
       name   = "default"
