@@ -111,10 +111,8 @@ resource "azurerm_automation_runbook" "power_management" {
 
   runbook_type = "PowerShellWorkflow"
   content = templatefile(
-    format("%s/files/ManagePower-%s.ps1", path.module, each.value),
-    {
-      subscription_id = data.azurerm_subscription.current.subscription_id
-    }
+    format("%s/templates/ManagePower-%s.ps1", path.module, each.value),
+    { subscription_id = data.azurerm_subscription.current.subscription_id }
   )
 
   log_verbose  = var.log_verbose

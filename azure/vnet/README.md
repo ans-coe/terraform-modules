@@ -1,4 +1,6 @@
-# Terraform Module - Azure Virtual Network
+# Terraform Module - Azure - Virtual Network
+
+> **NOTE:** Please migrate to using the "virtual-network" module over "vnet" as this has now been renamed.
 
 #### Table of Contents
 
@@ -46,6 +48,7 @@ This module will create an Azure Virtual Network with subnets using a complex ob
 |------|-------------|
 | <a name="output_address_space"></a> [address\_space](#output\_address\_space) | Address space of the virtual network. |
 | <a name="output_id"></a> [id](#output\_id) | ID of the virtual network. |
+| <a name="output_location"></a> [location](#output\_location) | Location of the virtual network. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the virtual network. |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | Name of the resource group. |
 | <a name="output_subnets"></a> [subnets](#output\_subnets) | Subnet configuration. |

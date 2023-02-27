@@ -3,6 +3,11 @@ output "id" {
   value       = azurerm_linux_function_app.main.id
 }
 
+output "location" {
+  description = "Location of the function app."
+  value       = azurerm_linux_function_app.main.location
+}
+
 output "name" {
   description = "Name  of the function app."
   value       = azurerm_linux_function_app.main.name

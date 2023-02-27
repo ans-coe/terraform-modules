@@ -1,4 +1,4 @@
-# Terraform Module - Azure DevOps Project
+# Terraform Module - Azure DevOps - Project
 
 #### Table of Contents
 

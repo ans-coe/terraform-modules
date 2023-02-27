@@ -1,4 +1,4 @@
-# Terraform Module - Github Repository
+# Terraform Module - Github - Repository
 
 #### Table of Contents
 

@@ -1,4 +1,4 @@
-# Terraform Module - Azure Bastion
+# Terraform Module - Azure - Bastion
 
 #### Table of Contents
 
@@ -41,6 +41,7 @@ This module deploys a Bastion service to an existing Azure Bastion subnet with N
 | Name | Description |
 |------|-------------|
 | <a name="output_id"></a> [id](#output\_id) | ID of the bastion. |
+| <a name="output_location"></a> [location](#output\_location) | Location of the bastion. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the bastion. |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | Name of the resource group. |
 

@@ -1,4 +1,4 @@
-# Terraform Module - Azure Linux Web App
+# Terraform Module - Azure - Linux Web App
 
 #### Table of Contents
 
@@ -60,6 +60,7 @@ Once deployed, management is expected to be through another medium, so changes t
 | <a name="output_fqdn"></a> [fqdn](#output\_fqdn) | Default FQDN of the app service. |
 | <a name="output_id"></a> [id](#output\_id) | ID of the app service. |
 | <a name="output_identity"></a> [identity](#output\_identity) | Identity of the app service. |
+| <a name="output_location"></a> [location](#output\_location) | Location of the app service. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the app service. |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | Name of the resource group. |
 
