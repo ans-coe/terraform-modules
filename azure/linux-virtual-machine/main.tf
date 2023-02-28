@@ -90,7 +90,7 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   lifecycle {
     ignore_changes = [
-      admin_username, admin_ssh_key[0]
+      admin_username, admin_ssh_key
     ]
   }
 }
