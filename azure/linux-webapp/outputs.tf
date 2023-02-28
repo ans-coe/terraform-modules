@@ -3,6 +3,11 @@ output "id" {
   value       = azurerm_linux_web_app.main.id
 }
 
+output "location" {
+  description = "Location of the app service."
+  value       = azurerm_linux_web_app.main.location
+}
+
 output "name" {
   description = "Name of the app service."
   value       = azurerm_linux_web_app.main.name

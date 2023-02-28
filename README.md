@@ -19,14 +19,17 @@ Below is a list of available modules linking directly to the root README.md.
 |Module|Type|
 |-|-|
 |[_template](./_template/README.md)|repo template|
-|[acr](./azure/acr/README.md)|azure|
-|[aks](./azure/aks/README.md)|azure|
 |[bastion](./azure/bastion/README.md)|azure|
+|[container-registry](./azure/container-registry/README.md)|azure|
+|[kubernetes-service](./azure/kubernetes-service/README.md)|azure|
 |[linux-functionapp](./azure/linux-functionapp/README.md)|azure|
+|[linux-virtual-machine](./azure/linux-virtual-machine/README.md)|azure|
 |[linux-webapp](./azure/linux-webapp/README.md)|azure|
+|[network-security-group](./azure/network-security-group/README.md)|azure|
 |[policy-baseline](./azure/policy-baseline/README.md)|azure|
 |[power-management](./azure/power-management/README.md)|azure|
 |[terraform-ops](./azure/terraform-ops/README.md)|azure|
-|[vnet](./azure/vnet/README.md)|azure|
+|[virtual-network](./azure/virtual-network/README.md)|azure|
+|[windows-virtual-machine](./azure/windows-virtual-machine/README.md)|azure|
 |[project](./azuredevops/project/README.md)|azuredevops|
 |[repository](./github/repository/README.md)|github|

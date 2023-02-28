@@ -1,4 +1,4 @@
-# Terraform - CHANGE_ME
+# Terraform (Module) - PLATFORM - NAME
 
 #### Table of Contents
 

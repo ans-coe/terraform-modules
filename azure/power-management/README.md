@@ -1,4 +1,4 @@
-# Terraform Module - Azure Power Management
+# Terraform Module - Azure - Power Management
 
 #### Table of Contents
 
@@ -39,10 +39,11 @@ This Terraform configuration will create automation resources to assist with pow
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | ID of the created automation account. |
-| <a name="output_identity"></a> [identity](#output\_identity) | Automation account identity. |
+| <a name="output_id"></a> [id](#output\_id) | ID of the automation account. |
+| <a name="output_identity"></a> [identity](#output\_identity) | The automation account identity. |
+| <a name="output_location"></a> [location](#output\_location) | Location of the automation account. |
 | <a name="output_main_runbooks"></a> [main\_runbooks](#output\_main\_runbooks) | Name of the main power management runbook. |
-| <a name="output_name"></a> [name](#output\_name) | Name of the created automation account. |
+| <a name="output_name"></a> [name](#output\_name) | Name of the automation account. |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | Name of the resource group. |
 | <a name="output_schedules"></a> [schedules](#output\_schedules) | Output of created weekdays schedules. |
 

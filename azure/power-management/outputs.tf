@@ -1,10 +1,15 @@
 output "id" {
-  description = "ID of the created automation account."
+  description = "ID of the automation account."
   value       = azurerm_automation_account.main.id
 }
 
+output "location" {
+  description = "Location of the automation account."
+  value       = azurerm_automation_account.main.location
+}
+
 output "name" {
-  description = "Name of the created automation account."
+  description = "Name of the automation account."
   value       = azurerm_automation_account.main.name
 }
 
@@ -14,7 +19,7 @@ output "resource_group_name" {
 }
 
 output "identity" {
-  description = "Automation account identity."
+  description = "The automation account identity."
   value       = one(azurerm_automation_account.main.identity)
 }
 
