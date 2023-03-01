@@ -1,0 +1,29 @@
+name: terraform - test - azure/windows-virtual-machine
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.windows-virtual-machine.yml
+      - azure/windows-virtual-machine/*.tf
+      - azure/windows-virtual-machine/*.hcl
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.windows-virtual-machine.yml
+      - azure/windows-virtual-machine/*.tf
+      - azure/windows-virtual-machine/*.hcl
+
+jobs:
+  test:
+    uses: ./.github/workflows/tf.test.yml
+    with:
+      tf_path: azure/windows-virtual-machine
+      tf_version: latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write

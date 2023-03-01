@@ -1,0 +1,29 @@
+name: terraform - test - azure/policy-baseline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.policy-baseline.yml
+      - azure/policy-baseline/*.tf
+      - azure/policy-baseline/*.hcl
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.policy-baseline.yml
+      - azure/policy-baseline/*.tf
+      - azure/policy-baseline/*.hcl
+
+jobs:
+  test:
+    uses: ./.github/workflows/tf.test.yml
+    with:
+      tf_path: azure/policy-baseline
+      tf_version: latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
