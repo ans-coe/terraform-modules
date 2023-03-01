@@ -1,0 +1,29 @@
+name: terraform - test - azure/linux-virtual-machine
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.linux-virtual-machine.yml
+      - azure/linux-virtual-machine/*.tf
+      - azure/linux-virtual-machine/*.hcl
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.linux-virtual-machine.yml
+      - azure/linux-virtual-machine/*.tf
+      - azure/linux-virtual-machine/*.hcl
+
+jobs:
+  test:
+    uses: ./.github/workflows/tf.test.yml
+    with:
+      tf_path: azure/linux-virtual-machine
+      tf_version: latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write

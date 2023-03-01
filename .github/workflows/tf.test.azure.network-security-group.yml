@@ -1,0 +1,29 @@
+name: terraform - test - azure/network-security-group
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.network-security-group.yml
+      - azure/network-security-group/*.tf
+      - azure/network-security-group/*.hcl
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.network-security-group.yml
+      - azure/network-security-group/*.tf
+      - azure/network-security-group/*.hcl
+
+jobs:
+  test:
+    uses: ./.github/workflows/tf.test.yml
+    with:
+      tf_path: azure/network-security-group
+      tf_version: latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
