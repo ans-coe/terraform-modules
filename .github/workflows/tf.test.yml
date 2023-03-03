@@ -23,9 +23,7 @@
 
 name: terraform - test
 
-# workflow triggers
 on:
-  # enables manual runs
   workflow_call:
     inputs:
       tf_version:
@@ -44,37 +42,27 @@ on:
         description: The reporter to use with Reviewdog and PR.
         default: github-pr-review
 
-# set global pipeline env vars
 env:
+  TF_IN_AUTOMATION: true
+  TF_INPUT: false
+  TF_CLI_ARGS_init: -backend=false
   tf_version: ${{ inputs.tf_version }}
   tf_path: ${{ inputs.tf_path }}
 
-# workflow
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ${{ env.tf_path }}
     permissions:
       contents: read
-      checks: write
-      pull-requests: write
-    env:
-      TF_IN_AUTOMATION: true
-      TF_INPUT: false
-      TF_CLI_ARGS_init: -backend=false
     steps:
-      # checkout
       - uses: actions/checkout@v3
-
-      # setup
       - name: setup terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.tf_version }}
-
-      # base checks
       - name: terraform fmt
         run: terraform fmt -check
         continue-on-error: true
@@ -83,7 +71,14 @@ jobs:
       - name: terraform validate
         run: terraform validate
 
-      # custom checks (push)
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
       - name: tflint
         uses: reviewdog/action-tflint@v1
         with:
@@ -92,17 +87,7 @@ jobs:
           reporter: github-check
           fail_on_error: false
           tflint_init: true
-        if: github.event_name != 'pull_request'
-      - name: tfsec
-        uses: reviewdog/action-tfsec@v1
-        with:
-          working_directory: ${{ env.tf_path }}
-          filter_mode: nofilter
-          reporter: github-check
-          fail_on_error: true
-        if: github.event_name != 'pull_request'
-
-      # custom checks (pr)
+        if: github.event_name == 'push'
       - name: tflint-pr
         uses: reviewdog/action-tflint@v1
         with:
@@ -112,7 +97,24 @@ jobs:
           fail_on_error: false
           tflint_init: true
         if: github.event_name == 'pull_request'
-      - name: tfsec-pr
+
+  tfsec:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: tfsec
+        uses: reviewdog/action-tfsec@v1
+        with:
+          working_directory: ${{ env.tf_path }}
+          filter_mode: nofilter
+          reporter: github-check
+          fail_on_error: true
+        if: github.event_name == 'push'
+      - name: tfsec
         uses: reviewdog/action-tfsec@v1
         with:
           working_directory: ${{ env.tf_path }}
