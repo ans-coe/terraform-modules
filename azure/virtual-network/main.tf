@@ -25,7 +25,6 @@ resource "azurerm_virtual_network" "main" {
   tags                = var.tags
 
   address_space = var.address_space
-  dns_servers   = var.dns_servers
 
   bgp_community = var.bgp_community
   dynamic "ddos_protection_plan" {
@@ -36,6 +35,11 @@ resource "azurerm_virtual_network" "main" {
       enable = true
     }
   }
+}
+
+resource "azurerm_virtual_network_dns_servers" "main" {
+  virtual_network_id = azurerm_virtual_network.main.id
+  dns_servers        = var.dns_servers
 }
 
 resource "azurerm_virtual_network_peering" "main" {
