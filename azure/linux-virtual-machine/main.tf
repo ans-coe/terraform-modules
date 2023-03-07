@@ -25,12 +25,6 @@ resource "azurerm_network_interface" "main" {
     private_ip_address            = var.ip_address != null ? var.ip_address : null
     public_ip_address_id          = var.public_ip_enabled ? azurerm_public_ip.main[0].id : null
   }
-
-  lifecycle {
-    ignore_changes = [
-      ip_configuration[0].public_ip_address_id
-    ]
-  }
 }
 
 resource "azurerm_network_interface_security_group_association" "main" {
