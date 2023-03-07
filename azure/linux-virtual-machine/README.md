@@ -41,6 +41,7 @@ This configuration creates a Linux VM with some simple extensions for management
 | <a name="input_identity_ids"></a> [identity\_ids](#input\_identity\_ids) | User assigned identity IDs to append to this virtual machine. | `list(string)` | `[]` | no |
 | <a name="input_ip_address"></a> [ip\_address](#input\_ip\_address) | Private IP address of the virtual machine NIC. | `string` | `null` | no |
 | <a name="input_ip_forwarding"></a> [ip\_forwarding](#input\_ip\_forwarding) | Enable IP forwarding on the virtual machine NIC. | `bool` | `false` | no |
+| <a name="input_license_type"></a> [license\_type](#input\_license\_type) | License type to use when building the virtual machine. | `string` | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_network_security_group_enabled"></a> [network\_security\_group\_enabled](#input\_network\_security\_group\_enabled) | Assign a network security group. | `bool` | `false` | no |
 | <a name="input_network_security_group_id"></a> [network\_security\_group\_id](#input\_network\_security\_group\_id) | ID of the network security group to use with the virtual machine NIC. | `string` | `null` | no |
