@@ -57,6 +57,7 @@ resource "azurerm_windows_virtual_machine" "main" {
   }
 
   source_image_id = var.source_image_id
+  license_type    = var.license_type
   dynamic "plan" {
     for_each = var.source_image_plan_required ? [local.source_image_reference] : []
     iterator = r

@@ -133,6 +133,12 @@ variable "source_image_id" {
   default     = null
 }
 
+variable "license_type" {
+  description = "License type to use when building the virtual machine."
+  type        = string
+  default     = null
+}
+
 variable "source_image_plan_required" {
   description = "Enable if plan block is required as part of the virtual machine."
   type        = bool
