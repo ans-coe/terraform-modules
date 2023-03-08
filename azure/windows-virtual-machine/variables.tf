@@ -93,6 +93,12 @@ variable "size" {
   default     = "Standard_B1s"
 }
 
+variable "patch_assessment_mode" {
+  description = "The patch assessment mode of the virtual machine."
+  type        = string
+  default     = null
+}
+
 variable "os_disk_size_gb" {
   description = "Size of the OS Disk in GB."
   type        = number
