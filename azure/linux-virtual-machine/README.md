@@ -48,6 +48,7 @@ This configuration creates a Linux VM with some simple extensions for management
 | <a name="input_os_disk_caching"></a> [os\_disk\_caching](#input\_os\_disk\_caching) | Caching option of the OS Disk. | `string` | `"None"` | no |
 | <a name="input_os_disk_size_gb"></a> [os\_disk\_size\_gb](#input\_os\_disk\_size\_gb) | Size of the OS Disk in GB. | `number` | `128` | no |
 | <a name="input_os_disk_storage_account_type"></a> [os\_disk\_storage\_account\_type](#input\_os\_disk\_storage\_account\_type) | Type of the storage account. | `string` | `"StandardSSD_LRS"` | no |
+| <a name="input_patch_assessment_mode"></a> [patch\_assessment\_mode](#input\_patch\_assessment\_mode) | The patch assessment mode of the virtual machine. | `string` | `null` | no |
 | <a name="input_public_ip_enabled"></a> [public\_ip\_enabled](#input\_public\_ip\_enabled) | Enable public IP. | `bool` | `false` | no |
 | <a name="input_size"></a> [size](#input\_size) | Size of the virtual machine. | `string` | `"Standard_B1s"` | no |
 | <a name="input_source_image_id"></a> [source\_image\_id](#input\_source\_image\_id) | Source image ID to use when creating the virtual machine. | `string` | `null` | no |

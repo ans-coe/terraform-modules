@@ -49,6 +49,8 @@ resource "azurerm_windows_virtual_machine" "main" {
   network_interface_ids = [azurerm_network_interface.main.id]
   boot_diagnostics {}
 
+  patch_assessment_mode = var.patch_assessment_mode
+
   os_disk {
     name                 = "${var.name}-osdisk"
     disk_size_gb         = var.os_disk_size_gb
