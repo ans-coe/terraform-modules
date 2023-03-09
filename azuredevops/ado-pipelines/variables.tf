@@ -9,6 +9,8 @@ variable "project_name" {
 }
 
 variable "pipelines" {
+  description = "A list of objects that each contain a definition for a pipeline"
+
   type = list(object({
     pipeline_name = string
     pipeline_path = string
