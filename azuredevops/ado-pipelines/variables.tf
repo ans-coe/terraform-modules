@@ -1,7 +1,3 @@
-variable "pat" {
-  description = "This is the PAT token to connect to the ADO project"
-}
-
 variable "repo_name" {
   default     = "terraform-configs"
   description = "The name of the repo"
@@ -16,7 +12,8 @@ variable "pipelines" {
   type = list(object({
     pipeline_name = string
     pipeline_path = string
-    yml_path      = string
+    config_path   = string
+    file_name     = optional(string, "azure-pipelines.yml")
+    branch_name   = optional(string, "main")
   }))
-
 }
