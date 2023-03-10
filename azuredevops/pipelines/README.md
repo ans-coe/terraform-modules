@@ -35,7 +35,7 @@ pat = "xxxxxxxxxxxxx"
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_pipelines"></a> [pipelines](#input\_pipelines) | A list of objects that each contain a definition for a pipeline | <pre>list(object({<br>    name = string<br>    path = optional(string)<br>    config_path   = string<br>    file_name     = optional(string, "azure-pipelines.yml")<br>    branch_name   = optional(string, "main")<br>  }))</pre> | n/a | yes |
+| <a name="input_pipelines"></a> [pipelines](#input\_pipelines) | A list of objects that each contain a definition for a pipeline | <pre>list(object({<br>    name        = string<br>    path        = optional(string)<br>    config_path = string<br>    file_name   = optional(string, "azure-pipelines.yml")<br>    branch_name = optional(string, "main")<br>  }))</pre> | n/a | yes |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | The name of the project | `string` | `"Terraform-Ops"` | no |
 | <a name="input_repo_name"></a> [repo\_name](#input\_repo\_name) | The name of the repo | `string` | `"terraform-configs"` | no |
 
