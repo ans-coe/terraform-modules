@@ -47,6 +47,8 @@ Once deployed, management is expected to be through another medium, so changes t
 | <a name="input_plan"></a> [plan](#input\_plan) | Object detailing the plan, if creating one with this module. | <pre>object({<br>    create         = optional(bool, true)<br>    id             = optional(string)<br>    name           = optional(string)<br>    sku_name       = optional(string, "Y1")<br>    zone_balancing = optional(bool, false)<br>  })</pre> | `{}` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | `null` | no |
 | <a name="input_site_config"></a> [site\_config](#input\_site\_config) | A map with site config values. | `map(any)` | `{}` | no |
+| <a name="input_sticky_app_settings"></a> [sticky\_app\_settings](#input\_sticky\_app\_settings) | A list of sticky app\_setting values. | `list(string)` | `[]` | no |
+| <a name="input_sticky_connection_strings"></a> [sticky\_connection\_strings](#input\_sticky\_connection\_strings) | A list of sticky connection\_strings values. | `list(string)` | `[]` | no |
 | <a name="input_storage_account_name"></a> [storage\_account\_name](#input\_storage\_account\_name) | The name of the function app's backing storage account. | `string` | `null` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | The subnet to deploy this function app to. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |

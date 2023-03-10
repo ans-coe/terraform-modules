@@ -47,12 +47,6 @@ variable "plan" {
   default = {}
 }
 
-variable "subnet_id" {
-  description = "The subnet to deploy this function app to."
-  type        = string
-  default     = null
-}
-
 variable "daily_memory_time_quota_gs" {
   description = "Daily memory time quota in gigabyte-seconds."
   type        = string
@@ -65,16 +59,46 @@ variable "functions_extension_version" {
   default     = null
 }
 
-variable "app_settings" {
-  description = "A map of app settings."
+variable "application_stack" {
+  description = "A map detailing the application stack."
   type        = map(string)
-  default     = {}
+  default = {
+    python_version = "3.10"
+  }
 }
 
 variable "site_config" {
   description = "A map with site config values."
   type        = map(any)
   default     = {}
+}
+
+variable "app_settings" {
+  description = "A map of app settings."
+  type        = map(string)
+  default     = {}
+}
+
+variable "sticky_app_settings" {
+  description = "A list of sticky app_setting values."
+  type        = list(string)
+  default     = []
+}
+
+variable "connection_strings" {
+  description = "A list of connection string objects."
+  type = list(object({
+    name  = string
+    type  = string
+    value = string
+  }))
+  default = []
+}
+
+variable "sticky_connection_strings" {
+  description = "A list of sticky connection_strings values."
+  type        = list(string)
+  default     = []
 }
 
 variable "cors" {
@@ -86,12 +110,10 @@ variable "cors" {
   default = null
 }
 
-variable "application_stack" {
-  description = "A map detailing the application stack."
-  type        = map(string)
-  default = {
-    python_version = "3.10"
-  }
+variable "subnet_id" {
+  description = "The subnet to deploy this function app to."
+  type        = string
+  default     = null
 }
 
 variable "identity_ids" {
@@ -146,14 +168,4 @@ variable "allowed_scm_service_tags" {
   description = "A list of SCM allowed service tags."
   type        = list(string)
   default     = []
-}
-
-variable "connection_strings" {
-  description = "A list of connection string objects."
-  type = list(object({
-    name  = string
-    type  = string
-    value = string
-  }))
-  default = []
 }

@@ -42,7 +42,7 @@ locals {
 
 #tfsec:ignore:azure-storage-queue-services-logging-enabled
 resource "azurerm_storage_account" "app" {
-  name                = var.storage_account_name == null ? lower(replace("${var.name}asa", "/[-_]/", "")) : var.storage_account_name
+  name                = var.storage_account_name == null ? lower(replace("${var.name}fasa", "/[-_]/", "")) : var.storage_account_name
   location            = var.location
   resource_group_name = local.resource_group_name
   tags                = var.tags
@@ -50,8 +50,9 @@ resource "azurerm_storage_account" "app" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  min_tls_version = "TLS1_2"
-  account_kind    = "BlobStorage"
+  min_tls_version           = "TLS1_2"
+  account_kind              = "BlobStorage"
+  shared_access_key_enabled = false
 }
 
 resource "azurerm_role_assignment" "main_app" {
@@ -86,10 +87,9 @@ resource "azurerm_linux_function_app" "main" {
   storage_uses_managed_identity = true
   storage_account_name          = azurerm_storage_account.app.name
   builtin_logging_enabled       = true
-  app_settings                  = local.app_settings
 
   dynamic "site_config" {
-    for_each = local.site_config
+    for_each = [var.site_config]
 
     content {
       worker_count           = lookup(site_config.value, "worker_count", 1)
@@ -109,6 +109,9 @@ resource "azurerm_linux_function_app" "main" {
 
       health_check_path                 = lookup(site_config.value, "health_check_path", null)
       health_check_eviction_time_in_min = lookup(site_config.value, "health_check_eviction_time_in_min", null)
+
+      application_insights_key               = lookup(site_config.value, "application_insights_key", null)
+      application_insights_connection_string = lookup(site_config.value, "application_insights_connection_string", null)
 
       ip_restriction                                = local.access_rules
       scm_ip_restriction                            = local.scm_access_rules
@@ -149,6 +152,7 @@ resource "azurerm_linux_function_app" "main" {
     }
   }
 
+  app_settings = local.app_settings
   dynamic "connection_string" {
     for_each = var.connection_strings
 
@@ -158,15 +162,17 @@ resource "azurerm_linux_function_app" "main" {
       value = connection_string.value["value"]
     }
   }
+  dynamic "sticky_settings" {
+    for_each = length(concat(var.sticky_app_settings, var.sticky_connection_strings)) == 0 ? [] : [1]
+
+    content {
+      app_setting_names       = length(var.sticky_app_settings) == 0 ? null : var.sticky_app_settings
+      connection_string_names = length(var.sticky_connection_strings) == 0 ? null : var.sticky_connection_strings
+    }
+  }
 
   identity {
     type         = length(var.identity_ids) == 0 ? "SystemAssigned" : "SystemAssigned, UserAssigned"
     identity_ids = var.identity_ids
-  }
-
-  lifecycle {
-    ignore_changes = [
-      # site_config[0].application_stack[0].docker[0].image_tag
-    ]
   }
 }
