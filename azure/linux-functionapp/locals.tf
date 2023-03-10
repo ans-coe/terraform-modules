@@ -1,9 +1,4 @@
 locals {
-  default_site_config = {
-    minimum_tls_version = "1.2"
-  }
-  site_config = [merge(local.default_site_config, var.site_config)]
-
   default_app_settings = {
 
   }
