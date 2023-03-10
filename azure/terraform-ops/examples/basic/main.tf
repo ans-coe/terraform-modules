@@ -38,12 +38,12 @@ module "terraform_ops" {
   location = local.location
   tags     = local.tags
 
-  application_name     = "Terraform Example"
-  storage_account_name = "tfmexbasictfotfsa"
-  key_vault_name       = "tfmexbasictfokv"
-
   managed_scopes = [data.azurerm_subscription.current.id]
   allowed_ips    = [data.http.my_ip.response_body]
 
+  application_name         = "Terraform Example"
+  group_name               = "Terraform Example Operators"
+  storage_account_name     = "tfmexbasictfotfsa"
   enable_shared_access_key = false
+  key_vault_name           = "tfmexbasictfokv"
 }

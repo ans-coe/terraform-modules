@@ -1,6 +1,7 @@
 output "service_principal" {
   description = "Service principal details."
   value = {
+    display_name   = azuread_service_principal.main.display_name
     tenant_id      = azuread_service_principal.main.application_tenant_id
     object_id      = azuread_service_principal.main.object_id
     application_id = azuread_service_principal.main.application_id
@@ -14,7 +15,7 @@ output "group" {
 
 output "resource_group_name" {
   description = "Name of the resource group."
-  value       = local.resource_group_name
+  value       = azurerm_resource_group.main.name
 }
 
 output "storage_account" {

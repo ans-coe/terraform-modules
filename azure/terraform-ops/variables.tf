@@ -11,7 +11,7 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the resource group this module will use."
   type        = string
-  default     = null
+  default     = "terraform-ops-rg"
 }
 
 variable "tags" {
@@ -37,13 +37,19 @@ variable "application_name" {
 }
 
 variable "msgraph_roles" {
-  description = "Assignable MS Graph roles to allow MS Graph actions."
+  description = "Assignable MS Graph roles to allow MS Graph / AAD access."
   type        = list(string)
   default = [
     "Application.Read.All",
     "Group.Read.All",
     "User.Read.All"
   ]
+}
+
+variable "role" {
+  description = "The role that the application will be given for ARM access."
+  type        = string
+  default     = "Owner"
 }
 
 variable "managed_scopes" {
@@ -61,7 +67,7 @@ variable "group_name" {
 variable "group_description" {
   description = "Description used to create the Terraform Operators group."
   type        = string
-  default     = "A group for Terraform Users with access to core Terraform resources."
+  default     = "A group for Terraform Operators with access to Terraform resources used for state and secrets."
 }
 
 variable "terraform_group_member_ids" {
@@ -78,6 +84,12 @@ variable "storage_account_name" {
 variable "key_vault_name" {
   description = "Name of the key vault."
   type        = string
+}
+
+variable "enable_key_vault_rbac" {
+  description = "Enable RBAC over access policies with the key vault."
+  type        = bool
+  default     = false
 }
 
 variable "enable_purge_protection" {
