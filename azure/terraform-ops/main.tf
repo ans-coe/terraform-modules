@@ -29,7 +29,7 @@ resource "azuread_service_principal" "main" {
   tags                         = ["Terraform"]
 }
 
-resource "azurerm_role_assignment" "main_owner" {
+resource "azurerm_role_assignment" "main_sp_scopes" {
   for_each = var.managed_scopes
 
   description = format("Provide SP '%s/%s' '%s' access to this resource scope.",
