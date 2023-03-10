@@ -1,0 +1,29 @@
+name: terraform - test - azuredevops/pipelines
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azuredevops.pipelines.yml
+      - azuredevops/pipelines/*.tf
+      - azuredevops/pipelines/*.hcl
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azuredevops.pipelines.yml
+      - azuredevops/pipelines/*.tf
+      - azuredevops/pipelines/*.hcl
+
+jobs:
+  test:
+    uses: ./.github/workflows/tf.test.yml
+    with:
+      tf_path: azuredevops/pipelines
+      tf_version: latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
