@@ -7,12 +7,16 @@ data "azuredevops_git_repository" "main" {
   name       = var.repo_name
 }
 
+locals {
+  pipelines = { for p in var.pipelines : p.name => p }
+}
+
 resource "azuredevops_build_definition" "main" {
-  for_each = { for p in var.pipelines : p.pipeline_name => p }
+  for_each = local.pipelines
 
   project_id = data.azuredevops_project.main.id
   name       = each.key
-  path       = each.value.pipeline_path
+  path       = each.value.path
   ci_trigger { use_yaml = true }
   repository {
     repo_type   = "TfsGit"
@@ -23,7 +27,7 @@ resource "azuredevops_build_definition" "main" {
 }
 
 resource "azuredevops_branch_policy_build_validation" "main" {
-  for_each = { for p in var.pipelines : p.pipeline_name => p }
+  for_each = local.pipelines
 
   project_id = data.azuredevops_project.main.id
 

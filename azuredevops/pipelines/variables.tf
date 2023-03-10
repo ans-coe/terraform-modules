@@ -12,8 +12,8 @@ variable "pipelines" {
   description = "A list of objects that each contain a definition for a pipeline"
 
   type = list(object({
-    pipeline_name = string
-    pipeline_path = string
+    name = string
+    path = optional(string)
     config_path   = string
     file_name     = optional(string, "azure-pipelines.yml")
     branch_name   = optional(string, "main")
