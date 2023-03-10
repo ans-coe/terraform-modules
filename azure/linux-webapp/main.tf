@@ -119,10 +119,9 @@ resource "azurerm_linux_web_app" "main" {
   key_vault_reference_identity_id = var.key_vault_identity_id
 
   zip_deploy_file = var.zip_deploy_file
-  app_settings    = local.app_settings
 
   dynamic "site_config" {
-    for_each = local.site_config
+    for_each = [var.site_config]
 
     content {
       worker_count           = lookup(site_config.value, "worker_count", 1)
@@ -173,6 +172,8 @@ resource "azurerm_linux_web_app" "main" {
     }
   }
 
+  app_settings = local.app_settings
+
   dynamic "connection_string" {
     for_each = var.connection_strings
 
@@ -180,6 +181,14 @@ resource "azurerm_linux_web_app" "main" {
       name  = connection_string.value["name"]
       type  = connection_string.value["type"]
       value = connection_string.value["value"]
+    }
+  }
+  dynamic "sticky_settings" {
+    for_each = length(concat(var.sticky_app_settings, var.sticky_connection_strings)) == 0 ? [] : [1]
+
+    content {
+      app_setting_names       = length(var.sticky_app_settings) == 0 ? null : var.sticky_app_settings
+      connection_string_names = length(var.sticky_connection_strings) == 0 ? null : var.sticky_connection_strings
     }
   }
 
@@ -199,7 +208,7 @@ resource "azurerm_linux_web_app" "main" {
           sas_url = format(
             "https://%s.blob.core.windows.net/%s%s",
             local.logs_storage_account.name,
-            local.logs_storage_account.name,
+            azurerm_storage_container.logs.name,
             data.azurerm_storage_account_blob_container_sas.logs.sas
           )
         }
@@ -211,7 +220,7 @@ resource "azurerm_linux_web_app" "main" {
           sas_url = format(
             "https://%s.blob.core.windows.net/%s%s",
             local.logs_storage_account.name,
-            local.logs_storage_account.name,
+            azurerm_storage_container.logs.name,
             data.azurerm_storage_account_blob_container_sas.logs.sas
           )
         }
@@ -222,11 +231,5 @@ resource "azurerm_linux_web_app" "main" {
   identity {
     type         = length(var.identity_ids) == 0 ? "SystemAssigned" : "SystemAssigned, UserAssigned"
     identity_ids = var.identity_ids
-  }
-
-  lifecycle {
-    ignore_changes = [
-      site_config[0].application_stack[0].docker_image_tag
-    ]
   }
 }
