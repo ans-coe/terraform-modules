@@ -1,6 +1,6 @@
 locals {
   default_app_settings = {
-
+    "AzureWebJobsStorage" = azurerm_storage_account.app.primary_connection_string
   }
   app_settings = merge(local.default_app_settings, var.app_settings)
 
