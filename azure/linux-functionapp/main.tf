@@ -52,7 +52,7 @@ resource "azurerm_storage_account" "app" {
 
   min_tls_version           = "TLS1_2"
   account_kind              = "BlobStorage"
-  shared_access_key_enabled = false
+  shared_access_key_enabled = var.shared_access_key_enabled
 }
 
 resource "azurerm_role_assignment" "main_app" {
