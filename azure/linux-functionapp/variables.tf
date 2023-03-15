@@ -35,6 +35,12 @@ variable "storage_account_name" {
   default     = null
 }
 
+variable "shared_access_key_enabled" {
+  description = "Enables shared access key within the storage account"
+  type        = bool
+  default     = false
+}
+
 variable "plan" {
   description = "Object detailing the plan, if creating one with this module."
   type = object({
