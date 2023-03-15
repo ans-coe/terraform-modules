@@ -37,8 +37,8 @@ variable "storage_account_name" {
 
 variable "shared_access_key_enabled" {
   description = "Enables shared access key within the storage account"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "plan" {
