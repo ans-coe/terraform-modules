@@ -3,7 +3,7 @@ variable "sku" {
   type = object({
     name     = string
     tier     = string
-    capacity = optional(string, null)
+    capacity = optional(string)
   })
   default = {
     name = "Standard_v2"
@@ -75,8 +75,8 @@ variable "frontend_ip_configurations" {
   description = "List of Frontend IP Configurations"
   type = list(object({
     name                 = string
-    private_ip_address   = optional(string, null)
-    public_ip_address_id = optional(string, null)
+    private_ip_address   = optional(string)
+    public_ip_address_id = optional(string)
   }))
 }
 variable "frontend_ports" {
@@ -100,20 +100,25 @@ variable "http_listeners" {
     frontend_ip_configuration_name = string
     frontend_port_name             = optional(string, "Http")
     protocol                       = optional(string, "Http")
-    host_name                      = optional(string, null)
-    host_names                     = optional(list(string), null)
-    ssl_certificate_name           = optional(string, null)
+    host_name                      = optional(string)
+    host_names                     = optional(list(string))
+    ssl_certificate_name           = optional(string)
   }))
 }
 variable "ssl_certificates" {
   description = "List of SSL Certs"
   type = list(object({
     name                = string
-    data                = optional(string, null)
-    password            = optional(string, null)
-    key_vault_secret_id = optional(string, null)
+    data                = optional(string)
+    password            = optional(string)
+    key_vault_secret_id = optional(string)
   }))
-  default = null
+  default   = null
+  sensitive = true
+  validation {
+    condition     = try(alltrue([for cert in var.ssl_certificates : (cert.key_vault_secret_id != null || (cert.data != null && cert.password != null))]), true)
+    error_message = "Each certificate must specify either data and password or key_vault_secret_id."
+  }
 }
 variable "url_path_maps" {
   description = "List of Path Maps"
@@ -136,9 +141,9 @@ variable "request_routing_rules" {
     name                       = string
     rule_type                  = optional(string, "PathBasedRouting")
     http_listener_name         = string
-    backend_address_pool_name  = optional(string, null)
-    backend_http_settings_name = optional(string, null)
-    url_path_map_name          = optional(string, null)
+    backend_address_pool_name  = optional(string)
+    backend_http_settings_name = optional(string)
+    url_path_map_name          = optional(string)
     priority                   = optional(number, 100)
   }))
 }
@@ -165,7 +170,7 @@ variable "probe" {
     unhealthy_threshold                       = optional(number, 3)
     port                                      = optional(number, 80)
     pick_host_name_from_backend_http_settings = optional(bool, false)
-    host                                      = optional(string, null)
+    host                                      = optional(string)
   }))
   default = [{
     name = "Default"

@@ -20,7 +20,7 @@ resource "azurerm_application_gateway" "main" {
   }
 
   dynamic "backend_address_pool" {
-    for_each = toset(var.backend_address_pools)
+    for_each = var.backend_address_pools
     content {
       name         = backend_address_pool.value["name"]
       ip_addresses = backend_address_pool.value["ip_addresses"]
@@ -37,7 +37,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "backend_http_settings" {
-    for_each = toset(var.backend_http_settings)
+    for_each = var.backend_http_settings
     content {
       name                  = backend_http_settings.value["name"]
       port                  = backend_http_settings.value["port"]
@@ -61,7 +61,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "frontend_ip_configuration" {
-    for_each = toset(var.frontend_ip_configurations)
+    for_each = var.frontend_ip_configurations
     content {
       name                          = frontend_ip_configuration.value["name"]
       private_ip_address            = frontend_ip_configuration.value["private_ip_address"]
@@ -83,7 +83,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "frontend_port" {
-    for_each = toset(var.frontend_ports)
+    for_each = var.frontend_ports
     content {
       name = frontend_port.value["name"]
       port = frontend_port.value["port"]
@@ -100,7 +100,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "http_listener" {
-    for_each = toset(var.http_listeners)
+    for_each = var.http_listeners
     content {
       name                           = http_listener.value["name"]
       frontend_ip_configuration_name = http_listener.value["frontend_ip_configuration_name"]
@@ -131,7 +131,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "ssl_certificate" {
-    for_each = toset(var.ssl_certificates) != null ? [0] : []
+    for_each = var.ssl_certificates != null ? var.ssl_certificates : []
     content {
       name                = ssl_certificate.value["name"]
       data                = ssl_certificate.value["data"]
@@ -150,13 +150,13 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "url_path_map" {
-    for_each = toset(var.url_path_maps) != null ? [0] : []
+    for_each = var.url_path_maps != null ? var.url_path_maps : []
     content {
       name                               = url_path_map.value["name"]
       default_backend_address_pool_name  = url_path_map.value["default_backend_address_pool_name"]
       default_backend_http_settings_name = url_path_map.value["default_backend_http_settings_name"]
       dynamic "path_rule" {
-        for_each = toset(url_path_map.value["path_rule"])
+        for_each = url_path_map.value["path_rule"]
         content {
           name                       = path_rule.value["name"]
           paths                      = path_rule.value["paths"]
@@ -203,7 +203,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "request_routing_rule" {
-    for_each = toset(var.request_routing_rules)
+    for_each = var.request_routing_rules
     content {
       name                       = request_routing_rule.value["name"]
       rule_type                  = request_routing_rule.value["rule_type"]
@@ -244,7 +244,7 @@ resource "azurerm_application_gateway" "main" {
   # ["id1","id2"]
 
   dynamic "probe" {
-    for_each = toset(var.probe)
+    for_each = var.probe
     content {
       name                                      = probe.value["name"]
       protocol                                  = probe.value["protocol"]

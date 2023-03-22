@@ -1,11 +1,5 @@
-# provider "azurerm" {
-#   features {}
-# }
-
 provider "azurerm" {
-  subscription_id = "c1b8750f-48de-43bd-b366-8128e418abd5"
-  features {
-  }
+  features {}
 }
 
 locals {
@@ -58,10 +52,10 @@ module "example" {
   }]
 
   request_routing_rules = [{
-    http_listener_name         = "HTTPFrontendListener"
-    rule_type                  = "Basic"
-    name                       = "HTTPRequestRoutingRule"
-    backend_address_pool_name  = "BackendPool"
+    http_listener_name        = "HTTPFrontendListener"
+    rule_type                 = "Basic"
+    name                      = "HTTPRequestRoutingRule"
+    backend_address_pool_name = "BackendPool"
   }]
 
   probe = [{
