@@ -17,7 +17,10 @@ No outputs.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [azurerm_public_ip.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
+| [azurerm_subnet.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subnet) | data source |
 
 ## Modules
 
