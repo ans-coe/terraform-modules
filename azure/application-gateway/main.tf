@@ -131,7 +131,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "ssl_certificate" {
-    for_each = toset(var.ssl_certificates)
+    for_each = toset(var.ssl_certificates) != null ? [0] : []
     content {
       name                = ssl_certificate.value["name"]
       data                = ssl_certificate.value["data"]
@@ -150,7 +150,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "url_path_map" {
-    for_each = toset(var.url_path_maps)
+    for_each = toset(var.url_path_maps) != null ? [0] : []
     content {
       name                               = url_path_map.value["name"]
       default_backend_address_pool_name  = url_path_map.value["default_backend_address_pool_name"]
@@ -209,7 +209,7 @@ resource "azurerm_application_gateway" "main" {
       rule_type                  = request_routing_rule.value["rule_type"]
       http_listener_name         = request_routing_rule.value["http_listener_name"]
       backend_address_pool_name  = request_routing_rule.value["backend_address_pool_name"]
-      backend_http_settings_name = request_routing_rule.value["backend_http_settings_name"]
+      backend_http_settings_name = request_routing_rule.value["backend_http_settings_name"] != null ? request_routing_rule.value["backend_http_settings_name"] : request_routing_rule.value["rule_type"] != "Basic" ? null : "Default"
       url_path_map_name          = request_routing_rule.value["url_path_map_name"]
       priority                   = request_routing_rule.value["priority"]
     }

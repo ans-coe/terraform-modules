@@ -17,6 +17,10 @@ variable "autoscale" {
     min = string
     max = string
   })
+  default = {
+    max = "3"
+    min = "1"
+  }
 }
 
 variable "create_resource_group" {
@@ -153,14 +157,14 @@ variable "tags" {
 variable "probe" {
   description = "List of Routing Rules"
   type = list(object({
-    name                                      = string
+    name                                      = optional(string, "Default")
     protocol                                  = optional(string, "Http")
     interval                                  = optional(number, 30)
     path                                      = optional(string, "/")
     timeout                                   = optional(number, 30)
     unhealthy_threshold                       = optional(number, 3)
     port                                      = optional(number, 80)
-    pick_host_name_from_backend_http_settings = optional(bool, true)
+    pick_host_name_from_backend_http_settings = optional(bool, false)
     host                                      = optional(string, null)
   }))
   default = [{
