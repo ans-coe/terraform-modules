@@ -117,7 +117,6 @@ variable "ssl_certificates" {
     key_vault_secret_id = optional(string)
   }))
   default   = []
-  sensitive = true
   validation {
     condition     = try(alltrue([for cert in var.ssl_certificates : (cert.key_vault_secret_id != null || (cert.data != null && cert.password != null))]), true)
     error_message = "Each certificate must specify either data and password or key_vault_secret_id."
