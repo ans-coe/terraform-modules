@@ -44,6 +44,7 @@ resource "azurerm_application_gateway" "main" {
       protocol              = backend_http_settings.value["protocol"]
       cookie_based_affinity = backend_http_settings.value["cookie_based_affinity"]
       probe_name            = backend_http_settings.value["probe_name"]
+      host_name             = backend_http_settings.value["host_name"]
     }
   }
 

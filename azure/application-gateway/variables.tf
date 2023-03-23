@@ -65,6 +65,7 @@ variable "backend_http_settings" {
     protocol              = optional(string, "Http")
     cookie_based_affinity = optional(string, "Enabled")
     probe_name            = optional(string, "Default")
+    host_name             = optional(string)
   }))
   default = [{
     name = "Default"
