@@ -116,7 +116,7 @@ variable "ssl_certificates" {
     password            = optional(string)
     key_vault_secret_id = optional(string)
   }))
-  default   = null
+  default   = []
   sensitive = true
   validation {
     condition     = try(alltrue([for cert in var.ssl_certificates : (cert.key_vault_secret_id != null || (cert.data != null && cert.password != null))]), true)
@@ -136,7 +136,7 @@ variable "url_path_maps" {
       backend_http_settings_name = optional(string, "Default")
     }))
   }))
-  default = null
+  default = []
 }
 variable "request_routing_rules" {
   description = "List of Routing Rules"

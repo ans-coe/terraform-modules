@@ -134,7 +134,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "ssl_certificate" {
-    for_each = var.ssl_certificates != null ? var.ssl_certificates : []
+    for_each = var.ssl_certificates
     content {
       name                = ssl_certificate.value["name"]
       data                = ssl_certificate.value["data"]
@@ -153,7 +153,7 @@ resource "azurerm_application_gateway" "main" {
   # }]
 
   dynamic "url_path_map" {
-    for_each = var.url_path_maps != null ? var.url_path_maps : []
+    for_each = var.url_path_maps
     content {
       name                               = url_path_map.value["name"]
       default_backend_address_pool_name  = url_path_map.value["default_backend_address_pool_name"]
