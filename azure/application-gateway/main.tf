@@ -1,6 +1,6 @@
 resource "azurerm_application_gateway" "main" {
   name                = var.application_gateway_name
-  resource_group_name = var.create_resource_group ? azurerm_resource_group.main[0].name : data.azurerm_resource_group.main[0].name
+  resource_group_name = var.create_resource_group ? azurerm_resource_group.main[0].name : var.resource_group_name
   location            = var.location
 
   sku {
