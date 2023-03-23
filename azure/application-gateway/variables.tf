@@ -202,10 +202,10 @@ variable "waf_configuration" {
         operator           = optional(string, "Contains")
         negation_condition = optional(bool, true)
         transforms         = optional(list(string))
-        match_variables = list(object({
-          variable_name = optional(string, "RemoteAddr")
+        match_variables = optional(list(object({
+          variable_name = string
           selector      = optional(string)
-        }))
+        })), [{ variable_name = "RemoteAddr" }])
       }))
     })))
   })
