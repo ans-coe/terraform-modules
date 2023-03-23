@@ -281,4 +281,32 @@ resource "azurerm_application_gateway" "main" {
   #   pick_host_name_from_backend_http_settings = true
   # }]
 
+  dynamic "waf_configuration" {
+    for_each = var.waf_configuration != null ? [0] : []
+
+    content {
+      enabled          = true
+      firewall_mode    = var.waf_configuration.firewall_mode
+      rule_set_type    = var.waf_configuration.rule_set_type
+      rule_set_version = var.waf_configuration.rule_set_version
+      dynamic "disabled_rule_group" {
+        for_each = var.waf_configuration.disabled_rule_group
+        content {
+          rule_group_name = disabled_rule_group.value["rule_group_name"]
+          rules           = disabled_rule_group.value["rules"]
+        }
+      }
+      file_upload_limit_mb     = var.waf_configuration.file_upload_limit_mb
+      max_request_body_size_kb = var.waf_configuration.max_request_body_size_kb
+      dynamic "exclusion" {
+        for_each = toset(var.waf_configuration.exclusion)
+        content {
+          match_variable          = disabled_rule_group.value["match_variable"]
+          selector_match_operator = disabled_rule_group.value["selector_match_operator"]
+          selector                = disabled_rule_group.value["selector"]
+        }
+      }
+    }
+  }
+
 }

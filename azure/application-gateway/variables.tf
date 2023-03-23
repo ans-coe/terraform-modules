@@ -176,3 +176,24 @@ variable "probe" {
     name = "Default"
   }]
 }
+
+variable "waf_configuration" {
+  description = "Rules Defining The WAF"
+  type = object({
+    firewall_mode    = optional(string, "Prevention")
+    rule_set_type    = optional(string, "OWASP")
+    rule_set_version = optional(string, "3.2")
+    disabled_rule_group = optional(list(object({
+      rule_group_name = string
+      rules           = optional(list(string))
+    })))
+    file_upload_limit_mb     = optional(number, 500)
+    max_request_body_size_kb = optional(number, 128)
+    exclusion = optional(list(object({
+      match_variable          = string
+      selector_match_operator = optional(string)
+      selector                = optional(string)
+    })))
+  })
+  default = null
+}
