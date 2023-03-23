@@ -116,7 +116,7 @@ variable "ssl_certificates" {
     password            = optional(string)
     key_vault_secret_id = optional(string)
   }))
-  default   = []
+  default = []
   validation {
     condition     = try(alltrue([for cert in var.ssl_certificates : (cert.key_vault_secret_id != null || (cert.data != null && cert.password != null))]), true)
     error_message = "Each certificate must specify either data and password or key_vault_secret_id."
@@ -182,19 +182,31 @@ variable "probe" {
 variable "waf_configuration" {
   description = "Rules Defining The WAF"
   type = object({
-    firewall_mode    = optional(string, "Prevention")
-    rule_set_type    = optional(string, "OWASP")
-    rule_set_version = optional(string, "3.2")
-    disabled_rule_group = optional(list(object({
-      rule_group_name = string
-      rules           = optional(list(string))
-    })))
+    policy_name              = string
+    firewall_mode            = optional(string, "Prevention")
+    rule_set_type            = optional(string, "OWASP")
+    rule_set_version         = optional(string, "3.2")
     file_upload_limit_mb     = optional(number, 500)
     max_request_body_size_kb = optional(number, 128)
-    exclusion = optional(list(object({
+    managed_rule_exclusion = optional(list(object({
       match_variable          = string
       selector_match_operator = optional(string)
       selector                = optional(string)
+    })))
+    custom_rules = optional(list(object({
+      name     = string
+      priority = number
+      action   = optional(string, "Block")
+      match_conditions = list(object({
+        match_values       = list(string)
+        operator           = optional(string, "Contains")
+        negation_condition = optional(bool, true)
+        transforms         = optional(list(string))
+        match_variables = list(object({
+          variable_name = optional(string, "RemoteAddr")
+          selector      = optional(string)
+        }))
+      }))
     })))
   })
   default = null

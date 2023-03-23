@@ -1,7 +1,67 @@
+resource "azurerm_web_application_firewall_policy" "main" {
+  count = var.waf_configuration != null ? 1 : 0
+
+  name                = var.waf_configuration.policy_name
+  resource_group_name = var.create_resource_group ? azurerm_resource_group.main[0].name : var.resource_group_name
+  location            = var.location
+
+  dynamic "custom_rules" {
+    for_each = var.waf_configuration.custom_rules
+    content {
+      name      = custom_rules.value["name"]
+      priority  = custom_rules.value["priority"]
+      rule_type = "MatchRule"
+      action    = custom_rules.value["action"]
+      dynamic "match_conditions" {
+        for_each = custom_rules.value["match_conditions"]
+
+        content {
+          dynamic "match_variables" {
+            for_each = match_conditions.value["match_variables"]
+            content {
+              variable_name = match_variables.value["variable_name"]
+              selector      = match_variables.value["selector"]
+            }
+          }
+          match_values       = match_conditions.value["match_values"]
+          operator           = match_conditions.value["operator"]
+          negation_condition = match_conditions.value["negation_condition"]
+          transforms         = match_conditions.value["transforms"]
+        }
+      }
+    }
+  }
+
+  managed_rules {
+    dynamic "exclusion" {
+      for_each = var.waf_configuration.managed_rule_exclusion
+      content {
+        match_variable          = exclusion.value["match_variable"]
+        selector_match_operator = exclusion.value["selector_match_operator"]
+        selector                = exclusion.value["selector"]
+      }
+    }
+    managed_rule_set {
+      type    = var.waf_configuration.rule_set_type
+      version = var.waf_configuration.rule_set_version
+    }
+  }
+
+  policy_settings {
+    enabled = true
+    mode    = var.waf_configuration.firewall_mode
+    # Global parameters
+    request_body_check          = true
+    max_request_body_size_in_kb = var.waf_configuration.max_request_body_size_kb
+    file_upload_limit_in_mb     = var.waf_configuration.file_upload_limit_mb
+  }
+}
 resource "azurerm_application_gateway" "main" {
   name                = var.application_gateway_name
   resource_group_name = var.create_resource_group ? azurerm_resource_group.main[0].name : var.resource_group_name
   location            = var.location
+
+  firewall_policy_id = var.waf_configuration != null ? azurerm_web_application_firewall_policy.main[0].id : null
 
   sku {
     name     = var.sku.name
@@ -283,33 +343,5 @@ resource "azurerm_application_gateway" "main" {
   #   port = 80
   #   pick_host_name_from_backend_http_settings = true
   # }]
-
-  dynamic "waf_configuration" {
-    for_each = var.waf_configuration != null ? [0] : []
-
-    content {
-      enabled          = true
-      firewall_mode    = var.waf_configuration.firewall_mode
-      rule_set_type    = var.waf_configuration.rule_set_type
-      rule_set_version = var.waf_configuration.rule_set_version
-      dynamic "disabled_rule_group" {
-        for_each = var.waf_configuration.disabled_rule_group
-        content {
-          rule_group_name = disabled_rule_group.value["rule_group_name"]
-          rules           = disabled_rule_group.value["rules"]
-        }
-      }
-      file_upload_limit_mb     = var.waf_configuration.file_upload_limit_mb
-      max_request_body_size_kb = var.waf_configuration.max_request_body_size_kb
-      dynamic "exclusion" {
-        for_each = toset(var.waf_configuration.exclusion)
-        content {
-          match_variable          = disabled_rule_group.value["match_variable"]
-          selector_match_operator = disabled_rule_group.value["selector_match_operator"]
-          selector                = disabled_rule_group.value["selector"]
-        }
-      }
-    }
-  }
 
 }
