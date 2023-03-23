@@ -60,12 +60,14 @@ variable "backend_address_pools" {
 variable "backend_http_settings" {
   description = "List of Backend HTTP Settings"
   type = list(object({
-    name                  = string
-    port                  = optional(number, 80)
-    protocol              = optional(string, "Http")
-    cookie_based_affinity = optional(string, "Enabled")
-    probe_name            = optional(string, "Default")
-    host_name             = optional(string)
+    name                                = string
+    port                                = optional(number, 80)
+    protocol                            = optional(string, "Http")
+    cookie_based_affinity               = optional(string, "Enabled")
+    probe_name                          = optional(string, "Default")
+    host_name                           = optional(string)
+    pick_host_name_from_backend_address = optional(bool, true)
+    request_timeout                     = optional(number, 30)
   }))
   default = [{
     name = "Default"

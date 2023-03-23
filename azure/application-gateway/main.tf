@@ -39,12 +39,14 @@ resource "azurerm_application_gateway" "main" {
   dynamic "backend_http_settings" {
     for_each = var.backend_http_settings
     content {
-      name                  = backend_http_settings.value["name"]
-      port                  = backend_http_settings.value["port"]
-      protocol              = backend_http_settings.value["protocol"]
-      cookie_based_affinity = backend_http_settings.value["cookie_based_affinity"]
-      probe_name            = backend_http_settings.value["probe_name"]
-      host_name             = backend_http_settings.value["host_name"]
+      name                                = backend_http_settings.value["name"]
+      port                                = backend_http_settings.value["port"]
+      protocol                            = backend_http_settings.value["protocol"]
+      cookie_based_affinity               = backend_http_settings.value["cookie_based_affinity"]
+      probe_name                          = backend_http_settings.value["probe_name"]
+      host_name                           = backend_http_settings.value["host_name"]
+      pick_host_name_from_backend_address = backend_http_settings.value["pick_host_name_from_backend_address"]
+      request_timeout                     = backend_http_settings.value["request_timeout"]
     }
   }
 
