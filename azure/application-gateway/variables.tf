@@ -192,7 +192,7 @@ variable "waf_configuration" {
       match_variable          = string
       selector_match_operator = optional(string)
       selector                = optional(string)
-    })))
+    })), [])
     custom_rules = optional(list(object({
       name     = string
       priority = number
@@ -207,7 +207,7 @@ variable "waf_configuration" {
           selector      = optional(string)
         })), [{ variable_name = "RemoteAddr" }])
       }))
-    })))
+    })), [])
   })
   default = null
 }
