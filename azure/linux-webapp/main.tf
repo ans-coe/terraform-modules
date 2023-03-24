@@ -161,8 +161,8 @@ resource "azurerm_linux_web_app" "main" {
 
       minimum_tls_version     = "1.2"
       scm_minimum_tls_version = "1.2"
-      http2_enabled       = lookup(site_config.value, "http2_enabled", false)
-      websockets_enabled  = lookup(site_config.value, "websockets_enabled", false)
+      http2_enabled           = lookup(site_config.value, "http2_enabled", false)
+      websockets_enabled      = lookup(site_config.value, "websockets_enabled", false)
       default_documents       = var.default_documents
 
       api_definition_url    = lookup(site_config.value, "api_definition_url", null)
@@ -171,8 +171,33 @@ resource "azurerm_linux_web_app" "main" {
       health_check_path                 = lookup(site_config.value, "health_check_path", null)
       health_check_eviction_time_in_min = lookup(site_config.value, "health_check_eviction_time_in_min", null)
 
-      # ip_restriction                                = local.access_rules
-      # scm_ip_restriction                            = local.scm_access_rules
+      dynamic "ip_restriction" {
+        for_each = local.access_rules
+        content {
+          name     = ip_restriction.name
+          priority = ip_restriction.priority
+          action   = ip_restriction.action
+
+          ip_address                = ip_restriction.ip_address
+          service_tag               = ip_restriction.service_tag
+          virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
+          headers                   = ip_restriction.headers
+        }
+      }
+      dynamic "scm_ip_restriction" {
+        for_each = local.access_rules
+        content {
+          name     = scm_ip_restriction.name
+          priority = scm_ip_restriction.priority
+          action   = scm_ip_restriction.action
+
+          ip_address                = scm_ip_restriction.ip_address
+          service_tag               = scm_ip_restriction.service_tag
+          virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
+          headers                   = scm_ip_restriction.headers
+        }
+      }
+
       container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
       container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
       remote_debugging_enabled                      = lookup(site_config.value, "remote_debugging_enabled", false)
@@ -308,8 +333,33 @@ resource "azurerm_linux_web_app_slot" "main" {
       health_check_path                 = lookup(site_config.value, "health_check_path", null)
       health_check_eviction_time_in_min = lookup(site_config.value, "health_check_eviction_time_in_min", null)
 
-      # ip_restriction                                = local.access_rules
-      # scm_ip_restriction                            = local.scm_access_rules
+      dynamic "ip_restriction" {
+        for_each = local.access_rules
+        content {
+          name     = ip_restriction.name
+          priority = ip_restriction.priority
+          action   = ip_restriction.action
+
+          ip_address                = ip_restriction.ip_address
+          service_tag               = ip_restriction.service_tag
+          virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
+          headers                   = ip_restriction.headers
+        }
+      }
+      dynamic "scm_ip_restriction" {
+        for_each = local.access_rules
+        content {
+          name     = scm_ip_restriction.name
+          priority = scm_ip_restriction.priority
+          action   = scm_ip_restriction.action
+
+          ip_address                = scm_ip_restriction.ip_address
+          service_tag               = scm_ip_restriction.service_tag
+          virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
+          headers                   = scm_ip_restriction.headers
+        }
+      }
+
       container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
       container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
       remote_debugging_enabled                      = lookup(site_config.value, "remote_debugging_enabled", false)

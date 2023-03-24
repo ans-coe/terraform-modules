@@ -77,7 +77,7 @@ resource "azurerm_storage_account" "app" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  min_tls_version           = "TLS1_2"
+  min_tls_version = "TLS1_2"
 
   queue_properties {
     logging {
@@ -124,8 +124,8 @@ resource "azurerm_linux_function_app" "main" {
 
       minimum_tls_version     = "1.2"
       scm_minimum_tls_version = "1.2"
-      http2_enabled       = lookup(site_config.value, "http2_enabled", false)
-      websockets_enabled  = lookup(site_config.value, "websockets_enabled", false)
+      http2_enabled           = lookup(site_config.value, "http2_enabled", false)
+      websockets_enabled      = lookup(site_config.value, "websockets_enabled", false)
       default_documents       = var.default_documents
 
       api_definition_url    = lookup(site_config.value, "api_definition_url", null)
@@ -137,12 +137,37 @@ resource "azurerm_linux_function_app" "main" {
       application_insights_key               = var.create_application_insights ? one(azurerm_application_insights.main[*].instrumentation_key) : lookup(site_config.value, "application_insights_key", null)
       application_insights_connection_string = var.create_application_insights ? one(azurerm_application_insights.main[*].connection_string) : lookup(site_config.value, "application_insights_connection_string", null)
 
-      # ip_restriction                                = local.access_rules
-      # scm_ip_restriction                            = local.scm_access_rules
       container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
       container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
       remote_debugging_enabled                      = lookup(site_config.value, "remote_debugging_enabled", false)
       remote_debugging_version                      = lookup(site_config.value, "remote_debugging_version", null)
+
+      dynamic "ip_restriction" {
+        for_each = local.access_rules
+        content {
+          name     = ip_restriction.name
+          priority = ip_restriction.priority
+          action   = ip_restriction.action
+
+          ip_address                = ip_restriction.ip_address
+          service_tag               = ip_restriction.service_tag
+          virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
+          headers                   = ip_restriction.headers
+        }
+      }
+      dynamic "scm_ip_restriction" {
+        for_each = local.access_rules
+        content {
+          name     = scm_ip_restriction.name
+          priority = scm_ip_restriction.priority
+          action   = scm_ip_restriction.action
+
+          ip_address                = scm_ip_restriction.ip_address
+          service_tag               = scm_ip_restriction.service_tag
+          virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
+          headers                   = scm_ip_restriction.headers
+        }
+      }
 
       dynamic "cors" {
         for_each = var.cors == null ? [] : [1]
@@ -254,12 +279,37 @@ resource "azurerm_linux_function_app_slot" "main" {
       application_insights_key               = var.create_application_insights ? one(azurerm_application_insights.main[*].instrumentation_key) : lookup(site_config.value, "application_insights_key", null)
       application_insights_connection_string = var.create_application_insights ? one(azurerm_application_insights.main[*].connection_string) : lookup(site_config.value, "application_insights_connection_string", null)
 
-      # ip_restriction                                = local.access_rules
-      # scm_ip_restriction                            = local.scm_access_rules
       container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
       container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
       remote_debugging_enabled                      = lookup(site_config.value, "remote_debugging_enabled", false)
       remote_debugging_version                      = lookup(site_config.value, "remote_debugging_version", null)
+
+      dynamic "ip_restriction" {
+        for_each = local.access_rules
+        content {
+          name     = ip_restriction.name
+          priority = ip_restriction.priority
+          action   = ip_restriction.action
+
+          ip_address                = ip_restriction.ip_address
+          service_tag               = ip_restriction.service_tag
+          virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
+          headers                   = ip_restriction.headers
+        }
+      }
+      dynamic "scm_ip_restriction" {
+        for_each = local.access_rules
+        content {
+          name     = scm_ip_restriction.name
+          priority = scm_ip_restriction.priority
+          action   = scm_ip_restriction.action
+
+          ip_address                = scm_ip_restriction.ip_address
+          service_tag               = scm_ip_restriction.service_tag
+          virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
+          headers                   = scm_ip_restriction.headers
+        }
+      }
 
       dynamic "cors" {
         for_each = var.cors == null ? [] : [1]
