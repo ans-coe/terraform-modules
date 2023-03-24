@@ -185,7 +185,7 @@ resource "azurerm_linux_web_app" "main" {
         }
       }
       dynamic "scm_ip_restriction" {
-        for_each = local.access_rules
+        for_each = local.scm_access_rules
         content {
           name     = scm_ip_restriction.name
           priority = scm_ip_restriction.priority
