@@ -18,4 +18,6 @@ module "functionapp" {
   name     = "${local.resource_prefix}-fa"
   location = local.location
   tags     = local.tags
+
+  app_slot_names = ["preview"]
 }

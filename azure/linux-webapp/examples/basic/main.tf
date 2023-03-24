@@ -18,4 +18,6 @@ module "webapp" {
   name     = "${local.resource_prefix}-wa"
   location = local.location
   tags     = local.tags
+
+  app_slot_names = ["preview"]
 }

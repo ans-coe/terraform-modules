@@ -116,10 +116,22 @@ variable "cors" {
   default = null
 }
 
+variable "default_documents" {
+  description = "A list of strings for default documents."
+  type        = list(string)
+  default     = null
+}
+
 variable "subnet_id" {
   description = "The subnet to deploy this function app to."
   type        = string
   default     = null
+}
+
+variable "create_application_insights" {
+  description = "Create an instance of Log Analytics and Application Insights for the function appp."
+  type        = bool
+  default     = true
 }
 
 variable "identity_ids" {
@@ -132,6 +144,12 @@ variable "key_vault_identity_id" {
   description = "The user managed identity used for key vault."
   type        = string
   default     = null
+}
+
+variable "app_slot_names" {
+  description = "Names for slots that are clones of the app."
+  type        = set(string)
+  default     = []
 }
 
 variable "allowed_ips" {
