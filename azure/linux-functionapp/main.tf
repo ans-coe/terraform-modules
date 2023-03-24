@@ -243,7 +243,6 @@ resource "azurerm_linux_function_app_slot" "main" {
   function_app_id = azurerm_linux_function_app.main.id
   tags            = var.tags
 
-  service_plan_id           = local.plan_id
   daily_memory_time_quota   = var.daily_memory_time_quota_gs
   virtual_network_subnet_id = var.subnet_id
 

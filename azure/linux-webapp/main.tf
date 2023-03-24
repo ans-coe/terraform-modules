@@ -303,7 +303,6 @@ resource "azurerm_linux_web_app_slot" "main" {
   app_service_id = azurerm_linux_web_app.main.id
   tags           = var.tags
 
-  service_plan_id           = local.plan_id
   virtual_network_subnet_id = var.subnet_id
 
   https_only                      = true
