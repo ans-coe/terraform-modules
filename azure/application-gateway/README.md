@@ -51,7 +51,7 @@
 | Name | Description |
 |------|-------------|
 | <a name="output_backend_address_pool"></a> [backend\_address\_pool](#output\_backend\_address\_pool) | List of objects of Backend Address Pools |
-| <a name="output_frontend_ip_configurations"></a> [frontend\_ip\_configurations](#output\_frontend\_ip\_configurations) | List of objects of Frontend IP Configurations |
+| <a name="output_frontend_ip_configuration"></a> [frontend\_ip\_configuration](#output\_frontend\_ip\_configuration) | List of objects of Frontend IP Configurations |
 | <a name="output_id"></a> [id](#output\_id) | ID of the application gateway. |
 | <a name="output_location"></a> [location](#output\_location) | Location of the application gateway. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the application gateway. |

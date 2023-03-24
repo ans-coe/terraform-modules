@@ -23,8 +23,8 @@ output "backend_address_pool" {
   value       = azurerm_application_gateway.main.backend_address_pool[*]
 }
 
-output "frontend_ip_configurations" {
+output "frontend_ip_configuration" {
   description = "List of objects of Frontend IP Configurations"
-  value       = azurerm_application_gateway.main.frontend_ip_configurations[*]
+  value       = azurerm_application_gateway.main.frontend_ip_configuration[*]
 
 }
