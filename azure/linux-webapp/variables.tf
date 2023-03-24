@@ -156,7 +156,7 @@ variable "key_vault_identity_id" {
   default     = null
 }
 
-variable "app_slot_names" {
+variable "slots" {
   description = "Names for slots that are clones of the app."
   type        = set(string)
   default     = []

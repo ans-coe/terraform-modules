@@ -35,12 +35,6 @@ variable "storage_account_name" {
   default     = null
 }
 
-variable "shared_access_key_enabled" {
-  description = "Enables shared access key within the storage account"
-  type        = bool
-  default     = false
-}
-
 variable "plan" {
   description = "Object detailing the plan, if creating one with this module."
   type = object({
@@ -146,7 +140,7 @@ variable "key_vault_identity_id" {
   default     = null
 }
 
-variable "app_slot_names" {
+variable "slots" {
   description = "Names for slots that are clones of the app."
   type        = set(string)
   default     = []

@@ -19,5 +19,5 @@ module "functionapp" {
   location = local.location
   tags     = local.tags
 
-  app_slot_names = ["preview"]
+  slots = ["preview"]
 }

@@ -237,7 +237,7 @@ resource "azurerm_linux_function_app" "main" {
 }
 
 resource "azurerm_linux_function_app_slot" "main" {
-  count = toset(var.app_slot_names)
+  for_each = var.slots
 
   name            = each.value
   function_app_id = azurerm_linux_function_app.main.id

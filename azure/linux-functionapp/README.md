@@ -39,15 +39,17 @@ Once deployed, management is expected to be through another medium, so changes t
 | <a name="input_application_stack"></a> [application\_stack](#input\_application\_stack) | A map detailing the application stack. | `map(string)` | <pre>{<br>  "python_version": "3.10"<br>}</pre> | no |
 | <a name="input_connection_strings"></a> [connection\_strings](#input\_connection\_strings) | A list of connection string objects. | <pre>list(object({<br>    name  = string<br>    type  = string<br>    value = string<br>  }))</pre> | `[]` | no |
 | <a name="input_cors"></a> [cors](#input\_cors) | Cross origin resource sharing configuration. | <pre>object({<br>    allowed_origins     = list(string)<br>    support_credentials = optional(bool, null)<br>  })</pre> | `null` | no |
+| <a name="input_create_application_insights"></a> [create\_application\_insights](#input\_create\_application\_insights) | Create an instance of Log Analytics and Application Insights for the function appp. | `bool` | `true` | no |
 | <a name="input_daily_memory_time_quota_gs"></a> [daily\_memory\_time\_quota\_gs](#input\_daily\_memory\_time\_quota\_gs) | Daily memory time quota in gigabyte-seconds. | `string` | `null` | no |
+| <a name="input_default_documents"></a> [default\_documents](#input\_default\_documents) | A list of strings for default documents. | `list(string)` | `null` | no |
 | <a name="input_functions_extension_version"></a> [functions\_extension\_version](#input\_functions\_extension\_version) | Functions extension version to use on this function app. | `string` | `null` | no |
 | <a name="input_identity_ids"></a> [identity\_ids](#input\_identity\_ids) | A list of user identity IDs to use for the function app. | `list(string)` | `[]` | no |
 | <a name="input_key_vault_identity_id"></a> [key\_vault\_identity\_id](#input\_key\_vault\_identity\_id) | The user managed identity used for key vault. | `string` | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_plan"></a> [plan](#input\_plan) | Object detailing the plan, if creating one with this module. | <pre>object({<br>    create         = optional(bool, true)<br>    id             = optional(string)<br>    name           = optional(string)<br>    sku_name       = optional(string, "Y1")<br>    zone_balancing = optional(bool, false)<br>  })</pre> | `{}` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | `null` | no |
-| <a name="input_shared_access_key_enabled"></a> [shared\_access\_key\_enabled](#input\_shared\_access\_key\_enabled) | Enables shared access key within the storage account | `bool` | `false` | no |
 | <a name="input_site_config"></a> [site\_config](#input\_site\_config) | A map with site config values. | `map(any)` | `{}` | no |
+| <a name="input_slots"></a> [slots](#input\_slots) | Names for slots that are clones of the app. | `set(string)` | `[]` | no |
 | <a name="input_sticky_app_settings"></a> [sticky\_app\_settings](#input\_sticky\_app\_settings) | A list of sticky app\_setting values. | `list(string)` | `[]` | no |
 | <a name="input_sticky_connection_strings"></a> [sticky\_connection\_strings](#input\_sticky\_connection\_strings) | A list of sticky connection\_strings values. | `list(string)` | `[]` | no |
 | <a name="input_storage_account_name"></a> [storage\_account\_name](#input\_storage\_account\_name) | The name of the function app's backing storage account. | `string` | `null` | no |
@@ -70,9 +72,11 @@ Once deployed, management is expected to be through another medium, so changes t
 
 | Name | Type |
 |------|------|
+| [azurerm_application_insights.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_insights) | resource |
 | [azurerm_linux_function_app.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_function_app) | resource |
+| [azurerm_linux_function_app_slot.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_function_app_slot) | resource |
+| [azurerm_log_analytics_workspace.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/log_analytics_workspace) | resource |
 | [azurerm_resource_group.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
-| [azurerm_role_assignment.main_app](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
 | [azurerm_service_plan.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/service_plan) | resource |
 | [azurerm_storage_account.app](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 
