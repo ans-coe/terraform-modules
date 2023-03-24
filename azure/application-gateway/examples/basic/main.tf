@@ -27,13 +27,17 @@ resource "azurerm_public_ip" "example" {
   tags = local.tags
 }
 
+resource "azurerm_resource_group" "main" {
+  name = "awg-rg"
+  location = local.location
+}
+
 module "example" {
   source = "../../"
 
   application_gateway_name = "agw-example"
 
-  resource_group_name   = "agw-rg"
-  create_resource_group = true
+  resource_group_name   = azurerm_resource_group.main.name
   location              = local.location
   subnet_id             = data.azurerm_subnet.example.id
   backend_address_pools = [{

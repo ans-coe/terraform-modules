@@ -2,7 +2,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
   count = var.waf_configuration != null ? 1 : 0
 
   name                = var.waf_configuration.policy_name
-  resource_group_name = var.create_resource_group ? azurerm_resource_group.main[0].name : var.resource_group_name
+  resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
 
@@ -59,7 +59,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
 }
 resource "azurerm_application_gateway" "main" {
   name                = var.application_gateway_name
-  resource_group_name = var.create_resource_group ? azurerm_resource_group.main[0].name : var.resource_group_name
+  resource_group_name = var.resource_group_name
   location            = var.location
 
   firewall_policy_id = var.waf_configuration != null ? azurerm_web_application_firewall_policy.main[0].id : null
