@@ -17,6 +17,6 @@ variable "pipelines" {
     path        = optional(string)
     config_path = string
     file_name   = optional(string, "azure-pipelines.yml")
-    branch_name = optional(string, "main")
+    branch_name = optional(string, "refs/heads/main")
   }))
 }
