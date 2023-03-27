@@ -67,7 +67,7 @@ Once deployed, management is expected to be through another medium, so changes t
 | <a name="output_location"></a> [location](#output\_location) | Location of the function app. |
 | <a name="output_name"></a> [name](#output\_name) | Name  of the function app. |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | Name of the resource group. |
-| <a name="output_slots"></a> [slots](#output\_slots) | Object containing details for the created slots. |
+| <a name="output_slots"></a> [slots](#output\_slots) | Object of objects containing details for the created slots. |
 
 ## Resources
 

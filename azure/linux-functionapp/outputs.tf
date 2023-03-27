@@ -34,6 +34,6 @@ output "fqdn" {
 }
 
 output "slots" {
-  description = "Object containing details for the created slots."
+  description = "Object of objects containing details for the created slots."
   value       = azurerm_linux_function_app_slot.main
 }

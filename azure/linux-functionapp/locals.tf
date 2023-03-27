@@ -3,25 +3,23 @@ locals {
     # Placeholder
   }
   app_settings = merge(local.default_app_settings, var.app_settings)
-  default_sticky_app_settings = concat(
+  default_sticky_app_settings = [
     # Application Insights
-    [
-      "ApplicationInsightsAgent_EXTENSION_VERSION",
-      "APPLICATIONINSIGHTS_CONNECTION_STRING",
-      "APPLICATIONINSIGHTS_CONFIGURATION_CONTENT",
-      "APPINSIGHTS_INSTRUMENTATIONKEY",
-      "APPINSIGHTS_PROFILERFEATURE_VERSION",
-      "APPINSIGHTS_SNAPSHOTFEATURE_VERSION",
-      "XDT_MicrosoftApplicationInsights_BaseExtensions",
-      "XDT_MicrosoftApplicationInsights_Mode",
-      "XDT_MicrosoftApplicationInsights_PreemptSdk",
-      "XDT_MicrosoftApplicationInsightsJava",
-      "XDT_MicrosoftApplicationInsights_NodeJS",
-      "DiagnosticServices_EXTENSION_VERSION",
-      "InstrumentationEngine_EXTENSION_VERSION",
-      "SnapshotDebugger_EXTENSION_VERSION"
-    ]
-  )
+    "ApplicationInsightsAgent_EXTENSION_VERSION",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING",
+    "APPLICATIONINSIGHTS_CONFIGURATION_CONTENT",
+    "APPINSIGHTS_INSTRUMENTATIONKEY",
+    "APPINSIGHTS_PROFILERFEATURE_VERSION",
+    "APPINSIGHTS_SNAPSHOTFEATURE_VERSION",
+    "XDT_MicrosoftApplicationInsights_BaseExtensions",
+    "XDT_MicrosoftApplicationInsights_Mode",
+    "XDT_MicrosoftApplicationInsights_PreemptSdk",
+    "XDT_MicrosoftApplicationInsightsJava",
+    "XDT_MicrosoftApplicationInsights_NodeJS",
+    "DiagnosticServices_EXTENSION_VERSION",
+    "InstrumentationEngine_EXTENSION_VERSION",
+    "SnapshotDebugger_EXTENSION_VERSION"
+  ]
   sticky_app_settings = concat(local.default_sticky_app_settings, var.sticky_app_settings)
 
   ip_restriction_defaults = {
