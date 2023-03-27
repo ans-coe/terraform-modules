@@ -13,6 +13,11 @@
 
 This configuration creates a Linux VM with some simple extensions for management and monitoring.
 
+When using a marketplace image, ensure that you accept the terms using the cli tools:
+
+[Azure CLI](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage#accept-the-terms)
+[PowerShell](https://learn.microsoft.com/en-us/azure/virtual-machines/windows/cli-ps-findimage#accept-purchase-plan-terms)
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
