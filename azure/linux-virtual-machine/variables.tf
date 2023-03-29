@@ -208,3 +208,27 @@ variable "data_collection_rule_id" {
   type        = string
   default     = null
 }
+
+variable "enable_autoshutdown" {
+  description = "Enable automatic shutdown on this virtual machine."
+  type        = bool
+  default     = false
+}
+
+variable "autoshutdown_time" {
+  description = "Time in 24h to automatically shut down the VM."
+  type        = string
+  default     = "2200"
+}
+
+variable "autoshutdown_timezone" {
+  description = "Timezone used when determining when to shut down the VM."
+  type        = string
+  default     = "UTC"
+}
+
+variable "autoshudown_email" {
+  description = "Email to send notificatons to when shutting down the virtual machine."
+  type        = string
+  default     = null
+}
