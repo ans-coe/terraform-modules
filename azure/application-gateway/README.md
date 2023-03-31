@@ -25,7 +25,7 @@ This module will deploy and manage an application gateway.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_application_gateway_name"></a> [application\_gateway\_name](#input\_application\_gateway\_name) | Name of the Application Gateway | `string` | n/a | yes |
+| <a name="input_name"></a> [application\_gateway\_name](#input\_application\_gateway\_name) | Name of the Application Gateway | `string` | n/a | yes |
 | <a name="input_backend_address_pools"></a> [backend\_address\_pools](#input\_backend\_address\_pools) | List of backend address pools | <pre>list(object({<br>    name         = string<br>    ip_addresses = list(string)<br>  }))</pre> | n/a | yes |
 | <a name="input_frontend_ip_configurations"></a> [frontend\_ip\_configurations](#input\_frontend\_ip\_configurations) | List of Frontend IP Configurations | <pre>list(object({<br>    name                 = string<br>    private_ip_address   = optional(string)<br>    public_ip_address_id = optional(string)<br>  }))</pre> | n/a | yes |
 | <a name="input_http_listeners"></a> [http\_listeners](#input\_http\_listeners) | List of HTTP Listeners | <pre>list(object({<br>    name                           = string<br>    frontend_ip_configuration_name = string<br>    frontend_port_name             = optional(string, "Http")<br>    protocol                       = optional(string, "Http")<br>    host_name                      = optional(string)<br>    host_names                     = optional(list(string))<br>    ssl_certificate_name           = optional(string)<br>  }))</pre> | n/a | yes |

@@ -35,7 +35,7 @@ resource "azurerm_subnet" "example" {
 module "example" {
   source = "../../"
 
-  application_gateway_name = "agw-example"
+  name = "agw-example"
 
   resource_group_name = azurerm_resource_group.example.name
   location            = local.location

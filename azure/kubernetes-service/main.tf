@@ -190,7 +190,7 @@ resource "azurerm_kubernetes_cluster" "main" {
 
     content {
       gateway_id   = var.ingress_application_gateway_id
-      gateway_name = var.ingress_application_gateway_name
+      gateway_name = var.ingress_name
       subnet_id    = var.ingress_application_subnet_id
       subnet_cidr  = var.ingress_application_subnet_cidr
     }

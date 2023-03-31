@@ -30,7 +30,7 @@ variable "location" {
   type        = string
 }
 
-variable "application_gateway_name" {
+variable "name" {
   description = "Name of the Application Gateway"
   type        = string
 }

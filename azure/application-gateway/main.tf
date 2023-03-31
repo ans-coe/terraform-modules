@@ -1,6 +1,6 @@
 resource "azurerm_public_ip" "main" {
   count               = var.create_public_ip ? 1 : 0
-  name                = "pip-${var.application_gateway_name}"
+  name                = "pip-${var.name}"
   resource_group_name = var.resource_group_name
   location            = var.location
   allocation_method   = "Static"
@@ -68,7 +68,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
   }
 }
 resource "azurerm_application_gateway" "main" {
-  name                = var.application_gateway_name
+  name                = var.name
   resource_group_name = var.resource_group_name
   location            = var.location
 
