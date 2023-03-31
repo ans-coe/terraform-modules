@@ -9,11 +9,9 @@
 5. [Resources](#resources)
 6. [Modules](#modules)
 
-## TODO
+## Usage
 
-- Outputs
-- Examples
-- README
+This module will deploy and manage an application gateway.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
