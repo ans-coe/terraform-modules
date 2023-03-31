@@ -1,3 +1,13 @@
+resource "azurerm_public_ip" "main" {
+  count               = var.create_public_ip ? 1 : 0
+  name                = "pip-${var.application_gateway_name}"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  allocation_method   = "Static"
+  sku                 = "Standard"
+
+  tags = var.tags
+}
 resource "azurerm_web_application_firewall_policy" "main" {
   count = var.waf_configuration != null ? 1 : 0
 
@@ -88,15 +98,6 @@ resource "azurerm_application_gateway" "main" {
     }
   }
 
-  # [{
-  #   name = value
-  #   ip_address = ["1.1.1.1","1.0.0.1"]
-  # },
-  # {
-  #   name = value
-  #   ip_address = ["1.1.1.1","1.0.0.1"]
-  # }]
-
   dynamic "backend_http_settings" {
     for_each = var.backend_http_settings
     content {
@@ -110,42 +111,24 @@ resource "azurerm_application_gateway" "main" {
       request_timeout                     = backend_http_settings.value["request_timeout"]
     }
   }
-
-  # [{
-  #   name = value
-  #   port = 80
-  #   protocol = http
-  #   cookie_based_affinity = "Enabled"
-  # },
-  # {
-  #   name = value2
-  #   port = 443
-  #   protocol = https
-  #   cookie_based_affinity = "Enabled"
-  # }]
-
   dynamic "frontend_ip_configuration" {
-    for_each = var.frontend_ip_configurations
+    for_each = var.private_ip != null ? [0] : []
+
     content {
-      name                          = frontend_ip_configuration.value["name"]
-      private_ip_address            = frontend_ip_configuration.value["private_ip_address"]
-      public_ip_address_id          = frontend_ip_configuration.value["public_ip_address_id"]
-      private_ip_address_allocation = frontend_ip_configuration.value["private_ip_address"] != null ? "Static" : null
-      subnet_id                     = frontend_ip_configuration.value["private_ip_address"] != null ? var.subnet_id : null
+      name                          = "PrivateFrontend"
+      private_ip_address            = var.private_frontend
+      subnet_id                     = var.subnet_id
+      private_ip_address_allocation = "Static"
     }
   }
+  dynamic "frontend_ip_configuration" {
+    for_each = var.create_public_ip ? [0] : []
 
-  # [{
-  #   name = value
-  #   private_ip_address = 1.1.1.1
-  #   public_ip_address_id = id
-  # },
-  # {
-  #   name = value
-  #   private_ip_address = 1.1.1.1
-  #   public_ip_address_id = id
-  # }]
-
+    content {
+      name                 = "PublicFrontend"
+      public_ip_address_id = azurerm_public_ip.main.id
+    }
+  }
   dynamic "frontend_port" {
     for_each = var.frontend_ports
     content {
@@ -153,15 +136,6 @@ resource "azurerm_application_gateway" "main" {
       port = frontend_port.value["port"]
     }
   }
-
-  # [{
-  #   name = value
-  #   port = 80
-  # },
-  # [{
-  #   name = value
-  #   port = 443
-  # }]
 
   dynamic "http_listener" {
     for_each = var.http_listeners
@@ -177,23 +151,6 @@ resource "azurerm_application_gateway" "main" {
     }
   }
 
-  # [{
-  #   name = value
-  #   frontend_ip_configuration_name = value
-  #   frontend_port_name = value
-  #   protocol = Https
-  #   host_name = example.com
-  #   ssl_certificate_name = ssl_cert
-  # },
-  # [{
-  #   name = value
-  #   frontend_ip_configuration_name = value
-  #   frontend_port_name = value
-  #   protocol = Https
-  #   host_names = ["example.com","*.example"]
-  #   ssl_certificate_name = ssl_cert
-  # }]
-
   dynamic "ssl_certificate" {
     for_each = var.ssl_certificates
     content {
@@ -203,15 +160,6 @@ resource "azurerm_application_gateway" "main" {
       key_vault_secret_id = ssl_certificate.value["key_vault_secret_id"]
     }
   }
-
-  # [{
-  #   name = value
-  #   key_vault_secret_id = id
-  # },
-  # [{
-  #   name = value2
-  #   key_vault_secret_id = id
-  # }]
 
   dynamic "url_path_map" {
     for_each = var.url_path_maps
@@ -230,42 +178,6 @@ resource "azurerm_application_gateway" "main" {
       }
     }
   }
-
-  # [{
-  #   name = value
-  #   default_backend_address_pool_name = value
-  #   default_backend_http_settings_name = value
-  #   path_rule = [{
-  #     name = value
-  #     paths = ["path1"]
-  #     backend_address_pool_name = Backend1
-  #     backend_http_settings_name = BackendSetting1
-  #     },
-  #     {
-  #     name = value1
-  #     paths = ["path2"]
-  #     backend_address_pool_name = Backend1
-  #     backend_http_settings_name = BackendSetting1
-  #     }]
-  # },
-  # {
-  #   name = value
-  #   default_backend_address_pool_name = value
-  #   default_backend_http_settings_name = value
-  #   path_rule = [{
-  #     name = value
-  #     paths = ["path1"]
-  #     backend_address_pool_name = Backend1
-  #     backend_http_settings_name = BackendSetting1
-  #     },
-  #     {
-  #     name = value1
-  #     paths = ["path2"]
-  #     backend_address_pool_name = Backend1
-  #     backend_http_settings_name = BackendSetting1
-  #     }]
-  # }]
-
   dynamic "request_routing_rule" {
     for_each = var.request_routing_rules
     content {
@@ -281,22 +193,6 @@ resource "azurerm_application_gateway" "main" {
 
   tags = var.tags
 
-
-  # [{
-  #   name = value
-  #   rule_type = "PathBasedRouting"
-  #   http_listener_name = Listener1
-  #   backend_address_pool_name = Backend1
-  #   url_path_map_name = Path1
-  # },
-  # {
-  #   name = value1
-  #   rule_type = "PathBasedRouting"
-  #   http_listener_name = Listener2
-  #   backend_address_pool_name = Backend2
-  #   url_path_map_name = Path2
-  # }]
-
   dynamic "identity" {
     for_each = var.identity_ids != null ? [0] : []
     content {
@@ -304,8 +200,6 @@ resource "azurerm_application_gateway" "main" {
       identity_ids = var.identity_ids
     }
   }
-
-  # ["id1","id2"]
 
   dynamic "probe" {
     for_each = var.probe
@@ -321,28 +215,4 @@ resource "azurerm_application_gateway" "main" {
       pick_host_name_from_backend_http_settings = probe.value["pick_host_name_from_backend_http_settings"]
     }
   }
-
-  # [{
-  #   name = value
-  #   protocol = "Http"
-  #   interval = 30
-  #   path = "/"
-  #   host = "example.com"
-  #   timeout = 30
-  #   unhealthy_threshold = 3
-  #   port = 80
-  #   pick_host_name_from_backend_http_settings = true
-  # },
-  # {
-  #   name = value
-  #   protocol = "Http"
-  #   interval = 30
-  #   path = "/"
-  #   host = "example.com"
-  #   timeout = 30
-  #   unhealthy_threshold = 3
-  #   port = 80
-  #   pick_host_name_from_backend_http_settings = true
-  # }]
-
 }

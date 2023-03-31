@@ -67,14 +67,16 @@ variable "backend_http_settings" {
     name = "Default"
   }]
 }
+variable "private_ip" {
+  description = "A private IP address for the frontend"
+  type        = string
+  default     = null
+}
 
-variable "frontend_ip_configurations" {
-  description = "List of Frontend IP Configurations"
-  type = list(object({
-    name                 = string
-    private_ip_address   = optional(string)
-    public_ip_address_id = optional(string)
-  }))
+variable "create_public_ip" {
+  description = "Set this bool to create a public IP address automatically"
+  type        = bool
+  default     = true
 }
 variable "frontend_ports" {
   description = "List of Frontend Ports"
@@ -94,13 +96,16 @@ variable "http_listeners" {
   description = "List of HTTP Listeners"
   type = list(object({
     name                           = string
-    frontend_ip_configuration_name = string
+    frontend_ip_configuration_name = optional(string, "PublicFrontend")
     frontend_port_name             = optional(string, "Http")
     protocol                       = optional(string, "Http")
     host_name                      = optional(string)
     host_names                     = optional(list(string))
     ssl_certificate_name           = optional(string)
   }))
+  default = [{
+    name = "Default"
+  }]
 }
 variable "ssl_certificates" {
   description = "List of SSL Certs"

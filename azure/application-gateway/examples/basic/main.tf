@@ -10,26 +10,26 @@ locals {
     usage   = "demo"
   }
 }
-
-data "azurerm_subnet" "example" {
-  name                 = "sn-vnet"
-  virtual_network_name = "vnet"
-  resource_group_name  = "vnet-rg"
-}
-
-resource "azurerm_public_ip" "example" {
-  name                = "pip-vnet"
-  resource_group_name = "vnet-rg"
-  location            = local.location
-  allocation_method   = "Static"
-  sku                 = "Standard"
-
-  tags = local.tags
-}
-
-resource "azurerm_resource_group" "main" {
-  name = "awg-rg"
+resource "azurerm_resource_group" "example" {
+  name     = "awg-rg"
   location = local.location
+}
+
+resource "azurerm_virtual_network" "example" {
+  name                = "vnet"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = local.location
+  tags                = local.tags
+
+  address_space = ["10.0.0.0/24"]
+}
+
+resource "azurerm_subnet" "example" {
+  name                 = "default"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.example.name
+
+  address_prefixes = azurerm_virtual_network.example.address_space
 }
 
 module "example" {
@@ -37,26 +37,15 @@ module "example" {
 
   application_gateway_name = "agw-example"
 
-  resource_group_name   = azurerm_resource_group.main.name
-  location              = local.location
-  subnet_id             = data.azurerm_subnet.example.id
+  resource_group_name = azurerm_resource_group.example.name
+  location            = local.location
+  subnet_id           = azurerm_subnet.example.id
   backend_address_pools = [{
     name         = "BackendPool"
     ip_addresses = ["1.1.1.1", "1.0.0.1"]
   }]
-  frontend_ip_configurations = [{
-    name                 = "PublicFrontend"
-    public_ip_address_id = azurerm_public_ip.example.id
-  }]
-
-  http_listeners = [{
-    name                           = "HTTPFrontendListener"
-    frontend_ip_configuration_name = "PublicFrontend"
-    host_name                      = "example.com"
-  }]
-
   request_routing_rules = [{
-    http_listener_name        = "HTTPFrontendListener"
+    http_listener_name        = "Default"
     rule_type                 = "Basic"
     name                      = "HTTPRequestRoutingRule"
     backend_address_pool_name = "BackendPool"
