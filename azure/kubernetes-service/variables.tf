@@ -274,7 +274,7 @@ variable "ingress_application_gateway_id" {
   default     = null
 }
 
-variable "ingress_name" {
+variable "ingress_application_gateway_name" {
   description = "The name of an Application Gateway to integrate with AKS or create in the Nodepool resource group."
   type        = string
   default     = null
