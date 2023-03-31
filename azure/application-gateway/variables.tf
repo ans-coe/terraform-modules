@@ -14,13 +14,10 @@ variable "sku" {
 variable "autoscale" {
   description = "Properties relating to the Autoscalling of the Applicaton Gateway"
   type = object({
-    min = string
-    max = string
+    min = optional(number, 1)
+    max = optional(number, 3)
   })
-  default = {
-    max = "3"
-    min = "1"
-  }
+  default = {}
 }
 
 variable "resource_group_name" {
