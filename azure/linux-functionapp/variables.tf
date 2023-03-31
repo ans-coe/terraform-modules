@@ -35,12 +35,6 @@ variable "storage_account_name" {
   default     = null
 }
 
-variable "shared_access_key_enabled" {
-  description = "Enables shared access key within the storage account"
-  type        = bool
-  default     = false
-}
-
 variable "plan" {
   description = "Object detailing the plan, if creating one with this module."
   type = object({
@@ -116,10 +110,22 @@ variable "cors" {
   default = null
 }
 
+variable "default_documents" {
+  description = "A list of strings for default documents."
+  type        = list(string)
+  default     = null
+}
+
 variable "subnet_id" {
   description = "The subnet to deploy this function app to."
   type        = string
   default     = null
+}
+
+variable "create_application_insights" {
+  description = "Create an instance of Log Analytics and Application Insights for the function appp."
+  type        = bool
+  default     = true
 }
 
 variable "identity_ids" {
@@ -132,6 +138,12 @@ variable "key_vault_identity_id" {
   description = "The user managed identity used for key vault."
   type        = string
   default     = null
+}
+
+variable "slots" {
+  description = "Names for slots that are clones of the app."
+  type        = set(string)
+  default     = []
 }
 
 variable "allowed_ips" {

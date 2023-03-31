@@ -32,3 +32,8 @@ output "fqdn" {
   description = "Default FQDN of the app service."
   value       = azurerm_linux_web_app.main.default_hostname
 }
+
+output "slots" {
+  description = "Object of objects containing details for the created slots."
+  value       = azurerm_linux_web_app_slot.main
+}
