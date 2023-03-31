@@ -155,6 +155,7 @@ variable "identity_ids" {
 variable "tags" {
   description = "Resource Tags"
   type        = map(string)
+  default = null
 }
 
 variable "probe" {
