@@ -5,7 +5,7 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "acr"
+    module  = "application-gateway"
     example = "basic"
     usage   = "demo"
   }
