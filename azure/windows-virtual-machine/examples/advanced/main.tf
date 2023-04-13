@@ -82,6 +82,6 @@ module "vm" {
     offer     = "WindowsServer"
     sku       = "2022-datacenter-g2"
   }
-  
-  enable_autoshutdown = true
+
+  autoshutdown = {}
 }

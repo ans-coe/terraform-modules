@@ -183,16 +183,16 @@ resource "azurerm_monitor_data_collection_rule_association" "main" {
 }
 
 resource "azurerm_dev_test_global_vm_shutdown_schedule" "main" {
-  count = var.enable_autoshutdown ? 1 : 0
+  count = var.autoshutdown != null ? 1 : 0
 
   virtual_machine_id = azurerm_linux_virtual_machine.main.id
   location           = var.location
   tags               = var.tags
 
-  daily_recurrence_time = var.autoshutdown_time
-  timezone              = var.autoshutdown_timezone
+  daily_recurrence_time = var.autoshutdown["time"]
+  timezone              = var.autoshutdown["timezone"]
   notification_settings {
-    enabled = var.autoshudown_email != null
-    email   = var.autoshudown_email
+    enabled = var.autoshutdown["email"] != null
+    email   = var.autoshutdown["email"]
   }
 }

@@ -34,16 +34,13 @@ When using a marketplace image, ensure that you accept the terms using the cli t
 | <a name="input_public_key"></a> [public\_key](#input\_public\_key) | Public key of the virtual machine. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | n/a | yes |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID of the virtual machine. | `string` | n/a | yes |
-| <a name="input_autoshudown_email"></a> [autoshudown\_email](#input\_autoshudown\_email) | Email to send notificatons to when shutting down the virtual machine. | `string` | `null` | no |
-| <a name="input_autoshutdown_time"></a> [autoshutdown\_time](#input\_autoshutdown\_time) | Time in 24h to automatically shut down the VM. | `string` | `"2200"` | no |
-| <a name="input_autoshutdown_timezone"></a> [autoshutdown\_timezone](#input\_autoshutdown\_timezone) | Timezone used when determining when to shut down the VM. | `string` | `"UTC"` | no |
+| <a name="input_autoshutdown"></a> [autoshutdown](#input\_autoshutdown) | Describes the autoshutdown configuration with time being in 24h format and timezone being a supported timezone. | <pre>object({<br>    time     = optional(string, "2200")<br>    timezone = optional(string, "UTC")<br>    email    = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_availability_set_id"></a> [availability\_set\_id](#input\_availability\_set\_id) | Availability set ID to add this virtual machine to. | `string` | `null` | no |
 | <a name="input_computer_name"></a> [computer\_name](#input\_computer\_name) | The OS-level computer name of the virtual machine. | `string` | `null` | no |
 | <a name="input_data_collection_enabled"></a> [data\_collection\_enabled](#input\_data\_collection\_enabled) | Enable data collection association. | `bool` | `false` | no |
 | <a name="input_data_collection_rule_id"></a> [data\_collection\_rule\_id](#input\_data\_collection\_rule\_id) | Data collection rule ID to associate to this virtual machine. | `string` | `null` | no |
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | The DNS servers to use with this virtual network. | `list(string)` | `null` | no |
 | <a name="input_enable_aad_login"></a> [enable\_aad\_login](#input\_enable\_aad\_login) | Enable AAD Login extension. | `bool` | `true` | no |
-| <a name="input_enable_autoshutdown"></a> [enable\_autoshutdown](#input\_enable\_autoshutdown) | Enable automatic shutdown on this virtual machine. | `bool` | `false` | no |
 | <a name="input_enable_azure_monitor"></a> [enable\_azure\_monitor](#input\_enable\_azure\_monitor) | Enable Azure Monitor extension. | `bool` | `true` | no |
 | <a name="input_enable_azure_policy"></a> [enable\_azure\_policy](#input\_enable\_azure\_policy) | Enable Azure Policy extension. | `bool` | `true` | no |
 | <a name="input_enable_network_watcher"></a> [enable\_network\_watcher](#input\_enable\_network\_watcher) | Enable Network Watcher extension. | `bool` | `true` | no |
