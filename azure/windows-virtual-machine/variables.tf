@@ -203,3 +203,13 @@ variable "data_collection_rule_id" {
   type        = string
   default     = null
 }
+
+variable "autoshutdown" {
+  description = "Describes the autoshutdown configuration with time being in 24h format and timezone being a supported timezone."
+  type = object({
+    time     = optional(string, "2200")
+    timezone = optional(string, "UTC")
+    email    = optional(string)
+  })
+  default = null
+}

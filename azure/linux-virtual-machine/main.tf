@@ -181,3 +181,18 @@ resource "azurerm_monitor_data_collection_rule_association" "main" {
 
   depends_on = [azurerm_virtual_machine_extension.main_azmonitor]
 }
+
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "main" {
+  count = var.autoshutdown != null ? 1 : 0
+
+  virtual_machine_id = azurerm_linux_virtual_machine.main.id
+  location           = var.location
+  tags               = var.tags
+
+  daily_recurrence_time = var.autoshutdown["time"]
+  timezone              = var.autoshutdown["timezone"]
+  notification_settings {
+    enabled = var.autoshutdown["email"] != null
+    email   = var.autoshutdown["email"]
+  }
+}

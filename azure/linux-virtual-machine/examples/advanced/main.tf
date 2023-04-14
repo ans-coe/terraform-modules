@@ -100,4 +100,6 @@ module "vm" {
     offer     = "0001-com-ubuntu-server-focal"
     sku       = "20_04-lts"
   }
+
+  autoshutdown = {}
 }
