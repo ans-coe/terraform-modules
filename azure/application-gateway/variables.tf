@@ -136,14 +136,29 @@ variable "url_path_maps" {
 variable "request_routing_rules" {
   description = "List of Routing Rules"
   type = list(object({
-    name                       = string
-    rule_type                  = optional(string, "PathBasedRouting")
-    http_listener_name         = string
-    backend_address_pool_name  = optional(string)
-    backend_http_settings_name = optional(string)
-    url_path_map_name          = optional(string)
-    priority                   = optional(number, 100)
+    name                        = string
+    rule_type                   = optional(string, "PathBasedRouting")
+    http_listener_name          = string
+    backend_address_pool_name   = optional(string)
+    backend_http_settings_name  = optional(string)
+    url_path_map_name           = optional(string)
+    priority                    = optional(number, 100)
+    redirect_configuration_name = optional(string)
+    rewrite_rule_set_name       = optional(string)
   }))
+}
+
+variable "redirect_configurations" {
+  description = "List of Routing Rules"
+  type = list(object({
+    name                 = string
+    redirect_type        = optional(string, "Permanent")
+    target_listener_name = optional(string)
+    target_url           = optional(string)
+    include_path         = optional(string)
+    include_query_string = optional(string)
+  }))
+  default = []
 }
 
 variable "identity_ids" {
@@ -155,7 +170,7 @@ variable "identity_ids" {
 variable "tags" {
   description = "Resource Tags"
   type        = map(string)
-  default = null
+  default     = null
 }
 
 variable "probe" {

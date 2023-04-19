@@ -181,13 +181,27 @@ resource "azurerm_application_gateway" "main" {
   dynamic "request_routing_rule" {
     for_each = var.request_routing_rules
     content {
-      name                       = request_routing_rule.value["name"]
-      rule_type                  = request_routing_rule.value["rule_type"]
-      http_listener_name         = request_routing_rule.value["http_listener_name"]
-      backend_address_pool_name  = request_routing_rule.value["backend_address_pool_name"]
-      backend_http_settings_name = request_routing_rule.value["backend_http_settings_name"] != null ? request_routing_rule.value["backend_http_settings_name"] : request_routing_rule.value["rule_type"] != "Basic" ? null : "Default"
-      url_path_map_name          = request_routing_rule.value["url_path_map_name"]
-      priority                   = request_routing_rule.value["priority"]
+      name                        = request_routing_rule.value["name"]
+      rule_type                   = request_routing_rule.value["rule_type"]
+      http_listener_name          = request_routing_rule.value["http_listener_name"]
+      backend_address_pool_name   = request_routing_rule.value["backend_address_pool_name"]
+      backend_http_settings_name  = request_routing_rule.value["backend_http_settings_name"] != null ? request_routing_rule.value["backend_http_settings_name"] : request_routing_rule.value["rule_type"] != "Basic" ? null : "Default"
+      url_path_map_name           = request_routing_rule.value["url_path_map_name"]
+      priority                    = request_routing_rule.value["priority"]
+      redirect_configuration_name = request_routing_rule.value["redirect_configuration_name"]
+      rewrite_rule_set_name       = request_routing_rule.value["rewrite_rule_set_name"]
+    }
+  }
+
+  dynamic "redirect_configuration" {
+    for_each = var.redirect_configurations
+    content {
+      name                 = redirect_configuration.value["name"]
+      redirect_type        = redirect_configuration.value["redirect_type"]
+      target_listener_name = redirect_configuration.value["target_listener_name"]
+      target_url           = redirect_configuration.value["target_url"]
+      include_path         = redirect_configuration.value["include_path"]
+      include_query_string = redirect_configuration.value["include_query_string"]
     }
   }
 
