@@ -185,6 +185,14 @@ variable "probe" {
     port                                      = optional(number, 80)
     pick_host_name_from_backend_http_settings = optional(bool, false)
     host                                      = optional(string)
+    match = optional(list(object({
+      body        = optional(string)
+      status_code = optional(list(string))
+      })), [{
+      status_code = [
+        "200-399"
+      ]
+    }])
   }))
   default = [{
     name = "Default"

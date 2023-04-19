@@ -227,6 +227,13 @@ resource "azurerm_application_gateway" "main" {
       unhealthy_threshold                       = probe.value["unhealthy_threshold"]
       port                                      = probe.value["port"]
       pick_host_name_from_backend_http_settings = probe.value["pick_host_name_from_backend_http_settings"]
+      dynamic "match" {
+        for_each = probe.value["match"]
+        content {
+          body        = match.value["body"]
+          status_code = match.value["status_code "]
+        }
+      }
     }
   }
 }
