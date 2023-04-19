@@ -126,7 +126,7 @@ resource "azurerm_application_gateway" "main" {
 
     content {
       name                 = "PublicFrontend"
-      public_ip_address_id = azurerm_public_ip.main.id
+      public_ip_address_id = azurerm_public_ip.main[0].id
     }
   }
   dynamic "frontend_port" {
