@@ -55,6 +55,7 @@ variable "backend_http_settings" {
     port                                = optional(number, 80)
     protocol                            = optional(string, "Http")
     cookie_based_affinity               = optional(string, "Enabled")
+    affinity_cookie_name                = optional(string, "ApplicationGatewayAffinity")
     probe_name                          = optional(string, "Default")
     host_name                           = optional(string)
     pick_host_name_from_backend_address = optional(bool, true)
