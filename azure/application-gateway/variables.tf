@@ -148,14 +148,14 @@ variable "request_routing_rules" {
 }
 
 variable "redirect_configurations" {
-  description = "List of Routing Rules"
+  description = "List of Redirection Configurations"
   type = list(object({
     name                 = string
     redirect_type        = optional(string, "Permanent")
     target_listener_name = optional(string)
     target_url           = optional(string)
-    include_path         = optional(string)
-    include_query_string = optional(string)
+    include_path         = optional(bool, true)
+    include_query_string = optional(bool, true)
   }))
   default = []
 }
