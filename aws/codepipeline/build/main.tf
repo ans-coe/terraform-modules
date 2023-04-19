@@ -8,7 +8,7 @@ resource "aws_iam_role" "codepipeline_role" {
 }
 
 module "kms_key" {
-  source           = "../kms_key"
+  source           = "../../kms_key"
   key_name         = "${local.pipeline_name}-kms-key"
   dest_account_ids = data.aws_arn.deployment_role.*.account
   dest_iam_roles   = var.deployment_roles
