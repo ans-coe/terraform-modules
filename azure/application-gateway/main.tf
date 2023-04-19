@@ -231,7 +231,7 @@ resource "azurerm_application_gateway" "main" {
         for_each = probe.value["match"]
         content {
           body        = match.value["body"]
-          status_code = match.value["status_code "]
+          status_code = match.value["status_code"]
         }
       }
     }
