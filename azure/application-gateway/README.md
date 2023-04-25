@@ -13,6 +13,8 @@
 
 This module will deploy and manage an application gateway.
 
+To set auto-scalling, set sku.max_capacity to a value greater than sku.capacity.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 

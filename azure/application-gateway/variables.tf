@@ -1,23 +1,15 @@
 variable "sku" {
   description = "Properties relating to the SKU of the Applicaton Gateway"
   type = object({
-    name     = string
-    tier     = string
-    capacity = optional(string)
+    name         = string
+    tier         = string
+    capacity     = optional(number, 1)
+    max_capacity = optional(number, 1)
   })
   default = {
     name = "Standard_v2"
     tier = "Standard_v2"
   }
-}
-
-variable "autoscale" {
-  description = "Properties relating to the Autoscalling of the Applicaton Gateway"
-  type = object({
-    min = optional(number, 1)
-    max = optional(number, 3)
-  })
-  default = {}
 }
 
 variable "resource_group_name" {
@@ -44,7 +36,8 @@ variable "backend_address_pools" {
   description = "List of backend address pools"
   type = list(object({
     name         = string
-    ip_addresses = list(string)
+    ip_addresses = optional(list(string))
+    fqdns        = optional(list(string))
   }))
 }
 
@@ -60,6 +53,7 @@ variable "backend_http_settings" {
     host_name                           = optional(string)
     pick_host_name_from_backend_address = optional(bool, true)
     request_timeout                     = optional(number, 30)
+    trusted_root_certificate_names      = optional(list(string))
   }))
   default = [{
     name = "Default"
@@ -76,20 +70,19 @@ variable "create_public_ip" {
   type        = bool
   default     = true
 }
-variable "frontend_ports" {
-  description = "List of Frontend Ports"
-  type = list(object({
-    name = string
-    port = number
-  }))
-  default = [{
-    name = "Http"
-    port = 80
-    }, {
-    name = "Https"
-    port = 443
-  }]
+
+variable "additional_frontend_ports" {
+  description = "Map of Additional Frontend Ports"
+  type        = map(number)
+  default     = {}
 }
+
+variable "enable_http2" {
+  description = "Enables HTTP2 on the application gateway."
+  type        = bool
+  default     = null
+}
+
 variable "http_listeners" {
   description = "List of HTTP Listeners"
   type = list(object({
@@ -119,6 +112,16 @@ variable "ssl_certificates" {
     error_message = "Each certificate must specify either data and password or key_vault_secret_id."
   }
 }
+
+variable "trusted_root_certificate" {
+  description = "List of SSL Certs"
+  type = list(object({
+    name = string
+    data = string
+  }))
+  default = []
+}
+
 variable "url_path_maps" {
   description = "List of Path Maps"
   type = list(object({
@@ -140,7 +143,7 @@ variable "request_routing_rules" {
     name                        = string
     rule_type                   = optional(string, "PathBasedRouting")
     http_listener_name          = string
-    backend_address_pool_name   = optional(string)
+    backend_address_pool_name   = optional(string, "Default")
     backend_http_settings_name  = optional(string)
     url_path_map_name           = optional(string)
     priority                    = optional(number, 100)
@@ -222,6 +225,7 @@ variable "waf_configuration" {
         operator           = optional(string, "Contains")
         negation_condition = optional(bool, true)
         transforms         = optional(list(string))
+
         match_variables = optional(list(object({
           variable_name = string
           selector      = optional(string)
@@ -230,4 +234,10 @@ variable "waf_configuration" {
     })), [])
   })
   default = null
+}
+
+variable "ssl_policy" {
+  description = "The predefined SSL policy to use with the application gateway."
+  type        = string
+  default     = "AppGwSslPolicy20220101"
 }

@@ -8,6 +8,7 @@ resource "azurerm_public_ip" "main" {
 
   tags = var.tags
 }
+
 resource "azurerm_web_application_firewall_policy" "main" {
   count = var.waf_configuration != null ? 1 : 0
 
@@ -71,23 +72,39 @@ resource "azurerm_application_gateway" "main" {
   name                = var.name
   resource_group_name = var.resource_group_name
   location            = var.location
+  tags                = var.tags
+  enable_http2        = var.enable_http2
 
-  firewall_policy_id = var.waf_configuration != null ? azurerm_web_application_firewall_policy.main[0].id : null
-
-  sku {
-    name     = var.sku.name
-    tier     = var.sku.tier
-    capacity = var.sku.capacity
-  }
+  firewall_policy_id                = var.waf_configuration != null ? azurerm_web_application_firewall_policy.main[0].id : null
+  force_firewall_policy_association = var.waf_configuration != null
 
   gateway_ip_configuration {
     name      = "ApplicationGatewayIP"
     subnet_id = var.subnet_id
   }
 
-  autoscale_configuration {
-    min_capacity = var.autoscale.min
-    max_capacity = var.autoscale.max
+  sku {
+    name     = var.sku.name
+    tier     = var.sku.tier
+    capacity = local.enable_autoscaling ? null : var.sku.capacity
+  }
+
+  dynamic "autoscale_configuration" {
+    for_each = local.enable_autoscaling ? [0] : []
+
+    content {
+      min_capacity = var.sku.capacity
+      max_capacity = var.sku.max_capacity
+    }
+  }
+
+  ssl_policy {
+    policy_name = var.ssl_policy
+    policy_type = "Predefined"
+  }
+
+  backend_address_pool {
+    name = "Default"
   }
 
   dynamic "backend_address_pool" {
@@ -95,6 +112,7 @@ resource "azurerm_application_gateway" "main" {
     content {
       name         = backend_address_pool.value["name"]
       ip_addresses = backend_address_pool.value["ip_addresses"]
+      fqdns        = backend_address_pool.value["fqdns"]
     }
   }
 
@@ -110,6 +128,7 @@ resource "azurerm_application_gateway" "main" {
       host_name                           = backend_http_settings.value["host_name"]
       pick_host_name_from_backend_address = backend_http_settings.value["pick_host_name_from_backend_address"]
       request_timeout                     = backend_http_settings.value["request_timeout"]
+      trusted_root_certificate_names      = backend_http_settings.value["trusted_root_certificate_names"]
     }
   }
   dynamic "frontend_ip_configuration" {
@@ -117,7 +136,7 @@ resource "azurerm_application_gateway" "main" {
 
     content {
       name                          = "PrivateFrontend"
-      private_ip_address            = var.private_frontend
+      private_ip_address            = var.private_ip
       subnet_id                     = var.subnet_id
       private_ip_address_allocation = "Static"
     }
@@ -130,11 +149,22 @@ resource "azurerm_application_gateway" "main" {
       public_ip_address_id = azurerm_public_ip.main[0].id
     }
   }
+
+  # Frontend Configuration
+
   dynamic "frontend_port" {
-    for_each = var.frontend_ports
+    for_each = local.default_frontend_ports
     content {
-      name = frontend_port.value["name"]
-      port = frontend_port.value["port"]
+      name = frontend_port.key
+      port = frontend_port.value
+    }
+  }
+
+  dynamic "frontend_port" {
+    for_each = var.additional_frontend_ports
+    content {
+      name = frontend_port.key
+      port = frontend_port.value
     }
   }
 
@@ -159,6 +189,14 @@ resource "azurerm_application_gateway" "main" {
       data                = ssl_certificate.value["data"]
       password            = ssl_certificate.value["password"]
       key_vault_secret_id = ssl_certificate.value["key_vault_secret_id"]
+    }
+  }
+
+  dynamic "trusted_root_certificate" {
+    for_each = var.trusted_root_certificate
+    content {
+      name = trusted_root_certificate.value["name"]
+      data = trusted_root_certificate.value["data"]
     }
   }
 
@@ -204,8 +242,6 @@ resource "azurerm_application_gateway" "main" {
       include_query_string = redirect_configuration.value["include_query_string"]
     }
   }
-
-  tags = var.tags
 
   dynamic "identity" {
     for_each = var.identity_ids != null ? [0] : []
