@@ -10,6 +10,7 @@ locals {
     usage   = "demo"
   }
 }
+
 resource "azurerm_resource_group" "example" {
   name     = "awg-rg"
   location = local.location

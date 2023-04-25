@@ -68,6 +68,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
     file_upload_limit_in_mb     = var.waf_configuration.file_upload_limit_mb
   }
 }
+
 resource "azurerm_application_gateway" "main" {
   name                = var.name
   resource_group_name = var.resource_group_name
@@ -131,6 +132,7 @@ resource "azurerm_application_gateway" "main" {
       trusted_root_certificate_names      = backend_http_settings.value["trusted_root_certificate_names"]
     }
   }
+
   dynamic "frontend_ip_configuration" {
     for_each = var.private_ip != null ? [0] : []
 
@@ -141,6 +143,7 @@ resource "azurerm_application_gateway" "main" {
       private_ip_address_allocation = "Static"
     }
   }
+
   dynamic "frontend_ip_configuration" {
     for_each = var.create_public_ip ? [0] : []
 
@@ -217,6 +220,7 @@ resource "azurerm_application_gateway" "main" {
       }
     }
   }
+
   dynamic "request_routing_rule" {
     for_each = var.request_routing_rules
     content {
