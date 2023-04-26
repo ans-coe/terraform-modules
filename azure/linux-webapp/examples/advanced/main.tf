@@ -1,5 +1,12 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+    key_vault {
+      purge_soft_delete_on_destroy = true
+    }
+  }
 }
 
 locals {
@@ -27,19 +34,6 @@ resource "azurerm_service_plan" "webapp" {
   sku_name = "S1"
 
   os_type = "Linux"
-}
-
-resource "azurerm_storage_account" "webapp" {
-  name                = lower(replace("${local.resource_prefix}lsa", "/[-_]/", ""))
-  location            = local.location
-  resource_group_name = azurerm_resource_group.webapp.name
-  tags                = local.tags
-
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  min_tls_version = "TLS1_2"
-  account_kind    = "BlobStorage"
 }
 
 resource "azurerm_virtual_network" "webapp" {
@@ -83,8 +77,7 @@ module "webapp" {
   subnet_id = azurerm_subnet.webapp.id
 
   site_config = {
-    container_registry_use_managed_identity = true
-    health_check_path                       = "/health"
+    health_check_path = "/health"
   }
 
   cors = {
@@ -101,17 +94,11 @@ module "webapp" {
     DOCKER_REGISTRY_SERVER_URL = "https://index.docker.io/v1"
   }
 
-  log_level = "Warning"
-  log_config = {
-    detailed_error_messages = false
-    failed_request_tracing  = false
+  logs = {
+    level                   = "Verbose"
+    detailed_error_messages = true
+    failed_request_tracing  = true
     retention_in_days       = 7
-    storage_account_name    = azurerm_storage_account.webapp.name
-    storage_account_rg      = azurerm_storage_account.webapp.resource_group_name
+    retention_in_mb         = 50
   }
-
-  depends_on = [
-    # included to prevent the data source for this querying too early
-    azurerm_storage_account.webapp
-  ]
 }

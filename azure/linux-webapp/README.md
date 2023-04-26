@@ -11,7 +11,7 @@
 
 ## Usage
 
-This Terraform configuration will create a Linux web app using a container for its runtime. It is able to utilize a subnet optionally and enables the usage of identities.
+This Terraform configuration will create a Linux web app. It is able to utilize a subnet optionally and enables the usage of identities.
 
 Once deployed, management is expected to be through another medium, so changes to the application stack will be ignored.
 
@@ -22,7 +22,6 @@ Once deployed, management is expected to be through another medium, so changes t
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.0 |
-| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.7 |
 
 ## Inputs
 
@@ -45,8 +44,7 @@ Once deployed, management is expected to be through another medium, so changes t
 | <a name="input_identity_ids"></a> [identity\_ids](#input\_identity\_ids) | A list of user identity IDs to use for the app service. | `list(string)` | `[]` | no |
 | <a name="input_key_vault_identity_id"></a> [key\_vault\_identity\_id](#input\_key\_vault\_identity\_id) | The user managed identity used for key vault. | `string` | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
-| <a name="input_log_config"></a> [log\_config](#input\_log\_config) | The log configuration to use with this app service. | <pre>object({<br>    detailed_error_messages = optional(bool, false)<br>    failed_request_tracing  = optional(bool, false)<br>    retention_in_days       = optional(number, 7)<br>    storage_account_name    = optional(string)<br>    storage_account_rg      = optional(string)<br>  })</pre> | <pre>{<br>  "detailed_error_messages": false,<br>  "failed_request_tracing": false,<br>  "retention_in_days": 7<br>}</pre> | no |
-| <a name="input_log_level"></a> [log\_level](#input\_log\_level) | The log level to use with this app service. | `string` | `"Error"` | no |
+| <a name="input_logs"></a> [logs](#input\_logs) | The log configuration to use with this app service. | <pre>object({<br>    level                   = optional(string, "Warning")<br>    detailed_error_messages = optional(bool, false)<br>    failed_request_tracing  = optional(bool, false)<br>    retention_in_days       = optional(number, 7)<br>    retention_in_mb         = optional(number, 100)<br>  })</pre> | `{}` | no |
 | <a name="input_plan"></a> [plan](#input\_plan) | Object detailing the plan, if creating one with this module. | <pre>object({<br>    create         = optional(bool, true)<br>    id             = optional(string)<br>    name           = optional(string)<br>    sku_name       = optional(string, "B1")<br>    zone_balancing = optional(bool, false)<br>  })</pre> | `{}` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | `null` | no |
 | <a name="input_site_config"></a> [site\_config](#input\_site\_config) | A map with site config values. | `map(any)` | `{}` | no |
@@ -61,14 +59,14 @@ Once deployed, management is expected to be through another medium, so changes t
 
 | Name | Description |
 |------|-------------|
+| <a name="output_app_service"></a> [app\_service](#output\_app\_service) | Output containing the main app service. |
 | <a name="output_app_service_plan_id"></a> [app\_service\_plan\_id](#output\_app\_service\_plan\_id) | ID of the service plan. |
 | <a name="output_fqdn"></a> [fqdn](#output\_fqdn) | Default FQDN of the app service. |
 | <a name="output_id"></a> [id](#output\_id) | ID of the app service. |
 | <a name="output_identity"></a> [identity](#output\_identity) | Identity of the app service. |
 | <a name="output_location"></a> [location](#output\_location) | Location of the app service. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the app service. |
-| <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | Name of the resource group. |
-| <a name="output_slots"></a> [slots](#output\_slots) | Object of objects containing details for the created slots. |
+| <a name="output_slots"></a> [slots](#output\_slots) | Object containing details for the created slots. |
 
 ## Resources
 
@@ -78,13 +76,7 @@ Once deployed, management is expected to be through another medium, so changes t
 | [azurerm_linux_web_app.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_web_app) | resource |
 | [azurerm_linux_web_app_slot.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_web_app_slot) | resource |
 | [azurerm_log_analytics_workspace.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/log_analytics_workspace) | resource |
-| [azurerm_resource_group.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_service_plan.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/service_plan) | resource |
-| [azurerm_storage_account.logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
-| [azurerm_storage_container.logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container) | resource |
-| [time_rotating.logs](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/rotating) | resource |
-| [azurerm_storage_account.logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/storage_account) | data source |
-| [azurerm_storage_account_blob_container_sas.logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/storage_account_blob_container_sas) | data source |
 
 ## Modules
 
