@@ -1,12 +1,13 @@
 resource "azurerm_public_ip" "main" {
   count               = var.create_public_ip ? 1 : 0
+  
   name                = "pip-${var.name}"
   resource_group_name = var.resource_group_name
   location            = var.location
-  allocation_method   = "Static"
-  sku                 = "Standard"
-
-  tags = var.tags
+  tags                = var.tags
+  
+  allocation_method = "Static"
+  sku               = "Standard"
 }
 
 resource "azurerm_web_application_firewall_policy" "main" {
