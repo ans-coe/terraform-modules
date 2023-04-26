@@ -177,7 +177,7 @@ variable "tags" {
 }
 
 variable "probe" {
-  description = "List of Routing Rules"
+  description = "List of Probes"
   type = list(object({
     name                                      = optional(string, "Default")
     protocol                                  = optional(string, "Http")
