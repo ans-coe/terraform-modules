@@ -1,6 +1,14 @@
 # Terraform Modules
 
-This repository contains a number of Terraform modules for different platforms. At their current scope they are currently being held in a monorepo however any larger modules will utilize a submodule to point to a particular module as a record.
+This repository contains a number of Terraform modules for different platforms. At their current scope they are currently being held in a monorepo however any mature modules will utilize a submodule to point to a particular module as a record.
+
+These modules should be suitable to use in production but we anticipate that there will be dramatic shifts in functionality made to these along the way. Therefore it's highly recommended that if you're planning to use these modules, that you specifically refer to the commit. EG:
+
+```hcl
+module "example" {
+  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/windows-virtual-machine/?ref=745f0256ad0499aefe97f7b2a8b7e6027ec92e88"
+}
+```
 
 ## Usage
 
