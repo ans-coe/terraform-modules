@@ -27,6 +27,7 @@ Below is a list of available modules linking directly to the root README.md.
 |Module|Type|
 |-|-|
 |[_template](./_template/README.md)|repo template|
+|[application-gateway](./azure/application-gateway/README.md)|azure|
 |[bastion](./azure/bastion/README.md)|azure|
 |[container-registry](./azure/container-registry/README.md)|azure|
 |[kubernetes-service](./azure/kubernetes-service/README.md)|azure|
@@ -37,7 +38,7 @@ Below is a list of available modules linking directly to the root README.md.
 |[policy-baseline](./azure/policy-baseline/README.md)|azure|
 |[power-management](./azure/power-management/README.md)|azure|
 |[terraform-ops](./azure/terraform-ops/README.md)|azure|
-|[virtual-network](./azure/virtual-network/README.md)|azure|
+|[virtual-network](https://github.com/ans-coe/terraform-azurerm-virtual-network/blob/main/README.md)|azure|
 |[windows-virtual-machine](./azure/windows-virtual-machine/README.md)|azure|
 |[project](./azuredevops/project/README.md)|azuredevops|
 |[repository](./github/repository/README.md)|github|
