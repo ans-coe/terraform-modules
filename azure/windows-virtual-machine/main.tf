@@ -39,7 +39,7 @@ resource "azurerm_marketplace_agreement" "main" {
 
   publisher = var.source_image_reference.publisher
   offer     = var.source_image_reference.offer
-  plan      = var.source_image_reference.plan
+  plan      = var.source_image_reference.sku
 }
 
 resource "azurerm_windows_virtual_machine" "main" {
