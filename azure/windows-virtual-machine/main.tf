@@ -34,6 +34,14 @@ resource "azurerm_network_interface_security_group_association" "main" {
   network_security_group_id = var.network_security_group_id
 }
 
+resource "azurerm_marketplace_agreement" "main" {
+  for_each = var.accept_terms ? [0] : []
+
+  publisher = var.source_image_reference.publisher
+  offer     = var.source_image_reference.offer
+  plan      = var.source_image_reference.plan
+}
+
 resource "azurerm_windows_virtual_machine" "main" {
   name                = var.name
   location            = var.location
