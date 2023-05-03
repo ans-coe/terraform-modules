@@ -1,0 +1,3 @@
+[submodule "azure/virtual-network"]
+	path = azure/virtual-network
+	url = git@github.com:ans-coe/terraform-azurerm-virtual-network.git
