@@ -35,7 +35,7 @@ resource "azurerm_network_interface_security_group_association" "main" {
 }
 
 resource "azurerm_marketplace_agreement" "main" {
-  for_each = var.accept_terms ? [0] : []
+  count = var.accept_terms ? 1 : 0
 
   publisher = var.source_image_reference.publisher
   offer     = var.source_image_reference.offer
