@@ -100,6 +100,9 @@ resource "azurerm_windows_virtual_machine" "main" {
       admin_username, admin_password
     ]
   }
+
+  // Depends on is required here because the marketplace image needs to be agreed before the VM can be created
+  depends_on = [azurerm_marketplace_agreement.main]
 }
 
 resource "azurerm_virtual_machine_extension" "main_azmonitor" {
