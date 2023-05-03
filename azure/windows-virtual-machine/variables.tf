@@ -151,6 +151,12 @@ variable "source_image_plan_required" {
   default     = false
 }
 
+variable "accept_terms" {
+  description = "Enable if terms are needed to be accepted"
+  type        = bool
+  default     = false
+}
+
 variable "source_image_reference" {
   description = "Source image reference to use when creating the virtual machine."
   type = object({

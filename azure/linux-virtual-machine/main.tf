@@ -34,6 +34,14 @@ resource "azurerm_network_interface_security_group_association" "main" {
   network_security_group_id = var.network_security_group_id
 }
 
+resource "azurerm_marketplace_agreement" "main" {
+  count = var.accept_terms ? 1 : 0
+
+  publisher = var.source_image_reference.publisher
+  offer     = var.source_image_reference.offer
+  plan      = var.source_image_reference.sku
+}
+
 resource "azurerm_linux_virtual_machine" "main" {
   name                = var.name
   location            = var.location
@@ -96,6 +104,8 @@ resource "azurerm_linux_virtual_machine" "main" {
       admin_username, admin_ssh_key
     ]
   }
+
+  depends_on = [azurerm_marketplace_agreement.main]
 }
 
 resource "azurerm_virtual_machine_extension" "main_azmonitor" {
