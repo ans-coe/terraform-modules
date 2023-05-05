@@ -28,19 +28,19 @@ resource "azurerm_network_interface" "main" {
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "main" {
-  for_each = var.lb_backend_address_pool_ids
+  count = length(var.lb_backend_address_pool_ids)
 
   ip_configuration_name   = one(azurerm_network_interface.main.ip_configuration[*].name)
   network_interface_id    = azurerm_network_interface.main.id
-  backend_address_pool_id = each.value
+  backend_address_pool_id = var.lb_backend_address_pool_ids[count.index]
 }
 
 resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "main" {
-  for_each = var.agw_backend_address_pool_ids
+  count = length(var.agw_backend_address_pool_ids)
 
   ip_configuration_name   = one(azurerm_network_interface.main.ip_configuration[*].name)
   network_interface_id    = azurerm_network_interface.main.id
-  backend_address_pool_id = each.value
+  backend_address_pool_id = var.agw_backend_address_pool_ids[count.index]
 }
 
 resource "azurerm_network_interface_security_group_association" "main" {

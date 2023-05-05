@@ -82,13 +82,13 @@ variable "public_ip_enabled" {
 
 variable "lb_backend_address_pool_ids" {
   description = "IDs of load balancer backends to assign this virtual machine's primary NIC to."
-  type        = set(string)
+  type        = list(string)
   default     = []
 }
 
 variable "agw_backend_address_pool_ids" {
   description = "IDs of application gateways backends to assign this virtual machine's primary NIC to."
-  type        = set(string)
+  type        = list(string)
   default     = []
 }
 
