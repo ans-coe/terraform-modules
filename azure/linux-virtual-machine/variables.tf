@@ -80,6 +80,18 @@ variable "public_ip_enabled" {
   default     = false
 }
 
+variable "lb_backend_address_pool_ids" {
+  description = "IDs of load balancer backends to assign this virtual machine's primary NIC to."
+  type        = list(string)
+  default     = []
+}
+
+variable "agw_backend_address_pool_ids" {
+  description = "IDs of application gateways backends to assign this virtual machine's primary NIC to."
+  type        = list(string)
+  default     = []
+}
+
 variable "network_security_group_enabled" {
   description = "Assign a network security group."
   type        = bool
