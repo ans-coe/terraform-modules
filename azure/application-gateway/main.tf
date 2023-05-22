@@ -1,7 +1,7 @@
 resource "azurerm_public_ip" "main" {
   count               = var.create_public_ip ? 1 : 0
   
-  name                = "pip-${var.name}"
+  name                = var.pip_name != null ? var.pip_name : "pip-${var.name}"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags

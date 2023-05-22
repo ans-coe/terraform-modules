@@ -65,6 +65,12 @@ variable "private_ip" {
   default     = null
 }
 
+variable "pip_name" {
+  description = "Override The Public IP Name"
+  type = string
+  default = null
+}
+
 variable "create_public_ip" {
   description = "Set this bool to create a public IP address automatically"
   type        = bool
