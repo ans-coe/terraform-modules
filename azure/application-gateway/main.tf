@@ -124,7 +124,7 @@ resource "azurerm_application_gateway" "main" {
       name                                = backend_http_settings.value["name"]
       port                                = backend_http_settings.value["port"]
       protocol                            = backend_http_settings.value["protocol"]
-      cookie_based_affinity               = backend_http_settings.value["cookie_based_affinity"] ? "Enabled" : null
+      cookie_based_affinity               = backend_http_settings.value["cookie_based_affinity"] ? "Enabled" : "Disabled"
       affinity_cookie_name                = backend_http_settings.value["cookie_based_affinity"] ? backend_http_settings.value["affinity_cookie_name"] : null
       probe_name                          = backend_http_settings.value["probe_name"]
       host_name                           = backend_http_settings.value["host_name"]
