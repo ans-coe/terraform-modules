@@ -29,3 +29,7 @@ No outputs.
 |------|--------|---------|
 | <a name="module_bastion"></a> [bastion](#module\_bastion) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

@@ -63,3 +63,7 @@ This Terraform configuration will create automation resources to assist with pow
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

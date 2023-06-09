@@ -30,3 +30,7 @@ No outputs.
 |------|--------|---------|
 | <a name="module_vm"></a> [vm](#module\_vm) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

@@ -103,3 +103,7 @@ Examples can be found under the [examples](./examples/) directory.
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

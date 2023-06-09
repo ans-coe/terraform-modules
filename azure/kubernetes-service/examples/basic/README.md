@@ -25,3 +25,7 @@ No resources.
 |------|--------|---------|
 | <a name="module_aks"></a> [aks](#module\_aks) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

@@ -103,3 +103,7 @@ When using a marketplace image, ensure that you accept the terms using the cli t
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

@@ -28,3 +28,7 @@ No outputs.
 |------|--------|---------|
 | <a name="module_terraform_ops"></a> [terraform\_ops](#module\_terraform\_ops) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

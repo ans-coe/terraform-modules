@@ -27,3 +27,7 @@ No outputs.
 |------|--------|---------|
 | <a name="module_nsg"></a> [nsg](#module\_nsg) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |
