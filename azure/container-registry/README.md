@@ -79,3 +79,7 @@ This module will deploy an Azure Container Registry with access to options relat
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

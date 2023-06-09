@@ -25,3 +25,7 @@ No resources.
 |------|--------|---------|
 | <a name="module_webapp"></a> [webapp](#module\_webapp) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

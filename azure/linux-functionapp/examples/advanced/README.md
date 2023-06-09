@@ -30,3 +30,7 @@ No outputs.
 |------|--------|---------|
 | <a name="module_functionapp"></a> [functionapp](#module\_functionapp) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

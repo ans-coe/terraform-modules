@@ -59,3 +59,7 @@ This module deploys a Bastion service to an existing Azure Bastion subnet with N
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

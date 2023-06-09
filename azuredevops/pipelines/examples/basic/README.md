@@ -28,3 +28,7 @@ No resources.
 |------|--------|---------|
 | <a name="module_ado-pipelines"></a> [ado-pipelines](#module\_ado-pipelines) | ../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

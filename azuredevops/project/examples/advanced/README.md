@@ -31,3 +31,7 @@ No inputs.
 |------|--------|---------|
 | <a name="module_project"></a> [project](#module\_project) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

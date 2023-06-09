@@ -43,3 +43,7 @@ No outputs.
 |------|--------|---------|
 | <a name="module_baseline_policies"></a> [baseline\_policies](#module\_baseline\_policies) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |
