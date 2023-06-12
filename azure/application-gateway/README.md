@@ -73,3 +73,7 @@ To set auto-scalling, set sku.max_capacity to a value greater than sku.capacity.
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

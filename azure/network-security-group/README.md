@@ -58,3 +58,7 @@ This module creates a network security group with a separate resource and variab
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

@@ -83,3 +83,7 @@ This module is used to deploy an Azure DevOps project with repositories already 
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

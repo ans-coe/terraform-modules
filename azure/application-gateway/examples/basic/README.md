@@ -29,3 +29,7 @@ No outputs.
 |------|--------|---------|
 | <a name="module_example"></a> [example](#module\_example) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

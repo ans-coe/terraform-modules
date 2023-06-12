@@ -29,3 +29,7 @@ No outputs.
 |------|--------|---------|
 | <a name="module_power_management"></a> [power\_management](#module\_power\_management) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

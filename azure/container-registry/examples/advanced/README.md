@@ -31,3 +31,7 @@ No outputs.
 |------|--------|---------|
 | <a name="module_acr"></a> [acr](#module\_acr) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

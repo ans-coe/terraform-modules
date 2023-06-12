@@ -42,3 +42,7 @@ Below is a list of available modules linking directly to the root README.md.
 |[windows-virtual-machine](./azure/windows-virtual-machine/README.md)|azure|
 |[project](./azuredevops/project/README.md)|azuredevops|
 |[repository](./github/repository/README.md)|github|
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |
