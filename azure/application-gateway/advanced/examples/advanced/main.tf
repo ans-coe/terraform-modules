@@ -98,7 +98,7 @@ module "example" {
       ssl_certificate_name = "example_cert"
       routing = {
         https_path_routing_rule = {
-          priority = 200
+          priority                   = 200
           backend_address_pool_name  = "default_backend"
           backend_http_settings_name = "DefaultSettings"
           path_rules = {
