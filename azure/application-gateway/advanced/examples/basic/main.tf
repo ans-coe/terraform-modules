@@ -37,24 +37,20 @@ module "example" {
   source = "../../"
 
   name = "agw-example"
-
   resource_group_name = azurerm_resource_group.example.name
   location            = local.location
-  subnet_id           = azurerm_subnet.example.id
-  backend_address_pools = [{
-    name         = "BackendPool"
-    ip_addresses = ["1.1.1.1", "1.0.0.1"]
-  }]
-  request_routing_rules = [{
-    http_listener_name        = "Default"
-    rule_type                 = "Basic"
-    name                      = "HTTPRequestRoutingRule"
-    backend_address_pool_name = "BackendPool"
-  }]
-
-  probe = [{
-    host = "example.com"
-  }]
-
   tags = local.tags
+  subnet_id           = azurerm_subnet.example.id
+
+  backend_address_pools = {
+    DefaultBackend = {
+      ip_addresses = ["1.1.1.1", "1.0.0.1"]
+    }
+  }
+
+  probe = {
+    DefaultProbe = {
+      host = "example.com"
+    }
+  }
 }

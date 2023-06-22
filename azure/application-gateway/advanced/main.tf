@@ -1,11 +1,11 @@
 resource "azurerm_public_ip" "main" {
-  count               = var.create_public_ip ? 1 : 0
-  
+  count = var.create_public_ip ? 1 : 0
+
   name                = var.pip_name != null ? var.pip_name : "pip-${var.name}"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
-  
+
   allocation_method = "Static"
   sku               = "Standard"
 }
@@ -21,7 +21,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
   dynamic "custom_rules" {
     for_each = var.waf_configuration.custom_rules
     content {
-      name      = custom_rules.value["name"]
+      name      = custom_rules.key
       priority  = custom_rules.value["priority"]
       rule_type = "MatchRule"
       action    = custom_rules.value["action"]
@@ -112,7 +112,7 @@ resource "azurerm_application_gateway" "main" {
   dynamic "backend_address_pool" {
     for_each = var.backend_address_pools
     content {
-      name         = backend_address_pool.value["name"]
+      name         = backend_address_pool.key
       ip_addresses = backend_address_pool.value["ip_addresses"]
       fqdns        = backend_address_pool.value["fqdns"]
     }
@@ -121,7 +121,7 @@ resource "azurerm_application_gateway" "main" {
   dynamic "backend_http_settings" {
     for_each = var.backend_http_settings
     content {
-      name                                = backend_http_settings.value["name"]
+      name                                = backend_http_settings.key
       port                                = backend_http_settings.value["port"]
       protocol                            = backend_http_settings.value["protocol"]
       cookie_based_affinity               = backend_http_settings.value["cookie_based_affinity"] ? "Enabled" : "Disabled"
@@ -175,13 +175,13 @@ resource "azurerm_application_gateway" "main" {
   dynamic "http_listener" {
     for_each = var.http_listeners
     content {
-      name                           = http_listener.value["name"]
+      name                           = http_listener.key
       frontend_ip_configuration_name = http_listener.value["frontend_ip_configuration_name"]
       frontend_port_name             = http_listener.value["frontend_port_name"]
       protocol                       = http_listener.value["protocol"]
       require_sni                    = http_listener.value["protocol"] == "Https" ? true : false
-      host_name                      = http_listener.value["host_name"]
-      host_names                     = http_listener.value["host_names"]
+      host_name                      = length(http_listener.value["host_names"]) == 1 ? one(http_listener.value["host_names"]) : null
+      host_names                     = length(http_listener.value["host_names"]) > 1 ? http_listener.value["host_names"] : null
       ssl_certificate_name           = http_listener.value["ssl_certificate_name"]
     }
   }
@@ -189,7 +189,7 @@ resource "azurerm_application_gateway" "main" {
   dynamic "ssl_certificate" {
     for_each = var.ssl_certificates
     content {
-      name                = ssl_certificate.value["name"]
+      name                = ssl_certificate.key
       data                = ssl_certificate.value["data"]
       password            = ssl_certificate.value["password"]
       key_vault_secret_id = ssl_certificate.value["key_vault_secret_id"]
@@ -199,21 +199,26 @@ resource "azurerm_application_gateway" "main" {
   dynamic "trusted_root_certificate" {
     for_each = var.trusted_root_certificate
     content {
-      name = trusted_root_certificate.value["name"]
+      name = trusted_root_certificate.key
       data = trusted_root_certificate.value["data"]
     }
   }
 
   dynamic "url_path_map" {
-    for_each = var.url_path_maps
+    // we create a list of maps that are then unlisted and merged but only if path_rules is set
+    for_each = merge([
+      for listener_name, routing_map in {
+      for k, v in var.http_listeners : k => v.routing }
+      : { for k, v in routing_map
+    : k => merge(v, { listener_name = listener_name }) if v.path_rules != null }]...)
     content {
-      name                               = url_path_map.value["name"]
-      default_backend_address_pool_name  = url_path_map.value["default_backend_address_pool_name"]
-      default_backend_http_settings_name = url_path_map.value["default_backend_http_settings_name"]
+      name                               = "${url_path_map.value.listener_name}_${url_path_map.key}_urlpathmap"
+      default_backend_address_pool_name  = url_path_map.value["backend_address_pool_name"]
+      default_backend_http_settings_name = url_path_map.value["backend_http_settings_name"]
       dynamic "path_rule" {
-        for_each = url_path_map.value["path_rule"]
+        for_each = url_path_map.value["path_rules"]
         content {
-          name                       = path_rule.value["name"]
+          name                       = path_rule.key
           paths                      = path_rule.value["paths"]
           backend_address_pool_name  = path_rule.value["backend_address_pool_name"]
           backend_http_settings_name = path_rule.value["backend_http_settings_name"]
@@ -223,28 +228,40 @@ resource "azurerm_application_gateway" "main" {
   }
 
   dynamic "request_routing_rule" {
-    for_each = var.request_routing_rules
+    // we create a list of maps that are then unlisted and merged.
+    for_each = merge([
+      for listener_name, routing_map in {
+      for k, v in var.http_listeners : k => v.routing }
+      : { for k, v in routing_map
+    : k => merge(v, { listener_name = listener_name }) }]...)
+
     content {
-      name                        = request_routing_rule.value["name"]
-      rule_type                   = request_routing_rule.value["rule_type"]
-      http_listener_name          = request_routing_rule.value["http_listener_name"]
-      backend_address_pool_name   = request_routing_rule.value["redirect_configuration_name"] != null ? null : request_routing_rule.value["backend_address_pool_name"]
-      backend_http_settings_name  = request_routing_rule.value["redirect_configuration_name"] != null ? null : request_routing_rule.value["backend_http_settings_name"]
-      url_path_map_name           = request_routing_rule.value["url_path_map_name"]
+      name                        = request_routing_rule.key
+      rule_type                   = request_routing_rule.value["path_rules"] != null ? "PathBasedRouting" : "Basic"
+      http_listener_name          = request_routing_rule.value["listener_name"]
+      backend_address_pool_name   = request_routing_rule.value["path_rules"] != null ? null : request_routing_rule.value["backend_address_pool_name"]
+      backend_http_settings_name  = request_routing_rule.value["path_rules"] != null ? null : request_routing_rule.value["backend_http_settings_name"]
+      url_path_map_name           = request_routing_rule.value["path_rules"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_urlpathmap" : null
       priority                    = request_routing_rule.value["priority"]
-      redirect_configuration_name = request_routing_rule.value["redirect_configuration_name"]
+      redirect_configuration_name = request_routing_rule.value["redirect_configuration"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_redirectconfiguration" : null
     }
   }
 
   dynamic "redirect_configuration" {
-    for_each = var.redirect_configurations
+    // we create a list of maps that are then unlisted and merged but only if redirect_configuration is set
+    for_each = merge([
+      for listener_name, routing_map in {
+      for k, v in var.http_listeners : k => v.routing }
+      : { for k, v in routing_map
+    : k => merge(v, { listener_name = listener_name }) if v.redirect_configuration != null }]...)
+
     content {
-      name                 = redirect_configuration.value["name"]
-      redirect_type        = redirect_configuration.value["redirect_type"]
-      target_listener_name = redirect_configuration.value["target_listener_name"]
-      target_url           = redirect_configuration.value["target_url"]
-      include_path         = redirect_configuration.value["include_path"]
-      include_query_string = redirect_configuration.value["include_query_string"]
+      name                 = "${redirect_configuration.value.listener_name}_${redirect_configuration.key}_redirectconfiguration"
+      redirect_type        = redirect_configuration.value.redirect_configuration["redirect_type"]
+      target_listener_name = redirect_configuration.value.redirect_configuration["target_listener_name"]
+      target_url           = redirect_configuration.value.redirect_configuration["target_url"]
+      include_path         = redirect_configuration.value.redirect_configuration["include_path"]
+      include_query_string = redirect_configuration.value.redirect_configuration["include_query_string"]
     }
   }
 
@@ -259,7 +276,7 @@ resource "azurerm_application_gateway" "main" {
   dynamic "probe" {
     for_each = var.probe
     content {
-      name                                      = probe.value["name"]
+      name                                      = probe.key
       protocol                                  = probe.value["protocol"]
       interval                                  = probe.value["interval"]
       path                                      = probe.value["path"]
