@@ -54,6 +54,12 @@ variable "private_ip" {
   default     = null
 }
 
+variable "create_public_ip" {
+  description = "Set this bool to create a public IP address automatically"
+  type        = bool
+  default     = true
+}
+
 variable "pip_name" {
   description = "Override The Public IP Name"
   type        = string
@@ -70,12 +76,6 @@ variable "enable_http2" {
   description = "Enables HTTP2 on the application gateway."
   type        = bool
   default     = null
-}
-
-variable "create_public_ip" {
-  description = "Set this bool to create a public IP address automatically"
-  type        = bool
-  default     = true
 }
 
 variable "ssl_certificates" {
@@ -103,7 +103,7 @@ variable "http_listeners" {
   type = map(object({
     frontend_ip_configuration_name = optional(string, "PublicFrontend")
     frontend_port_name             = optional(string, "Http")
-    protocol                       = optional(string, "Http")
+    https_enabled                  = optional(bool, false)
     host_names                     = optional(list(string), [])
     ssl_certificate_name           = optional(string)
     routing = optional(map(object({
@@ -120,9 +120,9 @@ variable "http_listeners" {
         include_path         = optional(bool, true)
         include_query_string = optional(bool, true)
       }))
-      backend_address_pool_name   = optional(string)
-      backend_http_settings_name  = optional(string, "DefaultSettings")
-      priority                    = optional(number, 100)
+      backend_address_pool_name  = optional(string)
+      backend_http_settings_name = optional(string, "DefaultSettings")
+      priority                   = optional(number, 100)
       })),
       {
         DefaultRoutingRule = {
@@ -140,7 +140,7 @@ variable "http_listeners" {
       for k, r in var.http_listeners
       : alltrue([
         for k1, v in r.routing
-        : v.redirect_configuration == null ? true : alltrue(v.path_rules == null, v.backend_address_pool_name == null)
+        : v.redirect_configuration == null ? true : alltrue([v.path_rules == null, v.backend_address_pool_name == null])
       ])
     ])
     error_message = "If redirect_configuration is set, path_rules and backend_address_pool_name must be not set."

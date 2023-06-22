@@ -178,8 +178,8 @@ resource "azurerm_application_gateway" "main" {
       name                           = http_listener.key
       frontend_ip_configuration_name = http_listener.value["frontend_ip_configuration_name"]
       frontend_port_name             = http_listener.value["frontend_port_name"]
-      protocol                       = http_listener.value["protocol"]
-      require_sni                    = http_listener.value["protocol"] == "Https" ? true : false
+      protocol                       = http_listener.value["https_enabled"] ? "Https" : "Http"
+      require_sni                    = http_listener.value["https_enabled"]
       host_name                      = length(http_listener.value["host_names"]) == 1 ? one(http_listener.value["host_names"]) : null
       host_names                     = length(http_listener.value["host_names"]) > 1 ? http_listener.value["host_names"] : null
       ssl_certificate_name           = http_listener.value["ssl_certificate_name"]
@@ -239,8 +239,8 @@ resource "azurerm_application_gateway" "main" {
       name                        = request_routing_rule.key
       rule_type                   = request_routing_rule.value["path_rules"] != null ? "PathBasedRouting" : "Basic"
       http_listener_name          = request_routing_rule.value["listener_name"]
-      backend_address_pool_name   = request_routing_rule.value["path_rules"] != null ? null : request_routing_rule.value["backend_address_pool_name"]
-      backend_http_settings_name  = request_routing_rule.value["path_rules"] != null ? null : request_routing_rule.value["backend_http_settings_name"]
+      backend_address_pool_name   = request_routing_rule.value["path_rules"] != null ? null : request_routing_rule.value["redirect_configuration"] != null ? null : request_routing_rule.value["backend_address_pool_name"]
+      backend_http_settings_name  = request_routing_rule.value["path_rules"] != null ? null : request_routing_rule.value["redirect_configuration"] != null ? null : request_routing_rule.value["backend_http_settings_name"]
       url_path_map_name           = request_routing_rule.value["path_rules"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_urlpathmap" : null
       priority                    = request_routing_rule.value["priority"]
       redirect_configuration_name = request_routing_rule.value["redirect_configuration"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_redirectconfiguration" : null
