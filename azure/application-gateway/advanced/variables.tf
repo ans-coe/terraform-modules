@@ -38,6 +38,10 @@ variable "sku" {
     name = "Standard_v2"
     tier = "Standard_v2"
   }
+  validation {
+    condition     = var.sku.max_capacity >= var.sku.capacity
+    error_message = "Max capacity must be greater than or equal to capacity"
+  }
 }
 
 variable "identity_ids" {
