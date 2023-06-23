@@ -18,7 +18,7 @@ As this module can be complex notes have been listed below to aid with its usage
   - The frontend ports "Http" and "Https" are provided by default, and used as defaults on frontends.
   - A selfsigned certificate is created as part of the AGW - this is there simply to enable creation of HTTPS endpoints and should be overridden with the `ssl_certificate_name` value and a provided `certificates` keyvault cert.
   - The backend address pool "default" is used if no other address pool name is provided.
-  - Default WAF policy must be disabled explicitly with `default_waf_policy = { enabled = false }` if setting `firewall_policy_id` as `count` is used which prevents `firewall_policy_id` being used in the condition
+  - Default WAF policy must be disabled explicitly with `default_waf_policy = { enabled = false }` if `firewall_policy_id` is set as `count` which prevents `firewall_policy_id` being used in the condition
 
 
 <!-- BEGIN_TF_DOCS -->
