@@ -140,6 +140,16 @@ variable "http_listeners" {
 
   ## Routing Validation Rules
   validation {
+    condition = length(flatten([
+      for k, r in var.http_listeners : [
+        for k1, v in r.routing : v.priority
+        ]])) == length(distinct(flatten([
+        for k, r in var.http_listeners : [
+          for k1, v in r.routing : v.priority
+    ]])))
+    error_message = "Each routing rule must have a unique priority."
+  }
+  validation {
     condition = alltrue([
       for k, r in var.http_listeners
       : alltrue([
