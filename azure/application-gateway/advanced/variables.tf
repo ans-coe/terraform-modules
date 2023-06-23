@@ -147,7 +147,7 @@ variable "http_listeners" {
         for k, r in var.http_listeners : [
           for k1, v in r.routing : v.priority
     ]])))
-    error_message = "Each routing rule must have a unique priority."
+    error_message = "Every routing rule across all listeners must have a unique priority."
   }
   validation {
     condition = alltrue([
