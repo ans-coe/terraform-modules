@@ -105,10 +105,6 @@ resource "azurerm_application_gateway" "main" {
     policy_type = "Predefined"
   }
 
-  backend_address_pool {
-    name = "Default"
-  }
-
   dynamic "backend_address_pool" {
     for_each = var.backend_address_pools
     content {
@@ -123,7 +119,7 @@ resource "azurerm_application_gateway" "main" {
     content {
       name                                = backend_http_settings.key
       port                                = backend_http_settings.value["port"]
-      protocol                            = backend_http_settings.value["protocol"]
+      protocol                            = backend_http_settings.value["https_enabled"] ? "Https" : "Http"
       cookie_based_affinity               = backend_http_settings.value["cookie_based_affinity"] ? "Enabled" : "Disabled"
       affinity_cookie_name                = backend_http_settings.value["cookie_based_affinity"] ? backend_http_settings.value["affinity_cookie_name"] : null
       probe_name                          = backend_http_settings.value["probe_name"]
@@ -138,7 +134,7 @@ resource "azurerm_application_gateway" "main" {
     for_each = var.private_ip != null ? [0] : []
 
     content {
-      name                          = "PrivateFrontend"
+      name                          = "private_frontend"
       private_ip_address            = var.private_ip
       subnet_id                     = var.subnet_id
       private_ip_address_allocation = "Static"
@@ -149,7 +145,7 @@ resource "azurerm_application_gateway" "main" {
     for_each = var.create_public_ip ? [0] : []
 
     content {
-      name                 = "PublicFrontend"
+      name                 = "public_frontend"
       public_ip_address_id = azurerm_public_ip.main[0].id
     }
   }
@@ -277,7 +273,7 @@ resource "azurerm_application_gateway" "main" {
     for_each = var.probe
     content {
       name                                      = probe.key
-      protocol                                  = probe.value["protocol"]
+      protocol                                  = probe.value["https_enabled"] ? "Https" : "Http"
       interval                                  = probe.value["interval"]
       path                                      = probe.value["path"]
       host                                      = probe.value["host"]

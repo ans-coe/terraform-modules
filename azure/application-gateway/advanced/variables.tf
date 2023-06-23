@@ -101,7 +101,7 @@ variable "ssl_policy" {
 variable "http_listeners" {
   description = "Map of HTTP Listeners"
   type = map(object({
-    frontend_ip_configuration_name = optional(string, "PublicFrontend")
+    frontend_ip_configuration_name = optional(string, "public_frontend")
     frontend_port_name             = optional(string, "Http")
     https_enabled                  = optional(bool, false)
     host_names                     = optional(list(string), [])
@@ -111,7 +111,7 @@ variable "http_listeners" {
       path_rules = optional(map(object({
         paths                      = list(string)
         backend_address_pool_name  = string
-        backend_http_settings_name = optional(string, "DefaultSettings")
+        backend_http_settings_name = optional(string, "default_settings")
       })))
       redirect_configuration = optional(object({
         redirect_type        = optional(string, "Permanent")
@@ -121,17 +121,17 @@ variable "http_listeners" {
         include_query_string = optional(bool, true)
       }))
       backend_address_pool_name  = optional(string)
-      backend_http_settings_name = optional(string, "DefaultSettings")
+      backend_http_settings_name = optional(string, "default_settings")
       priority                   = optional(number, 100)
       })),
       {
-        DefaultRoutingRule = {
-          backend_address_pool_name = "DefaultBackend"
+        default_routing_rule = {
+          backend_address_pool_name = "default_backend"
         }
     })
   }))
   default = {
-    DefaultListener = {}
+    default_listener = {}
   }
 
   ## Routing Validation Rules
@@ -191,17 +191,17 @@ variable "backend_http_settings" {
   description = "Map of Backend HTTP Settings"
   type = map(object({
     port                                = optional(number, 80)
-    protocol                            = optional(string, "Http")
+    https_enabled                       = optional(bool, false)
     cookie_based_affinity               = optional(bool, true)
     affinity_cookie_name                = optional(string, "ApplicationGatewayAffinity")
-    probe_name                          = optional(string, "DefaultProbe")
+    probe_name                          = optional(string, "default_probe")
     host_name                           = optional(string)
     pick_host_name_from_backend_address = optional(bool, true)
     request_timeout                     = optional(number, 30)
     trusted_root_certificate_names      = optional(list(string))
   }))
   default = {
-    DefaultSettings = {}
+    default_settings = {}
   }
 }
 
@@ -214,7 +214,7 @@ variable "trusted_root_certificate" {
 variable "probe" {
   description = "Map of Probes"
   type = map(object({
-    protocol                                  = optional(string, "Http")
+    https_enabled                             = optional(bool, false)
     interval                                  = optional(number, 30)
     path                                      = optional(string, "/")
     timeout                                   = optional(number, 30)
@@ -232,7 +232,7 @@ variable "probe" {
     }])
   }))
   default = {
-    DefaultProbe = {}
+    default_probe = {}
   }
 }
 

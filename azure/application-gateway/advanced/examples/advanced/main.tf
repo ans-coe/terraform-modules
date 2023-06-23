@@ -1,5 +1,9 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 locals {
@@ -100,7 +104,7 @@ module "example" {
         https_path_routing_rule = {
           priority                   = 200
           backend_address_pool_name  = "default_backend"
-          backend_http_settings_name = "DefaultSettings"
+          backend_http_settings_name = "default_settings"
           path_rules = {
             example_path = {
               paths                     = ["/path", "/another-path"]
@@ -120,7 +124,7 @@ module "example" {
   }
 
   probe = {
-    DefaultProbe = {
+    default_probe = {
       host = "example.com"
     }
   }

@@ -1,5 +1,9 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 locals {
@@ -42,13 +46,13 @@ module "example" {
   subnet_id           = azurerm_subnet.example.id
 
   backend_address_pools = {
-    DefaultBackend = {
+    default_backend = {
       ip_addresses = ["1.1.1.1", "1.0.0.1"]
     }
   }
 
   probe = {
-    DefaultProbe = {
+    default_probe = {
       host = "example.com"
     }
   }
