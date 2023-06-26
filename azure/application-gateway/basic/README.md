@@ -79,3 +79,7 @@ As this module can be complex notes have been listed below to aid with its usage
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |
