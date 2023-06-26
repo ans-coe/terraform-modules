@@ -1,9 +1,12 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 locals {
-  location = "uksouth"
   tags = {
     module  = "application-gateway"
     example = "basic"
@@ -13,13 +16,13 @@ locals {
 
 resource "azurerm_resource_group" "example" {
   name     = "awg-rg"
-  location = local.location
+  location = "uksouth"
 }
 
 resource "azurerm_virtual_network" "example" {
   name                = "vnet"
   resource_group_name = azurerm_resource_group.example.name
-  location            = local.location
+  location            = azurerm_resource_group.example.location
   tags                = local.tags
 
   address_space = ["10.0.0.0/24"]
@@ -36,25 +39,21 @@ resource "azurerm_subnet" "example" {
 module "example" {
   source = "../../"
 
-  name = "agw-example"
-
+  name                = "agw-example"
   resource_group_name = azurerm_resource_group.example.name
-  location            = local.location
+  location            = azurerm_resource_group.example.location
+  tags                = local.tags
   subnet_id           = azurerm_subnet.example.id
-  backend_address_pools = [{
-    name         = "BackendPool"
-    ip_addresses = ["1.1.1.1", "1.0.0.1"]
-  }]
-  request_routing_rules = [{
-    http_listener_name        = "Default"
-    rule_type                 = "Basic"
-    name                      = "HTTPRequestRoutingRule"
-    backend_address_pool_name = "BackendPool"
-  }]
 
-  probe = [{
-    host = "example.com"
-  }]
+  backend_address_pools = {
+    default_backend = {
+      ip_addresses = ["1.1.1.1", "1.0.0.1"]
+    }
+  }
 
-  tags = local.tags
+  probe = {
+    default_probe = {
+      host = "example.com"
+    }
+  }
 }
