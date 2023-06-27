@@ -185,10 +185,16 @@ resource "azurerm_application_gateway" "main" {
   dynamic "ssl_certificate" {
     for_each = var.ssl_certificates
     content {
-      name                = ssl_certificate.key
-      data                = ssl_certificate.value["data"]
-      password            = ssl_certificate.value["password"]
-      key_vault_secret_id = ssl_certificate.value["key_vault_secret_id"]
+      name = ssl_certificate.key
+      // For the below, if we have a condition where there is no automatically generated keyvault certificate and no user defined certificate, then we want to fall back to a regular file
+      data     = alltrue([!local.use_keyvault, ssl_certificate.value["data"] == null, ssl_certificate.value["key_vault_secret_id"] == null]) ? filebase64("files/selfsigned.pfx") : ssl_certificate.value["data"]
+      password = alltrue([!local.use_keyvault, ssl_certificate.value["data"] == null, ssl_certificate.value["key_vault_secret_id"] == null]) ? "default" : ssl_certificate.value["password"]
+      // If key_vault_secret_id isn't defined, then use the secretid of the generated keyvault instead
+      key_vault_secret_id = alltrue([
+        ssl_certificate.value["key_vault_secret_id"] == null,
+        ssl_certificate.value["data"] == null,
+        ssl_certificate.value["password"] == null
+      ]) ? azurerm_key_vault_certificate.main[ssl_certificate.key].secret_id : ssl_certificate.value["key_vault_secret_id"]
     }
   }
 
@@ -262,10 +268,10 @@ resource "azurerm_application_gateway" "main" {
   }
 
   dynamic "identity" {
-    for_each = var.identity_ids != null ? [0] : []
+    for_each = local.use_keyvault ? [0] : []
     content {
       type         = "UserAssigned"
-      identity_ids = var.identity_ids
+      identity_ids = [azurerm_user_assigned_identity.main_gateway[0].id]
     }
   }
 

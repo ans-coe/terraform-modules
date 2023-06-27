@@ -44,12 +44,6 @@ variable "sku" {
   }
 }
 
-variable "identity_ids" {
-  description = "Map of potential UserAssigned identities"
-  type        = list(string)
-  default     = null
-}
-
 ## Frontend Variables
 
 variable "private_ip" {
@@ -82,6 +76,8 @@ variable "enable_http2" {
   default     = null
 }
 
+### SSL Variables
+
 variable "ssl_certificates" {
   description = "Map of SSL Certs"
   type = map(object({
@@ -91,8 +87,12 @@ variable "ssl_certificates" {
   }))
   default = {}
   validation {
-    condition     = try(alltrue([for c, v in var.ssl_certificates : (v.key_vault_secret_id != null || (v.data != null && v.password != null))]), true)
-    error_message = "Each certificate must specify either data and password or key_vault_secret_id."
+    condition     = alltrue([for c, v in var.ssl_certificates : v.key_vault_secret_id != null ? alltrue([v.data == null, v.password == null]) : true])
+    error_message = "For each certificate, if key_vault_secret_id is set, data and password must not be set"
+  }
+  validation {
+    condition     = alltrue([for c, v in var.ssl_certificates : can(regex("^[0-9A-Za-z-_]+$", c))])
+    error_message = "SSL Certificate names can contain alphanumeric characters or dash(-) or underscore(_). Underscore gets converted to dash in keyvault"
   }
 }
 
@@ -100,6 +100,32 @@ variable "ssl_policy" {
   description = "The predefined SSL policy to use with the application gateway."
   type        = string
   default     = "AppGwSslPolicy20220101"
+}
+
+// A key vault can be created automatically, specified or disabled entirely.
+
+variable "create_key_vault" {
+  description = "Bool to create a keyvault. Variable is ignored if key vault id is specified"
+  type        = bool
+  default     = true
+}
+
+variable "key_vault_name" {
+  description = "Overwrite the name of the keyvault"
+  type        = string
+  default     = null
+}
+
+variable "key_vault_id" {
+  description = "Specify the value of the key vault ID to store the SSL certificates"
+  type        = string
+  default     = null
+}
+
+variable "key_vault_user_assigned_identity_name" {
+  description = "Overwrite the name of the umid"
+  type        = string
+  default     = null
 }
 
 variable "http_listeners" {

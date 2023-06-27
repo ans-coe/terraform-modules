@@ -36,12 +36,6 @@ resource "azurerm_subnet" "example" {
   address_prefixes = azurerm_virtual_network.example.address_space
 }
 
-resource "azurerm_user_assigned_identity" "example" {
-  name                = "umid-agw"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-}
-
 module "example" {
   source = "../../"
 
@@ -58,8 +52,6 @@ module "example" {
     max_capacity = 3
   }
 
-  identity_ids = [azurerm_user_assigned_identity.example.id]
-
   private_ip       = cidrhost(one(azurerm_subnet.example.address_prefixes), 5)
   create_public_ip = true
   pip_name         = "agw-pip"
@@ -71,10 +63,8 @@ module "example" {
   enable_http2 = true
 
   ssl_certificates = {
-    example_cert = {
-      data     = filebase64("selfsigned.pfx")
-      password = "default"
-    }
+    // Specifying an empty cert will automatically generate one
+    example_cert = {}
   }
 
   ssl_policy = "AppGwSslPolicy20220101"
