@@ -23,3 +23,12 @@ output "repositories" {
     : r.name => r
   }
 }
+
+##############
+# Environments
+##############
+
+output "environments" {
+  description = "Output of project environments."
+  value       = azuredevops_environment.main
+}
