@@ -237,11 +237,17 @@ resource "azurerm_application_gateway" "main" {
       : { for k, v in routing_map
     : k => merge(v, { listener_name = listener_name }) }]...)
     content {
-      name                        = request_routing_rule.key
-      rule_type                   = request_routing_rule.value["path_rules"] != null ? "PathBasedRouting" : "Basic"
-      http_listener_name          = request_routing_rule.value["listener_name"]
-      backend_address_pool_name   = alltrue([request_routing_rule.value["path_rules"] == null, request_routing_rule.value["redirect_configuration"] == null]) ? request_routing_rule.value["backend_address_pool_name"] : null
-      backend_http_settings_name  = alltrue([request_routing_rule.value["path_rules"] == null, request_routing_rule.value["redirect_configuration"] == null]) ? request_routing_rule.value["backend_http_settings_name"] : null
+      name               = request_routing_rule.key
+      rule_type          = request_routing_rule.value["path_rules"] != null ? "PathBasedRouting" : "Basic"
+      http_listener_name = request_routing_rule.value["listener_name"]
+      backend_address_pool_name = alltrue([
+        request_routing_rule.value["path_rules"] == null,
+        request_routing_rule.value["redirect_configuration"] == null
+      ]) ? request_routing_rule.value["backend_address_pool_name"] : null
+      backend_http_settings_name = alltrue([
+        request_routing_rule.value["path_rules"] == null,
+        request_routing_rule.value["redirect_configuration"] == null
+      ]) ? request_routing_rule.value["backend_http_settings_name"] : null
       url_path_map_name           = request_routing_rule.value["path_rules"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_urlpathmap" : null
       priority                    = request_routing_rule.value["priority"]
       redirect_configuration_name = request_routing_rule.value["redirect_configuration"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_redirectconfiguration" : null
