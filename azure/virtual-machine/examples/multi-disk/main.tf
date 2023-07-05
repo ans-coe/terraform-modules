@@ -13,10 +13,10 @@ locals {
   location = "uksouth"
   tags = {
     module  = "virtual-machine"
-    example = "basic"
+    example = "multi-disk"
     usage   = "demo"
   }
-  resource_prefix = "vm-bas-demo-uks-03"
+  resource_prefix = "vm-md-demo-uks-03"
 }
 
 resource "azurerm_resource_group" "vm" {
@@ -42,6 +42,19 @@ resource "azurerm_subnet" "vm" {
   address_prefixes = azurerm_virtual_network.vm.address_space
 }
 
+resource "azurerm_managed_disk" "vm" {
+  count = 2
+
+  name                = "disk${count.index}-${local.resource_prefix}"
+  resource_group_name = azurerm_resource_group.vm.name
+  location            = local.location
+  tags                = local.tags
+
+  disk_size_gb         = 64
+  storage_account_type = "Standard_LRS"
+  create_option        = "Empty"
+}
+
 module "vm" {
   source = "../../"
 
@@ -54,4 +67,15 @@ module "vm" {
   password      = "P4s5w0rd!"
   subnet_id     = azurerm_subnet.vm.id
   size          = "Standard_B2s"
+
+  disk_attachments = {
+    "datadisk_1" = {
+      id  = azurerm_managed_disk.vm[0].id
+      lun = 1
+    }
+    "datadisk_2" = {
+      id  = azurerm_managed_disk.vm[1].id
+      lun = 2
+    }
+  }
 }

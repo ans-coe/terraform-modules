@@ -169,6 +169,16 @@ variable "os_disk" {
   default = {}
 }
 
+variable "disk_attachments" {
+  description = "Disks to attach to this VM."
+  type = map(object({
+    id      = string
+    lun     = number
+    caching = optional(string, "None")
+  }))
+  default = {}
+}
+
 variable "source_image_id" {
   description = "Source image ID to use when creating the virtual machine."
   type        = string
@@ -196,6 +206,16 @@ variable "identity_ids" {
   description = "User assigned identity IDs to append to this virtual machine."
   type        = list(string)
   default     = []
+}
+
+variable "backup_config" {
+  description = "Configuration of the backup."
+  type = object({
+    backup_policy_id  = string
+    include_disk_luns = optional(set(number))
+    exclude_disk_luns = optional(set(number))
+  })
+  default = null
 }
 
 variable "enable_network_watcher" {
