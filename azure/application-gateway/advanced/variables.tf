@@ -104,26 +104,26 @@ variable "ssl_policy" {
 
 // A key vault can be created automatically, specified or disabled entirely.
 
-variable "create_key_vault" {
-  description = "Bool to create a keyvault. Variable is ignored if key vault id is specified"
+variable "use_key_vault" {
+  description = "Bool to use a keyvault. If key_vault_id is not set, a key vault will be created"
   type        = bool
   default     = true
 }
 
 variable "key_vault_name" {
-  description = "Overwrite the name of the keyvault"
+  description = "Overwrite the name of the keyvault. Value is ignored if use_key_vault is false"
   type        = string
   default     = null
 }
 
 variable "key_vault_id" {
-  description = "Specify the value of the key vault ID to store the SSL certificates"
+  description = "Specify the value of the key vault ID to store the SSL certificates. Value is ignored if use_key_vault is false"
   type        = string
   default     = null
 }
 
 variable "key_vault_user_assigned_identity_name" {
-  description = "Overwrite the name of the umid"
+  description = "Overwrite the name of the umid. Value is ignored if use_key_vault is false"
   type        = string
   default     = null
 }
@@ -165,6 +165,16 @@ variable "http_listeners" {
   }
 
   ## Routing Validation Rules
+  validation {
+    condition = length(flatten([
+      for k, r in var.http_listeners : [
+        for k1, v in r.routing : k1
+        ]])) == length(distinct(flatten([
+        for k, r in var.http_listeners : [
+          for k1, v in r.routing : k1
+    ]])))
+    error_message = "Every routing rule across all listeners must have a unique name."
+  }
   validation {
     condition = length(flatten([
       for k, r in var.http_listeners : [

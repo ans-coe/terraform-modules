@@ -3,18 +3,18 @@ data "azurerm_client_config" "current" {}
 resource "azurerm_key_vault" "main" {
   count = local.create_key_vault ? 1 : 0
 
-  name                        = var.key_vault_name != null ? var.key_vault_name : "kv-${var.name}"
-  resource_group_name         = var.resource_group_name
-  location                    = var.location
-  tags                        = var.tags
-  soft_delete_retention_days  = 7
-  purge_protection_enabled    = true
-  sku_name                    = "standard"
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  name                       = var.key_vault_name != null ? var.key_vault_name : "kv-${var.name}"
+  resource_group_name        = var.resource_group_name
+  location                   = var.location
+  tags                       = var.tags
+  soft_delete_retention_days = 7
+  purge_protection_enabled   = true
+  sku_name                   = "standard"
+  tenant_id                  = data.azurerm_client_config.current.tenant_id
 }
 
 resource "azurerm_key_vault_access_policy" "main_user" {
-  for_each = local.use_keyvault ? local.kv_cert_map : {}
+  for_each = var.use_key_vault ? local.kv_cert_map : {}
 
   key_vault_id = var.key_vault_id == null ? azurerm_key_vault.main[0].id : var.key_vault_id
   tenant_id    = data.azurerm_client_config.current.tenant_id
@@ -68,7 +68,7 @@ resource "azurerm_key_vault_access_policy" "main_user" {
 
 resource "azurerm_key_vault_certificate" "main" {
   // Generate certificates only when one is not provided & only when we have a keyvault to put them in
-  for_each = local.use_keyvault ? local.kv_cert_map : {}
+  for_each = var.use_key_vault ? local.kv_cert_map : {}
 
   name         = each.value
   key_vault_id = var.key_vault_id == null ? azurerm_key_vault.main[0].id : var.key_vault_id
@@ -125,11 +125,11 @@ resource "azurerm_key_vault_certificate" "main" {
       validity_in_months = 60
     }
   }
-  depends_on = [ azurerm_key_vault_access_policy.main_user ]
+  depends_on = [azurerm_key_vault_access_policy.main_user]
 }
 
 resource "azurerm_user_assigned_identity" "main_gateway" {
-  count = local.use_keyvault ? 1 : 0
+  count = var.use_key_vault ? 1 : 0
 
   name                = var.key_vault_user_assigned_identity_name != null ? var.key_vault_user_assigned_identity_name : "umid-${var.name}"
   resource_group_name = var.resource_group_name
@@ -137,7 +137,7 @@ resource "azurerm_user_assigned_identity" "main_gateway" {
 }
 
 resource "azurerm_key_vault_access_policy" "main_gateway" {
-  count = local.use_keyvault ? 1 : 0
+  count = var.use_key_vault ? 1 : 0
 
   key_vault_id = var.key_vault_id == null ? azurerm_key_vault.main[0].id : var.key_vault_id
   tenant_id    = data.azurerm_client_config.current.tenant_id

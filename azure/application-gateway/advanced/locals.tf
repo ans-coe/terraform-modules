@@ -14,6 +14,5 @@ locals {
     ])
   }
 
-  create_key_vault = alltrue([var.key_vault_id == null, var.create_key_vault])
-  use_keyvault      = !alltrue([var.key_vault_id == null, !var.create_key_vault])
+  create_key_vault = alltrue([var.key_vault_id == null, var.use_key_vault])
 }
