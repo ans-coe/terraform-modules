@@ -32,15 +32,15 @@ variable "sku" {
     name         = string
     tier         = string
     capacity     = optional(number, 1)
-    max_capacity = optional(number, 1)
+    max_capacity = optional(number)
   })
   default = {
     name = "Standard_v2"
     tier = "Standard_v2"
   }
   validation {
-    condition     = var.sku.max_capacity >= var.sku.capacity
-    error_message = "Max capacity must be greater than or equal to capacity"
+    condition     = var.sku.max_capacity == null ? true : var.sku.max_capacity > var.sku.capacity
+    error_message = "Max capacity must be greater than capacity or not set at all"
   }
 }
 
@@ -132,7 +132,7 @@ variable "http_listeners" {
   description = "Map of HTTP Listeners"
   type = map(object({
     frontend_ip_configuration_name = optional(string, "public_frontend")
-    frontend_port_name             = optional(string, "Http")
+    frontend_port_name             = optional(string, "http")
     https_enabled                  = optional(bool, false)
     host_names                     = optional(list(string), [])
     ssl_certificate_name           = optional(string)

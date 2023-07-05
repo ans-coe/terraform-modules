@@ -1,9 +1,9 @@
 locals {
   default_frontend_ports = {
-    "Http"  = 80
-    "Https" = 443
+    "http"  = 80
+    "https" = 443
   }
-  enable_autoscaling = var.sku.max_capacity > var.sku.capacity
+  enable_autoscaling = var.sku.max_capacity != null // If max capacity is set, enable autoscalling. By variable validation, max capacity must be greater capacity
 
   // we replace _ with - for keyvault cert names but only in the value of the map. 
   kv_cert_map = { for c, v in var.ssl_certificates

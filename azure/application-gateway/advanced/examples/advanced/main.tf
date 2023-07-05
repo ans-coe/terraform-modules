@@ -83,7 +83,7 @@ module "example" {
       }
     }
     https_listener = {
-      frontend_port_name = "Https"
+      frontend_port_name = "https" // default port names are "http" for 80 and "https" for 443
       https_enabled      = true
       host_names = [
         "example.com",
