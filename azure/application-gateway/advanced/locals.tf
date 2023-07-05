@@ -5,7 +5,7 @@ locals {
   }
   enable_autoscaling = var.sku.max_capacity != null // If max capacity is set, enable autoscalling. By variable validation, max capacity must be greater capacity
 
-  // we replace _ with - for keyvault cert names but only in the value of the map. 
+  // we replace _ with - for keyvault cert names but only in the value of the map. This is due to Keyvault limitations.
   kv_cert_map = { for c, v in var.ssl_certificates
     : c => replace(c, "_", "-") if alltrue([
       v.key_vault_secret_id == null,
