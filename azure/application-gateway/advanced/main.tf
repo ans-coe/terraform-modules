@@ -176,19 +176,31 @@ resource "azurerm_application_gateway" "main" {
       frontend_port_name             = http_listener.value["frontend_port_name"]
       protocol                       = http_listener.value["https_enabled"] ? "Https" : "Http"
       require_sni                    = http_listener.value["https_enabled"]
-      host_name                      = length(http_listener.value["host_names"]) == 1 ? one(http_listener.value["host_names"]) : null
-      host_names                     = length(http_listener.value["host_names"]) > 1 ? http_listener.value["host_names"] : null
-      ssl_certificate_name           = http_listener.value["ssl_certificate_name"]
+      host_name = alltrue([
+        length(http_listener.value["host_names"]) == 1,                                                  // Check to make sure there is only 1 hostname in the list
+        length(regexall("^(\\*\\.){1}([\\w-]+\\.)+[\\w-]+$", http_listener.value["host_names"][0])) == 0 // Check to make sure our host is not a wildcard
+      ]) ? http_listener.value["host_names"][0] : null
+      host_names = anytrue([
+        length(http_listener.value["host_names"]) > 1,                                                  // Check if there is more than 1 hostname in the list
+        length(regexall("^(\\*\\.){1}([\\w-]+\\.)+[\\w-]+$", http_listener.value["host_names"][0])) > 0 // OR check if the single hostname is a wildcard
+      ]) ? http_listener.value["host_names"] : null
+      ssl_certificate_name = http_listener.value["ssl_certificate_name"]
     }
   }
 
   dynamic "ssl_certificate" {
     for_each = var.ssl_certificates
     content {
-      name                = ssl_certificate.key
-      data                = ssl_certificate.value["data"]
-      password            = ssl_certificate.value["password"]
-      key_vault_secret_id = ssl_certificate.value["key_vault_secret_id"]
+      name = ssl_certificate.key
+      // For the below, if we have a condition where there is no automatically generated keyvault certificate and no user defined certificate, then we want to fall back to a regular file
+      data     = alltrue([!var.use_key_vault, ssl_certificate.value["data"] == null, ssl_certificate.value["key_vault_secret_id"] == null]) ? filebase64("files/selfsigned.pfx") : ssl_certificate.value["data"]
+      password = alltrue([!var.use_key_vault, ssl_certificate.value["data"] == null, ssl_certificate.value["key_vault_secret_id"] == null]) ? "default" : ssl_certificate.value["password"]
+      // If key_vault_secret_id isn't defined, then use the secretid of the generated keyvault instead
+      key_vault_secret_id = alltrue([
+        ssl_certificate.value["key_vault_secret_id"] == null,
+        ssl_certificate.value["data"] == null,
+        ssl_certificate.value["password"] == null
+      ]) ? azurerm_key_vault_certificate.main[ssl_certificate.key].secret_id : ssl_certificate.value["key_vault_secret_id"]
     }
   }
 
@@ -224,19 +236,24 @@ resource "azurerm_application_gateway" "main" {
   }
 
   dynamic "request_routing_rule" {
-    // we create a list of maps that are then unlisted and merged.
+    // we create a list of maps that are then delisted and merged.
     for_each = merge([
       for listener_name, routing_map in {
       for k, v in var.http_listeners : k => v.routing }
       : { for k, v in routing_map
     : k => merge(v, { listener_name = listener_name }) }]...)
-
     content {
-      name                        = request_routing_rule.key
-      rule_type                   = request_routing_rule.value["path_rules"] != null ? "PathBasedRouting" : "Basic"
-      http_listener_name          = request_routing_rule.value["listener_name"]
-      backend_address_pool_name   = request_routing_rule.value["path_rules"] != null ? null : request_routing_rule.value["redirect_configuration"] != null ? null : request_routing_rule.value["backend_address_pool_name"]
-      backend_http_settings_name  = request_routing_rule.value["path_rules"] != null ? null : request_routing_rule.value["redirect_configuration"] != null ? null : request_routing_rule.value["backend_http_settings_name"]
+      name               = request_routing_rule.key
+      rule_type          = request_routing_rule.value["path_rules"] != null ? "PathBasedRouting" : "Basic"
+      http_listener_name = request_routing_rule.value["listener_name"]
+      backend_address_pool_name = alltrue([
+        request_routing_rule.value["path_rules"] == null,
+        request_routing_rule.value["redirect_configuration"] == null
+      ]) ? request_routing_rule.value["backend_address_pool_name"] : null
+      backend_http_settings_name = alltrue([
+        request_routing_rule.value["path_rules"] == null,
+        request_routing_rule.value["redirect_configuration"] == null
+      ]) ? request_routing_rule.value["backend_http_settings_name"] : null
       url_path_map_name           = request_routing_rule.value["path_rules"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_urlpathmap" : null
       priority                    = request_routing_rule.value["priority"]
       redirect_configuration_name = request_routing_rule.value["redirect_configuration"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_redirectconfiguration" : null
@@ -262,10 +279,10 @@ resource "azurerm_application_gateway" "main" {
   }
 
   dynamic "identity" {
-    for_each = var.identity_ids != null ? [0] : []
+    for_each = var.use_key_vault ? [0] : []
     content {
       type         = "UserAssigned"
-      identity_ids = var.identity_ids
+      identity_ids = [azurerm_user_assigned_identity.main_gateway[0].id]
     }
   }
 

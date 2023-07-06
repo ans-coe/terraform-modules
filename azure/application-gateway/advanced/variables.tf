@@ -32,22 +32,16 @@ variable "sku" {
     name         = string
     tier         = string
     capacity     = optional(number, 1)
-    max_capacity = optional(number, 1)
+    max_capacity = optional(number)
   })
   default = {
     name = "Standard_v2"
     tier = "Standard_v2"
   }
   validation {
-    condition     = var.sku.max_capacity >= var.sku.capacity
-    error_message = "Max capacity must be greater than or equal to capacity"
+    condition     = var.sku.max_capacity == null ? true : var.sku.max_capacity > var.sku.capacity
+    error_message = "Max capacity must be greater than capacity or not set at all"
   }
-}
-
-variable "identity_ids" {
-  description = "Map of potential UserAssigned identities"
-  type        = list(string)
-  default     = null
 }
 
 ## Frontend Variables
@@ -82,6 +76,8 @@ variable "enable_http2" {
   default     = null
 }
 
+### SSL Variables
+
 variable "ssl_certificates" {
   description = "Map of SSL Certs"
   type = map(object({
@@ -91,8 +87,12 @@ variable "ssl_certificates" {
   }))
   default = {}
   validation {
-    condition     = try(alltrue([for c, v in var.ssl_certificates : (v.key_vault_secret_id != null || (v.data != null && v.password != null))]), true)
-    error_message = "Each certificate must specify either data and password or key_vault_secret_id."
+    condition     = alltrue([for c, v in var.ssl_certificates : v.key_vault_secret_id != null ? alltrue([v.data == null, v.password == null]) : true])
+    error_message = "For each certificate, if key_vault_secret_id is set, data and password must not be set"
+  }
+  validation {
+    condition     = alltrue([for c, v in var.ssl_certificates : can(regex("^[0-9A-Za-z-_]+$", c))])
+    error_message = "SSL Certificate names can contain alphanumeric characters or dash(-) or underscore(_). Underscore gets converted to dash in keyvault"
   }
 }
 
@@ -102,11 +102,37 @@ variable "ssl_policy" {
   default     = "AppGwSslPolicy20220101"
 }
 
+// A key vault can be created automatically, specified or disabled entirely.
+
+variable "use_key_vault" {
+  description = "Bool to use a keyvault. If key_vault_id is not set, a key vault will be created"
+  type        = bool
+  default     = true
+}
+
+variable "key_vault_name" {
+  description = "Overwrite the name of the keyvault. Value is ignored if use_key_vault is false"
+  type        = string
+  default     = null
+}
+
+variable "key_vault_id" {
+  description = "Specify the value of the key vault ID to store the SSL certificates. Value is ignored if use_key_vault is false"
+  type        = string
+  default     = null
+}
+
+variable "key_vault_user_assigned_identity_name" {
+  description = "Overwrite the name of the umid. Value is ignored if use_key_vault is false"
+  type        = string
+  default     = null
+}
+
 variable "http_listeners" {
   description = "Map of HTTP Listeners"
   type = map(object({
     frontend_ip_configuration_name = optional(string, "public_frontend")
-    frontend_port_name             = optional(string, "Http")
+    frontend_port_name             = optional(string, "http")
     https_enabled                  = optional(bool, false)
     host_names                     = optional(list(string), [])
     ssl_certificate_name           = optional(string)
@@ -139,6 +165,16 @@ variable "http_listeners" {
   }
 
   ## Routing Validation Rules
+  validation {
+    condition = length(flatten([
+      for k, r in var.http_listeners : [
+        for k1, v in r.routing : k1
+        ]])) == length(distinct(flatten([
+        for k, r in var.http_listeners : [
+          for k1, v in r.routing : k1
+    ]])))
+    error_message = "Every routing rule across all listeners must have a unique name."
+  }
   validation {
     condition = length(flatten([
       for k, r in var.http_listeners : [
