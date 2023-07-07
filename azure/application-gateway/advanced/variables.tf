@@ -269,7 +269,7 @@ variable "probe" {
     path                                      = optional(string, "/")
     timeout                                   = optional(number, 30)
     unhealthy_threshold                       = optional(number, 3)
-    port                                      = optional(number, 80)
+    port                                      = optional(number)
     pick_host_name_from_backend_http_settings = optional(bool, false)
     host                                      = optional(string)
     match = optional(list(object({
