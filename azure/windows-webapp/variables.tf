@@ -102,7 +102,7 @@ variable "site_config" {
     remote_debugging_version                      = optional(string)
     use_32_bit_worker                             = optional(bool)
     vnet_route_all_enabled                        = optional(bool)
-    websockets_enabled                            = optional(bool)
+    websockets_enabled                            = optional(bool, false)
     worker_count                                  = optional(number, 1)
   })
   default = {}
