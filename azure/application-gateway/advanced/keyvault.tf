@@ -134,6 +134,7 @@ resource "azurerm_user_assigned_identity" "main_gateway" {
   name                = var.key_vault_user_assigned_identity_name != null ? var.key_vault_user_assigned_identity_name : "umid-${var.name}"
   resource_group_name = var.resource_group_name
   location            = var.location
+  tags                = var.tags
 }
 
 resource "azurerm_key_vault_access_policy" "main_gateway" {
