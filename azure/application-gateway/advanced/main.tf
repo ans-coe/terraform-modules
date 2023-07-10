@@ -177,12 +177,12 @@ resource "azurerm_application_gateway" "main" {
       protocol                       = http_listener.value["https_enabled"] ? "Https" : "Http"
       require_sni                    = http_listener.value["https_enabled"]
       host_name = alltrue([
-        length(http_listener.value["host_names"]) == 1,                                                  // Check to make sure there is only 1 hostname in the list
-        length(regexall("^(\\*\\.){1}([\\w-]+\\.)+[\\w-]+$", try(http_listener.value["host_names"][0],""))) == 0 // Check to make sure our host is not a wildcard
+        length(http_listener.value["host_names"]) == 1,                                                           // Check to make sure there is only 1 hostname in the list
+        length(regexall("^(\\*\\.){1}([\\w-]+\\.)+[\\w-]+$", try(http_listener.value["host_names"][0], ""))) == 0 // Check to make sure our host is not a wildcard
       ]) ? http_listener.value["host_names"][0] : null
       host_names = anytrue([
-        length(http_listener.value["host_names"]) > 1,                                                  // Check if there is more than 1 hostname in the list
-        length(regexall("^(\\*\\.){1}([\\w-]+\\.)+[\\w-]+$", try(http_listener.value["host_names"][0],""))) > 0 // OR check if the single hostname is a wildcard
+        length(http_listener.value["host_names"]) > 1,                                                           // Check if there is more than 1 hostname in the list
+        length(regexall("^(\\*\\.){1}([\\w-]+\\.)+[\\w-]+$", try(http_listener.value["host_names"][0], ""))) > 0 // OR check if the single hostname is a wildcard
       ]) ? http_listener.value["host_names"] : null
       ssl_certificate_name = http_listener.value["ssl_certificate_name"]
     }

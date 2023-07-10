@@ -35,10 +35,10 @@ output "identity_id" {
 
 output "private_ip" {
   description = "Private IP Address"
-  value = var.private_ip
+  value       = var.private_ip
 }
 
 output "public_ip" {
   description = "Public IP Address"
-  value = azurerm_public_ip.main[0].ip_address
+  value       = azurerm_public_ip.main[0].ip_address
 }
