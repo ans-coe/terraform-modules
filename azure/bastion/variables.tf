@@ -55,7 +55,7 @@ variable "allowed_cidrs" {
 variable "sku" {
   description = "The SKU of the Bastion."
   type        = string
-  default     = "Basic"
+  default     = "Standard"
 }
 
 variable "scale_units" {
