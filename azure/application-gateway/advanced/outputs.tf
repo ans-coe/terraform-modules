@@ -35,10 +35,14 @@ output "identity_id" {
 
 output "private_ip" {
   description = "Private IP Address"
-  value       = var.private_ip
+  value = one([
+    for ipconfig in azurerm_application_gateway.main.frontend_ip_configuration[*]
+    : ipconfig.private_ip_address
+    if ipconfig.private_ip_address != ""
+  ])
 }
 
 output "public_ip" {
   description = "Public IP Address"
-  value       = azurerm_public_ip.main[0].ip_address
+  value       = one(azurerm_public_ip.main[*].ip_address)
 }
