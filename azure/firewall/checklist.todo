@@ -1,0 +1,25 @@
+Firewall Module:
+
+- azurerm_resource_group
+
+- firewall
+  - name 
+  - location
+  - availability zome
+  - sku
+  - firewall management
+  - virtual network
+  - Azure Firewall subnet /26 (AzureFirewallSubnet) - need to create?
+  - public IP - standard - static
+  - forced tunneling - bool
+
+- firewall policy 
+  - name
+  - location
+  - sku
+
+- Monitoring
+  - IP
+  - Firewall
+  - LA_Workspace
+  - Storage Account
