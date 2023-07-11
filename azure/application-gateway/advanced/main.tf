@@ -175,10 +175,10 @@ resource "azurerm_application_gateway" "main" {
       frontend_ip_configuration_name = http_listener.value["frontend_ip_configuration_name"]
       frontend_port_name             = http_listener.value["frontend_port_name"]
       protocol                       = http_listener.value["https_enabled"] ? "Https" : "Http"
-      require_sni                    = http_listener.value["https_enabled"]
+      require_sni                    = alltrue([http_listener.value["https_enabled"],length(http_listener.value["host_names"]) != 0])
       host_name = alltrue([
         length(http_listener.value["host_names"]) == 1,                                                           // Check to make sure there is only 1 hostname in the list
-        length(regexall("^(\\*\\.){1}([\\w-]+\\.)+[\\w-]+$", try(http_listener.value["host_names"][0], ""))) == 0 // Check to make sure our host is not a wildcard
+        length(regexall("^(\\*\\.){1}([\\w-]+\\.)+[\\w-]+$", try(http_listener.value["host_names"][0], ""))) == 0 // AND Check to make sure our host is not a wildcard
       ]) ? http_listener.value["host_names"][0] : null
       host_names = anytrue([
         length(http_listener.value["host_names"]) > 1,                                                           // Check if there is more than 1 hostname in the list
