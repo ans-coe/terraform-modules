@@ -5,6 +5,7 @@ provider "azurerm" {
 locals {
   location    = "uksouth"
   dns_servers = ["1.1.1.1", "8.8.8.8"]
+  vnet_address_space = ["10.0.0.0/16"]
   tags = {
     department = "CoE"
     owner      = "Jon Kelly"
@@ -21,13 +22,13 @@ resource "azurerm_virtual_network" "main" {
   name                = "tfmex-basic-fw-vnet"
   location            = local.location
   resource_group_name = azurerm_resource_group.main.name
-  address_space       = ["10.0.0.0/16"]
+  address_space       = local.vnet_address_space
   dns_servers         = local.dns_servers
   tags                = local.tags
 
   subnet {
     name           = "tfmex-basic-fw-snet1"
-    address_prefix = "10.0.1.0/24"
+    address_prefix = "10.0.0.0/24"
   }
 }
 
@@ -40,7 +41,7 @@ module "firewall" {
 
   virtual_network_name  = azurerm_virtual_network.main.name
   pip_name              = "tfmex-basic-fw-pip"
-  subnet_address_prefix = ["10.0.0.0/26"]
+  subnet_address_prefix = ["10.0.0.192/26"]
 
   firewall_name        = "tfmex-basic-fw"
   firewall_sku_name    = "AZFW_VNet"
