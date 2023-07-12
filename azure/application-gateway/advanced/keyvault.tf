@@ -75,7 +75,7 @@ resource "azurerm_key_vault_certificate" "main" {
 
   lifecycle {
     ignore_changes = [
-      certificate
+      all
     ]
   }
 
