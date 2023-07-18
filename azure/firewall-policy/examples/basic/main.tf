@@ -70,91 +70,82 @@ module "firewall-policy" {
 
   firewall_policies = {
     tfmex-basic-fw-policy = {
-      name                = "tfmex-basic-fw-policy"
-      resource_group_name = azurerm_resource_group.main.name
-      location            = local.location
-      tags                = local.tags
-      sku = "Standard"
+      resource_group_name      = azurerm_resource_group.main.name
+      location                 = local.location
+      tags                     = local.tags
+      sku                      = "Standard"
       threat_intelligence_mode = "Alert"
 
       dns = {
         servers       = ["1.1.1.1", "8.8.8.8"]
         proxy_enabled = false
       }
-    }
-  }
 
-  #############
-  # Firewall Policy Rule Collection Group
-  #############
+      #############
+      # Firewall Policy Rule Collection Group
+      #############
 
-  firewall_policy_rule_collection_groups = {
-    ApplicationOne = {
-      name            = "ApplicationOne"
-      priority        = "100"
-      firewall_policy_name = "tfmex-basic-fw-policy"
+      rule_collection_groups = {
+        ApplicationOne = {
+          priority             = "100"
+          firewall_policy_name = "tfmex-basic-fw-policy"
 
-      application_rule_collection = {
-        AppOne-App-Collection = {
-          name     = "AppOne-App-Collection"
-          action   = "Allow"
-          priority = "100"
+          application_rule_collection = {
+            AppOne-App-Collection = {
+              action   = "Allow"
+              priority = "100"
 
-          rule = {
-            Windows_Updates = {
-              name = "Windows_Updates"
-              protocols = {
-                http = {
-                  type = "Http"
-                  port = "80"
+              rule = {
+                Windows_Updates = {
+                  protocols = {
+                    Http = {
+                      type = "Http"
+                      port = "80"
+                    },
+                    Https = {
+                      type = "Https"
+                      port = "443"
+                    }
+                  }
+                  source_addresses  = "${local.vnet_address_space}"
+                  destination_fqdns = ["*.microsoft.com"]
                 }
-                https = {
-                  type = "Https"
-                  port = "443"
-                }
-                source_addresses  = [local.vnet_address_space]
-                destination_fqdns = ["*.microsoft.com"]
               }
             }
           }
-        }
-      }
 
-      network_rule_collection = {
-        AppOne-Net-Collection = {
-          name     = "AppOne-Net-Collection"
-          action   = "Allow"
-          priority = "100"
+          network_rule_collection = {
+            AppOne-Net-Collection = {
+              action   = "Allow"
+              priority = "100"
 
-          rule = {
-            ntp = {
-              name                  = "ntp"
-              action                = "Allow"
-              source_addresses      = local.vnet_address_space
-              destination_ports     = ["123"]
-              destination_addresses = ["*"]
-              protocols             = ["UDP"]
+              rule = {
+                ntp = {
+                  action                = "Allow"
+                  source_addresses      = "${local.vnet_address_space}"
+                  destination_ports     = ["123"]
+                  destination_addresses = ["*"]
+                  protocols             = ["UDP"]
+                }
+              }
             }
           }
-        }
-      }
 
-      nat_rule_collection = {
-        AppOne-NAT-Collection = {
-          name     = "AppOne-NAT-Collection"
-          action   = "Allow"
-          priority = "100"
+          nat_rule_collection = {
+            AppOne-NAT-Collection = {
+              priority = "100"
+              action   = "Allow"
 
-          rule = {
-            DNS = {
-              name                  = "DNS"
-              action                = "DNat"
-              source_addresses      = local.vnet_address_space
-              destination_ports     = ["53"]
-              destination_addresses = ["tfmex-basic-fw-pip"]
-              translated_port       = 53
-              translated_address    = "8.8.8.8"
-              protocols             = ["TCP", "UDP"]
+              rule = {
+                DNS = {
+                  protocols           = ["TCP", "UDP"]
+                  source_addresses    = "${local.vnet_address_space}"
+                  destination_ports   = ["53"]
+                  destination_address = "${module.firewall.firewall_public_ip}"
+                  translated_port     = "53"
+                  translated_address  = "8.8.8.8"
+                }
+              }
             }
           }
         }
