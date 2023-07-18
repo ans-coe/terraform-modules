@@ -57,8 +57,21 @@ resource "azurerm_web_application_firewall_policy" "main" {
     managed_rule_set {
       type    = var.waf_configuration.rule_set_type
       version = var.waf_configuration.rule_set_version
+      dynamic "rule_group_override" {
+        for_each = var.waf_configuration.rule_group_override
+        content {
+          rule_group_name = rule_group_override.key
+          dynamic "rule" {
+            for_each = rule_group_override.value
+            content {
+              id = rule.value["id"]
+              enabled = rule.value["enabled"]
+              action = rule.value["action"]
+            }
+          }
+        }
+      }
     }
-  }
 
   policy_settings {
     enabled = true
