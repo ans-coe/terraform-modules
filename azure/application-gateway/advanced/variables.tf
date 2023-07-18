@@ -295,7 +295,7 @@ variable "waf_configuration" {
     firewall_mode            = optional(string, "Prevention")
     rule_set_type            = optional(string, "OWASP")
     rule_set_version         = optional(string, "3.2")
-    rule_group_override      = optional(map(list(object({
+    rule_group_override      = optional(map(map(object({
       id = string
       enabled = bool
       action = string

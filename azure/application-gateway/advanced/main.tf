@@ -64,7 +64,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
           dynamic "rule" {
             for_each = rule_group_override.value
             content {
-              id = rule.value["id"]
+              id = rule.key
               enabled = rule.value["enabled"]
               action = rule.value["action"]
             }
