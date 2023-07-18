@@ -72,6 +72,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
         }
       }
     }
+  }
 
   policy_settings {
     enabled = true

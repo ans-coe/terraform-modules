@@ -296,9 +296,8 @@ variable "waf_configuration" {
     rule_set_type            = optional(string, "OWASP")
     rule_set_version         = optional(string, "3.2")
     rule_group_override      = optional(map(map(object({
-      id = string
-      enabled = bool
-      action = string
+      enabled = optional(bool, true)
+      action = optional(string)
     }))))
     file_upload_limit_mb     = optional(number, 500)
     max_request_body_size_kb = optional(number, 128)
