@@ -124,14 +124,25 @@ module "example" {
     firewall_mode    = "Prevention"
     rule_set_type    = "OWASP"
     rule_set_version = "3.2"
+    rule_group_override = {
+      REQUEST-942-APPLICATION-ATTACK-SQLI = {
+        942120 = { enabled = false }
+        942130 = { enabled = false }
+        942260 = { enabled = false }
+        942370 = { enabled = false }
+        942430 = { enabled = false }
+        942440 = { enabled = false }
+      }
+    }
     custom_rules = {
       example_rule = {
         priority = 5
         match_conditions = [
           {
+            // Rule to only allow local traffic
             match_values       = ["192.168.1.0/24", "10.0.0.0/24"]
             operator           = "IPMatch"
-            negation_condition = false
+            negation_condition = true
             match_variables    = [{ variable_name = "RemoteAddr" }]
           }
         ]
