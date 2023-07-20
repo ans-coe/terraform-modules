@@ -3,8 +3,8 @@ provider "azurerm" {
 }
 
 locals {
-  location    = "uksouth"
-  dns_servers = ["1.1.1.1", "8.8.8.8"]
+  location           = "uksouth"
+  dns_servers        = ["1.1.1.1", "8.8.8.8"]
   vnet_address_space = ["10.0.0.0/16"]
   tags = {
     department = "CoE"
