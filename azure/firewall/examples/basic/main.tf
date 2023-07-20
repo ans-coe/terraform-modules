@@ -5,7 +5,6 @@ provider "azurerm" {
 locals {
   location           = "uksouth"
   dns_servers        = ["1.1.1.1", "8.8.8.8"]
-  vnet_address_space = ["10.0.0.0/16"]
   tags = {
     module  = "firewall"
     example = "basic"
@@ -13,34 +12,37 @@ locals {
   }
 }
 
-resource "azurerm_resource_group" "main" {
+resource "azurerm_resource_group" "example" {
   name     = "tfmex-basic-fw-rg"
   location = local.location
   tags     = local.tags
 }
 
-resource "azurerm_virtual_network" "main" {
-  name                = "tfmex-basic-fw-vnet"
-  location            = local.location
-  resource_group_name = azurerm_resource_group.main.name
-  address_space       = local.vnet_address_space
-  dns_servers         = local.dns_servers
+resource "azurerm_virtual_network" "example" {
+  name                = "vnet"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
   tags                = local.tags
 
-  subnet {
-    name           = "tfmex-basic-fw-snet1"
-    address_prefix = "10.0.0.0/24"
-  }
+  address_space = ["10.0.0.0/24"]
+}
+
+resource "azurerm_subnet" "example" {
+  name                 = "default"
+  resource_group_name  = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.example.name
+
+  address_prefixes = azurerm_virtual_network.example.address_space
 }
 
 module "firewall" {
   source = "../../"
 
-  resource_group_name = azurerm_resource_group.main.name
-  location            = local.location
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
   tags                = local.tags
 
-  virtual_network_name  = azurerm_virtual_network.main.name
+  virtual_network_name  = azurerm_virtual_network.example.name
   pip_name              = "tfmex-basic-fw-pip"
   subnet_address_prefix = ["10.0.0.192/26"]
 

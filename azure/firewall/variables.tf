@@ -11,13 +11,11 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the resource group this module will use."
   type        = string
-  default     = null
 }
 
 variable "tags" {
   description = "Tags applied to created resources."
   type        = map(string)
-  default     = null
 }
 
 #############
@@ -26,17 +24,18 @@ variable "tags" {
 
 variable "virtual_network_name" {
   description = "Name of your Azure Virtual Network"
-  default     = null
+  type = string
 }
 
 variable "pip_name" {
   description = "Name of the Firewall's public IP"
+  type = string
   default     = null
 }
 
 variable "subnet_address_prefix" {
   description = "The Subnet used the Firewall must have the name `AzureFirAzureFirewallSubnet` and a subnet mask of at least /26"
-  default     = []
+  type = string
 }
 
 #############
