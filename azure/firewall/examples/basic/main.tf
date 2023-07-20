@@ -7,8 +7,9 @@ locals {
   dns_servers        = ["1.1.1.1", "8.8.8.8"]
   vnet_address_space = ["10.0.0.0/16"]
   tags = {
-    department = "CoE"
-    owner      = "Jon Kelly"
+    module  = "firewall"
+    example = "basic"
+    usage   = "demo"
   }
 }
 
