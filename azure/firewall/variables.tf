@@ -3,13 +3,13 @@
 ###################
 
 variable "location" {
-  description = "The location of created resources."
+  description = "The location of the firewall."
   type        = string
   default     = "uksouth"
 }
 
 variable "resource_group_name" {
-  description = "The name of the resource group this module will use."
+  description = "The name of the resource group."
   type        = string
 }
 
@@ -24,18 +24,18 @@ variable "tags" {
 
 variable "virtual_network_name" {
   description = "Name of your Azure Virtual Network"
-  type = string
+  type        = string
 }
 
 variable "pip_name" {
-  description = "Name of the Firewall's public IP"
-  type = string
+  description = "Name of the firewall's public IP"
+  type        = string
   default     = null
 }
 
-variable "subnet_address_prefix" {
-  description = "The Subnet used the Firewall must have the name `AzureFirAzureFirewallSubnet` and a subnet mask of at least /26"
-  type = string
+variable "subnet_address_prefixes" {
+  description = "The subnet used for the firewall must have the name `AzureFirewallSubnet` and a subnet mask of at least /26"
+  type        = list(string)
 }
 
 #############

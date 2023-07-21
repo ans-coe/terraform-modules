@@ -1,14 +1,19 @@
-output "firewall_name" {
+output "name" {
   description = "The name of the Azure Firewall."
   value       = azurerm_firewall.main.name
 }
 
-output "firewall_id" {
+output "id" {
   description = "The ID of the Azure Firewall"
   value       = azurerm_firewall.main.id
 }
 
-output "firewall_public_ip" {
-  description = "The public ip of firewall."
+output "public_ip" {
+  description = "The public IP Address of firewall."
   value       = azurerm_public_ip.main.ip_address
+}
+
+output "private_ip" {
+  description = "The private IP Address of the firewall"
+  value = one(azurerm_firewall.fw.ip_configuration.*.private_ip_address)
 }
