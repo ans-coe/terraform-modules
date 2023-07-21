@@ -25,7 +25,7 @@ resource "tls_private_key" "vm" {
 
 data "template_cloudinit_config" "vm" {
   gzip          = false
-  base64_encode = true
+  base64_encode = false
 
   part {
     filename     = "cloudconfig.web.yml"
@@ -109,7 +109,7 @@ module "vm" {
   os_type       = "Linux"
   computer_name = format("vm%02d", count.index + 1)
   public_key    = tls_private_key.vm.public_key_openssh
-  user_data_b64 = data.template_cloudinit_config.vm.rendered
+  user_data     = data.template_cloudinit_config.vm.rendered
 
   subnet_id                     = azurerm_subnet.vm.id
   ip_address                    = cidrhost(azurerm_subnet.vm.address_prefixes[0], 10 + count.index + 1)

@@ -19,7 +19,7 @@ resource "azurerm_linux_virtual_machine" "main" {
     }
   }
 
-  user_data = var.user_data_b64
+  user_data = base64encode(var.user_data)
 
   availability_set_id   = var.availability_set_id
   size                  = var.size
