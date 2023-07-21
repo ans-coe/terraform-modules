@@ -1,15 +1,22 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+    key_vault {
+      purge_soft_delete_on_destroy = true
+    }
+  }
 }
 
 locals {
   location = "uksouth"
   tags = {
-    module  = "aks"
-    example = "adv"
+    module  = "kubernetes-cluster"
+    example = "advanced"
     usage   = "demo"
   }
-  resource_prefix = "tfmex-adv-aks"
+  resource_prefix = "akc-adv-demo-uks-03"
 }
 
 data "http" "my_ip" {
@@ -23,68 +30,68 @@ data "http" "my_ip" {
   }
 }
 
-resource "azurerm_resource_group" "aks" {
-  name     = "${local.resource_prefix}-rg"
+resource "azurerm_resource_group" "akc" {
+  name     = "rg-${local.resource_prefix}"
   location = local.location
   tags     = local.tags
 }
 
-resource "azurerm_container_registry" "aks" {
-  name                = lower(replace("${local.resource_prefix}acr", "/[-_]/", ""))
+resource "azurerm_container_registry" "akc" {
+  name                = lower(replace("cr${local.resource_prefix}", "/[-_]/", ""))
   location            = local.location
-  resource_group_name = azurerm_resource_group.aks.name
+  resource_group_name = azurerm_resource_group.akc.name
   tags                = local.tags
 
   sku = "Basic"
 }
 
-resource "azurerm_virtual_network" "aks" {
-  name                = "${local.resource_prefix}-vnet"
+resource "azurerm_virtual_network" "akc" {
+  name                = "vnet-${local.resource_prefix}"
   location            = local.location
-  resource_group_name = azurerm_resource_group.aks.name
+  resource_group_name = azurerm_resource_group.akc.name
   tags                = local.tags
 
   address_space = ["10.0.0.0/16"]
 }
 
-resource "azurerm_subnet" "aks" {
-  name                 = "aks-default"
-  resource_group_name  = azurerm_virtual_network.aks.resource_group_name
-  virtual_network_name = azurerm_virtual_network.aks.name
+resource "azurerm_subnet" "akc" {
+  name                 = "snet-akc-default"
+  resource_group_name  = azurerm_virtual_network.akc.resource_group_name
+  virtual_network_name = azurerm_virtual_network.akc.name
 
   address_prefixes  = ["10.0.0.0/20"]
   service_endpoints = ["Microsoft.ContainerRegistry"]
 }
 
-resource "azurerm_user_assigned_identity" "aks" {
-  name                = "${local.resource_prefix}-msi"
+resource "azurerm_user_assigned_identity" "akc" {
+  name                = "id-${local.resource_prefix}"
   location            = local.location
-  resource_group_name = azurerm_resource_group.aks.name
+  resource_group_name = azurerm_resource_group.akc.name
   tags                = local.tags
 }
 
-resource "azurerm_user_assigned_identity" "aks_nodepool" {
-  name                = "${local.resource_prefix}-nodepool-msi"
+resource "azurerm_user_assigned_identity" "akc_nodepool" {
+  name                = "id-np-${local.resource_prefix}"
   location            = local.location
-  resource_group_name = azurerm_resource_group.aks.name
+  resource_group_name = azurerm_resource_group.akc.name
   tags                = local.tags
 }
 
-resource "azurerm_role_assignment" "aks_nodepool_identity" {
+resource "azurerm_role_assignment" "akc_nodepool_identity" {
   description                      = "Assign the AKS identity Contributor rights to the Nodepool identity."
-  principal_id                     = azurerm_user_assigned_identity.aks.principal_id
+  principal_id                     = azurerm_user_assigned_identity.akc.principal_id
   skip_service_principal_aad_check = true
 
   role_definition_name = "Contributor"
-  scope                = azurerm_user_assigned_identity.aks_nodepool.id
+  scope                = azurerm_user_assigned_identity.akc_nodepool.id
 }
 
-module "aks" {
+module "akc" {
   source = "../../"
 
-  name                = "${local.resource_prefix}-aks"
+  name                = "akc-${local.resource_prefix}"
   location            = local.location
-  resource_group_name = azurerm_resource_group.aks.name
+  resource_group_name = azurerm_resource_group.akc.name
   tags                = local.tags
 
   authorized_ip_ranges       = ["${data.http.my_ip.response_body}/32"]
@@ -92,14 +99,14 @@ module "aks" {
 
   # cluster_identity and kubelet_identity
   # supports directly passing in identity resource
-  cluster_identity = azurerm_user_assigned_identity.aks
-  kubelet_identity = azurerm_user_assigned_identity.aks_nodepool
+  cluster_identity = azurerm_user_assigned_identity.akc
+  kubelet_identity = azurerm_user_assigned_identity.akc_nodepool
 
   node_count     = 2
   node_count_max = 3
 
   use_azure_cni  = true
-  node_subnet_id = azurerm_subnet.aks.id
+  subnet_id      = azurerm_subnet.akc.id
   network_policy = "azure"
   service_cidr   = "10.1.0.0/16"
 
@@ -129,8 +136,8 @@ module "aks" {
   ]
 
   # Requires the registry to exist as value can't be determined.
-  # Run terraform apply -target azurerm_container_registry.aks first
-  registry_ids = [azurerm_container_registry.aks.id]
+  # Run terraform apply -target azurerm_container_registry.akc first
+  registry_ids = [azurerm_container_registry.akc.id]
 
-  depends_on = [azurerm_role_assignment.aks_nodepool_identity]
+  depends_on = [azurerm_role_assignment.akc_nodepool_identity]
 }

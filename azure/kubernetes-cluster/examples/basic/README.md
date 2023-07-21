@@ -17,15 +17,13 @@ No outputs.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [azurerm_resource_group.akc](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aks"></a> [aks](#module\_aks) | ../../ | n/a |
+| <a name="module_akc"></a> [akc](#module\_akc) | ../../ | n/a |
 <!-- END_TF_DOCS -->
-_______________
-| Classified  |
-| :---------: |
-|   PUBLIC    |

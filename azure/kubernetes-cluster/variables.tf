@@ -11,7 +11,6 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the resource group this module will use."
   type        = string
-  default     = null
 }
 
 variable "tags" {
@@ -30,8 +29,20 @@ variable "use_log_analytics" {
   default     = false
 }
 
-variable "log_analytics_id" {
+variable "log_analytics_workspace_id" {
   description = "Log analytics workspace ID to use if providing an existing workspace."
+  type        = string
+  default     = null
+}
+
+variable "enable_microsoft_defender" {
+  description = "Enable Microsoft Defender integration with the cluster."
+  type        = bool
+  default     = false
+}
+
+variable "microsoft_defender_log_analytics_workspace_id" {
+  description = "Log analytics workspace ID used with Microsoft Defender."
   type        = string
   default     = null
 }
@@ -39,6 +50,12 @@ variable "log_analytics_id" {
 ###########
 # Security
 ###########
+
+variable "enable_run_command" {
+  description = "Enable Run Command feature with the cluster."
+  type        = bool
+  default     = false
+}
 
 variable "aad_tenant_id" {
   description = "Tenant ID used for AAD RBAC. (defaults to current tenant)"
@@ -49,6 +66,18 @@ variable "aad_tenant_id" {
     condition     = var.aad_tenant_id == null || can(regex("\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}", var.aad_tenant_id))
     error_message = "The aad_tenant_id must to be a valid UUID."
   }
+}
+
+variable "enable_oidc_issuer" {
+  description = "Enable the OIDC issuer for the cluster."
+  type        = bool
+  default     = true
+}
+
+variable "enable_workload_identity" {
+  description = "Enable workload identity for the cluster."
+  type        = bool
+  default     = true
 }
 
 variable "aad_admin_group_object_ids" {
@@ -110,7 +139,7 @@ variable "allowed_maintenance_windows" {
     day   = string
     hours = optional(list(number), [21])
   }))
-  default = null
+  default = []
 }
 
 variable "enable_private_cluster" {
@@ -168,12 +197,6 @@ variable "service_cidr" {
   }
 }
 
-variable "default_node_pool_name" {
-  description = "Name of the default node pool."
-  type        = string
-  default     = "default"
-}
-
 variable "node_size" {
   description = "Size of nodes in the default node pool."
   type        = string
@@ -187,25 +210,19 @@ variable "node_count" {
 }
 
 variable "node_count_max" {
-  description = "Maximum number of nodes in the AKS cluster. node_count_min must also be set for this to function."
+  description = "Maximum number of nodes in the AKS cluster."
   type        = number
   default     = null
 }
 
-variable "node_zones" {
-  description = "Availability zones nodes should be placed in."
-  type        = list(number)
-  default     = [1, 2, 3]
-}
-
-variable "node_subnet_id" {
-  description = "Subnet ID to use with default node pool nodes for Azure CNI."
+variable "subnet_id" {
+  description = "Subnet ID to use with the default nodepool if using Azure CNI."
   type        = string
   default     = null
 }
 
 variable "pod_subnet_id" {
-  description = "Subnet ID to use with default node pool pods for Azure CNI."
+  description = "Subnet ID to use with default nodepool pods for Azure CNI."
   type        = string
   default     = null
 }
@@ -216,22 +233,54 @@ variable "node_critical_addons_only" {
   default     = false
 }
 
-variable "node_labels" {
-  description = "Node labels to apply to the default node pool."
-  type        = map(string)
-  default     = null
-}
-
 variable "node_config" {
   description = "Additional default node pool configuration not covered by base variables."
-  type        = map(any)
-  default     = {}
+  type = object({
+    pool_name = optional(string, "system")
+    tags      = optional(map(string))
+
+    zones                    = optional(list(number), [1, 2, 3])
+    enable_node_public_ip    = optional(bool, false)
+    node_public_ip_prefix_id = optional(string)
+
+    os_sku                 = optional(string)
+    os_disk_size_gb        = optional(string)
+    os_disk_type           = optional(number)
+    ultra_ssd_enabled      = optional(bool)
+    kubelet_disk_type      = optional(string)
+    enable_host_encryption = optional(bool)
+    fips_enabled           = optional(bool)
+
+    orchestrator_version = optional(string)
+    max_pods             = optional(number, 50)
+    node_labels          = optional(map(string))
+  })
+  default = {}
 }
 
 variable "auto_scaler_profile" {
   description = "Autoscaler config."
-  type        = map(any)
-  default     = {}
+  type = object({
+    scan_interval                 = optional(string)
+    skip_nodes_with_local_storage = optional(bool)
+    skip_nodes_with_system_pods   = optional(bool)
+    empty_bulk_delete_max         = optional(string)
+    balance_similar_node_groups   = optional(bool)
+    new_pod_scale_up_delay        = optional(string)
+
+    max_graceful_termination_sec = optional(string)
+    max_node_provisioning_time   = optional(string)
+    max_unready_nodes            = optional(number)
+    max_unready_percentage       = optional(number)
+
+    scale_down_unready               = optional(string)
+    scale_down_unneeded              = optional(string)
+    scale_down_utilization_threshold = optional(string)
+    scale_down_delay_after_add       = optional(string)
+    scale_down_delay_after_delete    = optional(string)
+    scale_down_delay_after_failure   = optional(string)
+  })
+  default = {}
 }
 
 variable "kubelet_identity" {
@@ -292,6 +341,30 @@ variable "ingress_application_subnet_cidr" {
   default     = null
 }
 
+variable "enable_blob_driver" {
+  description = "Enable blob_driver feature on the storage profile of the cluster."
+  type        = bool
+  default     = null
+}
+
+variable "enable_disk_driver" {
+  description = "Enable disk_driver feature on the storage profile of the cluster."
+  type        = bool
+  default     = null
+}
+
+variable "disk_driver_version" {
+  description = "Version of the disk_driver feature on the storage profile of the cluster."
+  type        = bool
+  default     = null
+}
+
+variable "enable_file_driver" {
+  description = "Enable file_driver feature on the storage profile of the cluster."
+  type        = bool
+  default     = null
+}
+
 variable "enable_azure_keyvault_secrets_provider" {
   description = "Enable the Azure Keyvault secrets provider plugin."
   type        = bool
@@ -307,4 +380,10 @@ variable "azure_keyvault_secrets_provider_config" {
   default = {
     enable_secret_rotation = true
   }
+}
+
+variable "enable_flux" {
+  description = "Enable the flux extension on the cluster."
+  type        = bool
+  default     = false
 }
