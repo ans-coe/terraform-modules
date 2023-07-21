@@ -13,11 +13,6 @@ output "name" {
   value       = azurerm_automation_account.main.name
 }
 
-output "resource_group_name" {
-  description = "Name of the resource group."
-  value       = local.resource_group_name
-}
-
 output "identity" {
   description = "The automation account identity."
   value       = one(azurerm_automation_account.main.identity)
