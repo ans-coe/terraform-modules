@@ -70,50 +70,50 @@ resource "azurerm_windows_web_app" "main" {
     for_each = [var.site_config]
     content {
       application_stack {
-        current_stack                = lookup(var.application_stack, "current_stack", null)
-        docker_container_name        = lookup(var.application_stack, "docker_container_name", null)
-        docker_container_tag         = lookup(var.application_stack, "docker_container_tag", null)
-        docker_container_registry    = lookup(var.application_stack, "docker_container_registry", null)
-        dotnet_version               = lookup(var.application_stack, "dotnet_version", null)
-        dotnet_core_version          = lookup(var.application_stack, "dotnet_core_version", null)
-        java_version                 = lookup(var.application_stack, "java_version", null)
-        java_embedded_server_enabled = lookup(var.application_stack, "java_embedded_server_enabled", null)
-        node_version                 = lookup(var.application_stack, "node_version", null)
-        php_version                  = lookup(var.application_stack, "php_version", null)
-        python                       = lookup(var.application_stack, "python", null)
-        tomcat_version               = lookup(var.application_stack, "tomcat_version", null)
+        current_stack                = var.application_stack.current_stack
+        docker_container_name        = var.application_stack.docker_container_name
+        docker_container_tag         = var.application_stack.docker_container_tag
+        docker_container_registry    = var.application_stack.docker_container_registry
+        dotnet_version               = var.application_stack.dotnet_version
+        dotnet_core_version          = var.application_stack.dotnet_core_version
+        java_version                 = var.application_stack.java_version
+        java_embedded_server_enabled = var.application_stack.java_embedded_server_enabled
+        node_version                 = var.application_stack.node_version
+        php_version                  = var.application_stack.php_version
+        python                       = var.application_stack.python
+        tomcat_version               = var.application_stack.tomcat_version
       }
-      app_command_line = lookup(site_config.value, "app_command_line", null)
+      app_command_line = site_config.value.app_command_line
 
-      worker_count           = lookup(site_config.value, "worker_count", 1)
-      use_32_bit_worker      = lookup(site_config.value, "use_32_bit_worker", null)
-      local_mysql_enabled    = lookup(site_config.value, "local_mysql_enabled", null)
-      always_on              = lookup(site_config.value, "always_on", false)
-      vnet_route_all_enabled = lookup(site_config.value, "vnet_route_all_enabled", null)
-      load_balancing_mode    = lookup(site_config.value, "load_balancing_mode", null)
+      worker_count           = site_config.value.worker_count
+      use_32_bit_worker      = site_config.value.use_32_bit_worker
+      local_mysql_enabled    = site_config.value.local_mysql_enabled
+      always_on              = site_config.value.always_on
+      vnet_route_all_enabled = site_config.value.vnet_route_all_enabled
+      load_balancing_mode    = site_config.value.load_balancing_mode
 
       minimum_tls_version     = "1.2"
       scm_minimum_tls_version = "1.2"
-      http2_enabled           = lookup(site_config.value, "http2_enabled", false)
-      websockets_enabled      = lookup(site_config.value, "websockets_enabled", false)
+      http2_enabled           = site_config.value.http2_enabled
+      websockets_enabled      = site_config.value.websockets_enabled
       default_documents       = var.default_documents
 
-      api_definition_url    = lookup(site_config.value, "api_definition_url", null)
-      api_management_api_id = lookup(site_config.value, "api_management_api_id", null)
+      api_definition_url    = site_config.value.api_definition_url
+      api_management_api_id = site_config.value.api_management_api_id
 
-      health_check_path                 = lookup(site_config.value, "health_check_path", null)
-      health_check_eviction_time_in_min = lookup(site_config.value, "health_check_eviction_time_in_min", null)
+      health_check_path                 = site_config.value.health_check_path
+      health_check_eviction_time_in_min = site_config.value.health_check_eviction_time_in_min
 
-      container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
-      container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
-      remote_debugging_enabled                      = lookup(site_config.value, "remote_debugging_enabled", false)
-      remote_debugging_version                      = lookup(site_config.value, "remote_debugging_version", null)
+      container_registry_use_managed_identity       = site_config.value.container_registry_use_managed_identity
+      container_registry_managed_identity_client_id = site_config.value.container_registry_managed_identity_client_id
+      remote_debugging_enabled                      = site_config.value.remote_debugging_enabled
+      remote_debugging_version                      = site_config.value.remote_debugging_version
 
       dynamic "cors" {
         for_each = var.cors == null ? [] : [1]
         content {
-          allowed_origins     = lookup(var.cors, "allowed_origins", null)
-          support_credentials = lookup(var.cors, "support_credentials", null)
+          allowed_origins     = var.cors.allowed_origins
+          support_credentials = var.cors.support_credentials
         }
       }
 
@@ -232,29 +232,29 @@ resource "azurerm_windows_web_app_slot" "main" {
   dynamic "site_config" {
     for_each = [var.site_config]
     content {
-      worker_count           = lookup(site_config.value, "worker_count", 1)
-      use_32_bit_worker      = lookup(site_config.value, "use_32_bit_worker", null)
-      local_mysql_enabled    = lookup(site_config.value, "local_mysql_enabled", null)
-      always_on              = lookup(site_config.value, "always_on", false)
-      vnet_route_all_enabled = lookup(site_config.value, "vnet_route_all_enabled", null)
-      load_balancing_mode    = lookup(site_config.value, "load_balancing_mode", null)
+      worker_count           = site_config.value.worker_count
+      use_32_bit_worker      = site_config.value.use_32_bit_worker
+      local_mysql_enabled    = site_config.value.local_mysql_enabled
+      always_on              = site_config.value.always_on
+      vnet_route_all_enabled = site_config.value.vnet_route_all_enabled
+      load_balancing_mode    = site_config.value.load_balancing_mode
 
       minimum_tls_version     = "1.2"
       scm_minimum_tls_version = "1.2"
-      http2_enabled           = lookup(site_config.value, "http2_enabled", false)
-      websockets_enabled      = lookup(site_config.value, "websockets_enabled", false)
+      http2_enabled           = site_config.value.http2_enabled
+      websockets_enabled      = site_config.value.websockets_enabled
       default_documents       = var.default_documents
 
-      api_definition_url    = lookup(site_config.value, "api_definition_url", null)
-      api_management_api_id = lookup(site_config.value, "api_management_api_id", null)
+      api_definition_url    = site_config.value.api_definition_url
+      api_management_api_id = site_config.value.api_management_api_id
 
-      health_check_path                 = lookup(site_config.value, "health_check_path", null)
-      health_check_eviction_time_in_min = lookup(site_config.value, "health_check_eviction_time_in_min", null)
+      health_check_path                 = site_config.value.health_check_path
+      health_check_eviction_time_in_min = site_config.value.health_check_eviction_time_in_min
 
-      container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
-      container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
-      remote_debugging_enabled                      = lookup(site_config.value, "remote_debugging_enabled", false)
-      remote_debugging_version                      = lookup(site_config.value, "remote_debugging_version", null)
+      container_registry_use_managed_identity       = site_config.value.container_registry_use_managed_identity
+      container_registry_managed_identity_client_id = site_config.value.container_registry_managed_identity_client_id
+      remote_debugging_enabled                      = site_config.value.remote_debugging_enabled
+      remote_debugging_version                      = site_config.value.remote_debugging_version
 
       dynamic "ip_restriction" {
         for_each = local.access_rules
@@ -286,24 +286,24 @@ resource "azurerm_windows_web_app_slot" "main" {
       dynamic "cors" {
         for_each = var.cors == null ? [] : [1]
         content {
-          allowed_origins     = lookup(var.cors, "allowed_origins", null)
-          support_credentials = lookup(var.cors, "support_credentials", null)
+          allowed_origins     = var.cors.allowed_origins
+          support_credentials = var.cors.support_credentials
         }
       }
 
       application_stack {
-        current_stack                = lookup(var.application_stack, "current_stack", null)
-        docker_container_name        = lookup(var.application_stack, "docker_container_name", null)
-        docker_container_tag         = lookup(var.application_stack, "docker_container_tag", null)
-        docker_container_registry    = lookup(var.application_stack, "docker_container_registry", null)
-        dotnet_version               = lookup(var.application_stack, "dotnet_version", null)
-        dotnet_core_version          = lookup(var.application_stack, "dotnet_core_version", null)
-        java_version                 = lookup(var.application_stack, "java_version", null)
-        java_embedded_server_enabled = lookup(var.application_stack, "java_embedded_server_enabled", null)
-        node_version                 = lookup(var.application_stack, "node_version", null)
-        php_version                  = lookup(var.application_stack, "php_version", null)
-        python                       = lookup(var.application_stack, "python", null)
-        tomcat_version               = lookup(var.application_stack, "tomcat_version", null)
+        current_stack                = var.application_stack.current_stack
+        docker_container_name        = var.application_stack.docker_container_name
+        docker_container_tag         = var.application_stack.docker_container_tag
+        docker_container_registry    = var.application_stack.docker_container_registry
+        dotnet_version               = var.application_stack.dotnet_version
+        dotnet_core_version          = var.application_stack.dotnet_core_version
+        java_version                 = var.application_stack.java_version
+        java_embedded_server_enabled = var.application_stack.java_embedded_server_enabled
+        node_version                 = var.application_stack.node_version
+        php_version                  = var.application_stack.php_version
+        python                       = var.application_stack.python
+        tomcat_version               = var.application_stack.tomcat_version
       }
 
       virtual_application {

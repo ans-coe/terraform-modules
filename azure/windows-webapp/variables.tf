@@ -49,7 +49,20 @@ variable "zip_deploy_file" {
 
 variable "application_stack" {
   description = "A map detailing the application stack."
-  type        = map(string)
+  type = object({
+    current_stack                = optional(string)
+    docker_container_name        = optional(string)
+    docker_container_registry    = optional(string)
+    docker_container_tag         = optional(string)
+    dotnet_core_version          = optional(string)
+    dotnet_version               = optional(string)
+    java_embedded_server_enabled = optional(bool)
+    java_version                 = optional(string)
+    node_version                 = optional(string)
+    php_version                  = optional(string)
+    python                       = optional(bool)
+    tomcat_version               = optional(string)
+  })
   default = {
     docker_container_name     = "azure-app-service/samples/aspnethelloworld"
     docker_container_tag      = "latest"
@@ -73,8 +86,26 @@ variable "virtual_application" {
 
 variable "site_config" {
   description = "A map with site config values."
-  type        = map(any)
-  default     = {}
+  type = object({
+    always_on                                     = optional(bool, false)
+    api_definition_url                            = optional(string)
+    api_management_api_id                         = optional(string)
+    app_command_line                              = optional(string)
+    container_registry_managed_identity_client_id = optional(string)
+    container_registry_use_managed_identity       = optional(bool, true)
+    health_check_eviction_time_in_min             = optional(number, 2)
+    health_check_path                             = optional(string)
+    http2_enabled                                 = optional(bool, false)
+    load_balancing_mode                           = optional(string)
+    local_mysql_enabled                           = optional(string)
+    remote_debugging_enabled                      = optional(bool, false)
+    remote_debugging_version                      = optional(string)
+    use_32_bit_worker                             = optional(bool)
+    vnet_route_all_enabled                        = optional(bool)
+    websockets_enabled                            = optional(bool, false)
+    worker_count                                  = optional(number, 1)
+  })
+  default = {}
 }
 
 variable "app_settings" {
