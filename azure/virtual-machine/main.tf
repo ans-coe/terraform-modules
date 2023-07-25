@@ -11,7 +11,7 @@ resource "azurerm_public_ip" "main" {
 }
 
 resource "azurerm_network_interface" "main" {
-  name                = "nic-${var.name}"
+  name                = var.network_interface_name == null ? "nic-${var.name}" : var.network_interface_name
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags

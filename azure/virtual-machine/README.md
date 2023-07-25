@@ -48,6 +48,7 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_ip_address"></a> [ip\_address](#input\_ip\_address) | Private IP address of the virtual machine NIC. | `string` | `null` | no |
 | <a name="input_license_type"></a> [license\_type](#input\_license\_type) | License type of the virtual machine. | `string` | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
+| <a name="input_network_interface_name"></a> [network\_interface\_name](#input\_network\_interface\_name) | Name of the network interface. | `string` | `null` | no |
 | <a name="input_network_security_group_id"></a> [network\_security\_group\_id](#input\_network\_security\_group\_id) | ID of the network security group to use with the virtual machine NIC. | `string` | `null` | no |
 | <a name="input_os_disk"></a> [os\_disk](#input\_os\_disk) | OS Disk configuration. | <pre>object({<br>    name                 = optional(string)<br>    size_gb              = optional(number, 128)<br>    storage_account_type = optional(string, "StandardSSD_LRS")<br>    caching              = optional(string, "None")<br>  })</pre> | `{}` | no |
 | <a name="input_os_type"></a> [os\_type](#input\_os\_type) | The OS type to use. | `string` | `"Linux"` | no |
