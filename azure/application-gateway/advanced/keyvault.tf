@@ -74,9 +74,7 @@ resource "azurerm_key_vault_certificate" "main" {
   key_vault_id = var.key_vault_id == null ? azurerm_key_vault.main[0].id : var.key_vault_id
 
   lifecycle {
-    ignore_changes = [
-      certificate
-    ]
+    ignore_changes = all
   }
 
   certificate_policy {
