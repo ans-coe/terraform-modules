@@ -13,11 +13,6 @@ output "name" {
   value       = azurerm_linux_web_app.main.name
 }
 
-output "resource_group_name" {
-  description = "Name of the resource group."
-  value       = local.resource_group_name
-}
-
 output "identity" {
   description = "Identity of the app service."
   value       = one(azurerm_linux_web_app.main.identity)
@@ -33,7 +28,12 @@ output "fqdn" {
   value       = azurerm_linux_web_app.main.default_hostname
 }
 
+output "app_service" {
+  description = "Output containing the main app service."
+  value       = azurerm_linux_web_app.main
+}
+
 output "slots" {
-  description = "Object of objects containing details for the created slots."
+  description = "Object containing details for the created slots."
   value       = azurerm_linux_web_app_slot.main
 }

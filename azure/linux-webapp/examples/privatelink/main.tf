@@ -1,5 +1,12 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+    key_vault {
+      purge_soft_delete_on_destroy = true
+    }
+  }
 }
 
 locals {
@@ -56,17 +63,7 @@ module "webapp" {
   resource_group_name = azurerm_resource_group.webapp.name
   tags                = local.tags
 
-  plan = { name = "${local.resource_prefix}-sp" }
-
-  application_stack = {
-    docker_image     = "mcr.microsoft.com/appsvc/staticsite"
-    docker_image_tag = "latest"
-  }
-
-  app_settings = {
-    DOCKER_ENABLE_CI           = true
-    DOCKER_REGISTRY_SERVER_URL = "https://mcr.microsoft.com"
-  }
+  plan = { name = "${local.resource_prefix}-asp" }
 }
 
 resource "azurerm_private_endpoint" "webapp" {
