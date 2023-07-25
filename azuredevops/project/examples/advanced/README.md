@@ -7,7 +7,7 @@ This example is used to create a project in Azure DevOps with some of the provid
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_azuredevops"></a> [azuredevops](#requirement\_azuredevops) | >=0.3.0 |
+| <a name="requirement_azuredevops"></a> [azuredevops](#requirement\_azuredevops) | ~> 0.6 |
 
 ## Inputs
 
@@ -23,7 +23,7 @@ No inputs.
 
 | Name | Type |
 |------|------|
-| [azuredevops_users.users](https://registry.terraform.io/providers/microsoft/azuredevops/latest/docs/data-sources/users) | data source |
+| [azuredevops_users.all](https://registry.terraform.io/providers/microsoft/azuredevops/latest/docs/data-sources/users) | data source |
 
 ## Modules
 
@@ -31,7 +31,3 @@ No inputs.
 |------|--------|---------|
 | <a name="module_project"></a> [project](#module\_project) | ../../ | n/a |
 <!-- END_TF_DOCS -->
-_______________
-| Classified  |
-| :---------: |
-|   PUBLIC    |

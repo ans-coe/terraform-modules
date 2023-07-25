@@ -3,12 +3,12 @@ terraform {
   required_providers {
     azuredevops = {
       source  = "microsoft/azuredevops"
-      version = ">=0.3.0"
+      version = "~> 0.6"
     }
   }
 }
 
-data "azuredevops_users" "users" {
+data "azuredevops_users" "all" {
   subject_types = ["aad", "msa"]
 }
 
@@ -18,91 +18,86 @@ module "project" {
   name        = "terraform-module-example-advanced-project"
   description = "Example project created and managed through Terraform."
 
-  repository_names = ["repo1", "repo2"]
-  teams = [
-    {
-      name           = "app1"
-      description    = "Application 1"
-      administrators = data.azuredevops_users.users.users[*].descriptor
-      members        = [data.azuredevops_users.users.users[*].descriptor[0]]
+  repositories = ["repo1", "repo2"]
+  teams = {
+    "app1" = {
+      description = "Application 1"
+      # Generally speaking, this will probably be more tightly scoped.
+      # This is just here for example purposes.
+      administrators = data.azuredevops_users.all.users[*].descriptor
+      members        = data.azuredevops_users.all.users[*].descriptor
     },
-    {
-      name        = "app2"
+    "app2" = {
       description = "Application 2"
     },
-    {
-      name           = "app3"
+    "app3" = {
       description    = "Application 3"
-      administrators = data.azuredevops_users.users.users[*].descriptor
+      administrators = data.azuredevops_users.all.users[*].descriptor
     }
-  ]
+  }
   teams_membership_mode = "add"
 
-  environments = [
-    {
-      name        = "default"
+  environments = {
+    "default" = {
       description = "Default Environment"
     },
-    {
-      name = "dev"
+    "dev" = {},
+    "test" = {
+      approval = {
+        approvers             = data.azuredevops_users.all.users[*].id
+        requester_can_approve = true
+      }
+      allowed_branches = { branches = "refs/heads/main, refs/heads/releases/*" }
     },
-    {
-      name = "test"
-    },
-    {
-      name = "prod"
+    "prod" = {
+      approval = {
+        approvers     = data.azuredevops_users.all.users[*].id
+        min_approvers = 2
+        instructions  = "This is production. Think about this!"
+      }
+      allowed_branches = { branches = "refs/heads/main, refs/heads/releases/*" }
     }
-  ]
+  }
 
   author_email_policy = {
-    enabled          = true
     blocking         = false
     email_patterns   = ["*.example.com", "*.outlook.com"]
     repository_names = ["repo1"]
   }
 
   file_path_policy = {
-    enabled          = true
     blocking         = false
     denied_paths     = ["dont_create", "bad_file"]
     repository_names = ["repo2"]
   }
 
   reserved_names_policy = {
-    enabled  = true
     blocking = true
   }
 
-  case_enforcement_policy = {
-    enabled = true
-  }
+  case_enforcement_policy = {}
 
   path_length_policy = {
-    enabled         = true
     blocking        = false
     max_path_length = 550
   }
 
   file_size_policy = {
-    enabled       = true
     blocking      = true
     max_file_size = 100
   }
 
   review_policy = {
-    enabled            = true
     blocking           = false
     repository_names   = ["repo1"]
     submitter_can_vote = true
   }
 
   work_item_policy = {
-    enabled  = true
     blocking = false
   }
 
   comment_policy = {
-    enabled  = true
     blocking = false
   }
 }
