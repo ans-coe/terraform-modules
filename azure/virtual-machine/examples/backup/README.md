@@ -9,7 +9,9 @@ No requirements.
 
 ## Inputs
 
-No inputs.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_password"></a> [password](#input\_password) | VM Password. | `string` | n/a | yes |
 
 ## Outputs
 

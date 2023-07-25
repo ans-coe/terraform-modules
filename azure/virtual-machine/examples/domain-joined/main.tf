@@ -9,6 +9,12 @@ provider "azurerm" {
   }
 }
 
+variable "password" {
+  description = "VM Password."
+  type        = string
+  sensitive   = true
+}
+
 locals {
   location = "uksouth"
   tags = {
@@ -53,7 +59,7 @@ module "vm" {
 
   os_type       = "Windows"
   computer_name = "vm"
-  password      = "P4s5w0rd!"
+  password      = var.password
   subnet_id     = azurerm_subnet.vm.id
   size          = "Standard_B2s"
 }
