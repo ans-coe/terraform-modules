@@ -1,19 +1,3 @@
-#################
-# Resource Group
-#################
-
-resource "azurerm_resource_group" "main" {
-  count = var.resource_group_name == null ? 1 : 0
-
-  name     = "${var.name}-rg"
-  location = var.location
-  tags     = var.tags
-}
-
-locals {
-  resource_group_name = coalesce(one(azurerm_resource_group.main[*].name), var.resource_group_name)
-}
-
 ########################
 # Power Management Role
 ########################
@@ -22,8 +6,7 @@ resource "azurerm_role_definition" "power_management" {
   name        = "Power Management - ${var.name}"
   description = "This custom role provides ${var.name} permissions to read, start and stop Virtual Machines, Virtual Machine Scale Sets, Kubernetes Services, Web Apps and Web App Slots."
 
-  scope             = data.azurerm_subscription.current.id
-  assignable_scopes = local.managed_scopes
+  scope = var.custom_role_scope != null ? var.custom_role_scope : data.azurerm_subscription.current.id
 
   permissions {
     actions = [
@@ -55,7 +38,7 @@ resource "azurerm_role_definition" "power_management" {
 resource "azurerm_automation_account" "main" {
   name                = var.name
   location            = var.location
-  resource_group_name = local.resource_group_name
+  resource_group_name = var.resource_group_name
   tags                = var.tags
 
   sku_name = "Basic"
@@ -64,12 +47,12 @@ resource "azurerm_automation_account" "main" {
 }
 
 resource "azurerm_automation_schedule" "weekdays" {
-  for_each = toset(var.scheduled_hours)
+  for_each = var.scheduled_hours
 
-  name                    = "weekdays-${each.value}"
-  resource_group_name     = local.resource_group_name
+  name                    = "weekdays-${each.key}"
+  resource_group_name     = var.resource_group_name
   automation_account_name = azurerm_automation_account.main.name
-  description             = format("This schedule runs once a day at %s every day in %s.", each.value, var.timezone)
+  description             = format("This schedule runs once a day every weekday in %s.", var.timezone)
 
   timezone = var.timezone
   # Ugly logic, but pull tomorrow from locals and substring the 24 hour date formatted date.
@@ -80,15 +63,13 @@ resource "azurerm_automation_schedule" "weekdays" {
   frequency = "Week"
   week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
   interval  = 1
-
-  lifecycle { ignore_changes = [start_time] }
 }
 
 resource "azurerm_role_assignment" "power_management" {
-  for_each = toset(local.managed_scopes)
+  for_each = toset(formatlist("/subscriptions/%s", var.managed_subscription_ids))
 
   description        = "Allow the automation account ${azurerm_automation_account.main.name} privileges to read, start and stop this resources under this scope."
-  principal_id       = one(azurerm_automation_account.main.identity).principal_id
+  principal_id       = one(azurerm_automation_account.main.identity[*].principal_id)
   scope              = each.value
   role_definition_id = azurerm_role_definition.power_management.role_definition_resource_id
 
@@ -104,7 +85,7 @@ resource "azurerm_automation_runbook" "power_management" {
 
   name                    = "ManagePower-${each.value}"
   location                = var.location
-  resource_group_name     = local.resource_group_name
+  resource_group_name     = var.resource_group_name
   automation_account_name = azurerm_automation_account.main.name
   tags                    = var.tags
   description             = "This runbook is used to manage power state for ${each.value} resources."
