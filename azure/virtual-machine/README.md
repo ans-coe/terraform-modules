@@ -49,13 +49,14 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_license_type"></a> [license\_type](#input\_license\_type) | License type of the virtual machine. | `string` | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_network_security_group_id"></a> [network\_security\_group\_id](#input\_network\_security\_group\_id) | ID of the network security group to use with the virtual machine NIC. | `string` | `null` | no |
-| <a name="input_os_disk"></a> [os\_disk](#input\_os\_disk) | OS Disk configuration. | <pre>object({<br>    size_gb              = optional(number, 128)<br>    storage_account_type = optional(string, "StandardSSD_LRS")<br>    caching              = optional(string, "None")<br>  })</pre> | `{}` | no |
+| <a name="input_os_disk"></a> [os\_disk](#input\_os\_disk) | OS Disk configuration. | <pre>object({<br>    name                 = optional(string)<br>    size_gb              = optional(number, 128)<br>    storage_account_type = optional(string, "StandardSSD_LRS")<br>    caching              = optional(string, "None")<br>  })</pre> | `{}` | no |
 | <a name="input_os_type"></a> [os\_type](#input\_os\_type) | The OS type to use. | `string` | `"Linux"` | no |
 | <a name="input_password"></a> [password](#input\_password) | Password of the virtual machine. | `string` | `null` | no |
 | <a name="input_patch_assessment_mode"></a> [patch\_assessment\_mode](#input\_patch\_assessment\_mode) | Patch assessment mode of the virtual machine. | `string` | `null` | no |
 | <a name="input_patch_mode"></a> [patch\_mode](#input\_patch\_mode) | Patch mode of the virtual machine. | `string` | `null` | no |
 | <a name="input_public_ip_allocation_method"></a> [public\_ip\_allocation\_method](#input\_public\_ip\_allocation\_method) | Public IP allocation method. | `string` | `"Dynamic"` | no |
 | <a name="input_public_ip_hostname"></a> [public\_ip\_hostname](#input\_public\_ip\_hostname) | Public IP hostname. | `string` | `null` | no |
+| <a name="input_public_ip_name"></a> [public\_ip\_name](#input\_public\_ip\_name) | Name of the public IP. | `string` | `null` | no |
 | <a name="input_public_key"></a> [public\_key](#input\_public\_key) | Public key of the virtual machine. | `string` | `null` | no |
 | <a name="input_size"></a> [size](#input\_size) | Size of the virtual machine. | `string` | `"Standard_B2s"` | no |
 | <a name="input_source_image_id"></a> [source\_image\_id](#input\_source\_image\_id) | Source image ID to use when creating the virtual machine. | `string` | `null` | no |
