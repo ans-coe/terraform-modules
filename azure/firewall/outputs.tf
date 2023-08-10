@@ -15,5 +15,5 @@ output "public_ip" {
 
 output "private_ip" {
   description = "The private IP Address of the firewall"
-  value = one(azurerm_firewall.main.ip_configuration.*.private_ip_address)
+  value       = one(azurerm_firewall.main.ip_configuration.*.private_ip_address)
 }

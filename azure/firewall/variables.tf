@@ -72,7 +72,7 @@ variable "firewall_sku_tier" {
 variable "firewall_dns_servers" {
   description = "List of DNS Servers for Firewall config"
   type        = list(string)
-  default = null
+  default     = null
 }
 
 #############
