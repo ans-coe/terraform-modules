@@ -98,14 +98,8 @@ module "firewall-policy" {
               rule = {
                 Windows_Updates = {
                   protocols = {
-                    Http = {
-                      type = "Http"
-                      port = "80"
-                    },
-                    Https = {
-                      type = "Https"
-                      port = "443"
-                    }
+                    80  = "Http"
+                    443 = "Https"
                   }
                   source_addresses  = "${local.vnet_address_space}"
                   destination_fqdns = ["*.microsoft.com"]

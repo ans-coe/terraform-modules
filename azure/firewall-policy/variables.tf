@@ -26,8 +26,8 @@ variable "tags" {
 
 variable "test" {
   description = "test"
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "firewall_policies" {
@@ -62,10 +62,7 @@ variable "firewall_policies" {
         action      = string
         priority    = string
         rule = map(object({
-          protocols = optional(map(object({
-            type = string #Possible values are http or https
-            port = string
-          })))
+          protocols             = optional(map(string))
           source_addresses      = optional(list(string))
           source_ip_groups      = optional(list(string))
           destination_addresses = optional(list(string))
