@@ -24,6 +24,12 @@ variable "tags" {
 # Firewall Policy
 #############
 
+variable "test" {
+  description = "test"
+  type = string
+  default = null
+}
+
 variable "firewall_policies" {
   description = "List of Firewall Policies"
   type = map(object({

@@ -51,9 +51,9 @@ module "firewall" {
   location            = local.location
   tags                = local.tags
 
-  virtual_network_name  = azurerm_virtual_network.main.name
-  pip_name              = "tfmex-basic-fw-pip"
-  subnet_address_prefix = ["10.0.0.0/26"]
+  virtual_network_name    = azurerm_virtual_network.main.name
+  pip_name                = "tfmex-basic-fw-pip"
+  subnet_address_prefixes = ["10.0.0.0/26"]
 
   firewall_name        = "tfmex-basic-fw"
   firewall_sku_name    = "AZFW_VNet"
@@ -141,7 +141,7 @@ module "firewall-policy" {
                   protocols           = ["TCP", "UDP"]
                   source_addresses    = "${local.vnet_address_space}"
                   destination_ports   = ["53"]
-                  destination_address = "${module.firewall.firewall_public_ip}"
+                  destination_address = "${module.firewall.private_ip}"
                   translated_port     = "53"
                   translated_address  = "8.8.8.8"
                 }

@@ -24,22 +24,32 @@ resource "azurerm_firewall_policy" "main" {
   }
 }
 
-#############
-# Firewall Policy Rule Collection Group
-#############
-resource "azurerm_firewall_policy_rule_collection_group" "main" {
-  for_each = merge([
+locals {
+  rule_collection_map = merge([
     for policy_name, collection_group_map in {
     for k, v in var.firewall_policies : k => v.rule_collection_groups }
     : { for k, v in collection_group_map
   : k => merge(v, { policy_name = policy_name }) }]...)
+}
+
+#############
+# Firewall Policy Rule Collection Group
+#############
+resource "azurerm_firewall_policy_rule_collection_group" "main" {
+  for_each = local.rule_collection_map
   
+  # merge([
+  #   for policy_name, collection_group_map in {
+  #   for k, v in var.firewall_policies : k => v.rule_collection_groups }
+  #   : { for k, v in collection_group_map
+  # : k => merge(v, { policy_name = policy_name }) }]...)
+
   name               = each.key
   priority           = each.value.priority
-  firewall_policy_id = azurerm_firewall_policy.main[each.value.policy_name].id
+  #firewall_policy_id = azurerm_firewall_policy.main[each.value.policy_name].id
 
   dynamic "application_rule_collection" {
-    for_each = each.value.application_rule_collection
+    for_each = 
     content {
       name     = application_rule_collection.key
       priority = application_rule_collection.value.priority

@@ -10,9 +10,9 @@ locals {
   location    = "uksouth"
   dns_servers = ["1.1.1.1", "8.8.8.8"]
   tags = {
-    module  = "firewall"
-    example = "basic"
-    usage   = "demo"
+    module     = "firewall"
+    owner      = "John Doe"
+    department = "Technical"
   }
 }
 
