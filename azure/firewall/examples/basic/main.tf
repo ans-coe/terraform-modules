@@ -6,6 +6,10 @@ provider "azurerm" {
   }
 }
 
+#############
+# Locals
+#############
+
 locals {
   location    = "uksouth"
   dns_servers = ["1.1.1.1", "8.8.8.8"]
@@ -16,9 +20,13 @@ locals {
   }
 }
 
+#############
+# Global Resources
+#############
+
 resource "azurerm_resource_group" "example" {
   name     = "firewall-rg"
-  location = "uksouth"
+  location = local.location
   tags     = local.tags
 }
 
@@ -30,6 +38,10 @@ resource "azurerm_virtual_network" "example" {
 
   address_space = ["10.0.0.0/24"]
 }
+
+#############
+# Firewall
+#############
 
 module "firewall" {
   source = "../../"

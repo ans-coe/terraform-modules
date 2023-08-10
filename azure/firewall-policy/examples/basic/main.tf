@@ -7,12 +7,12 @@ provider "azurerm" {
 #############
 
 locals {
-  location           = "uksouth"
-  dns_servers        = ["1.1.1.1", "8.8.8.8"]
-  vnet_address_space = ["10.0.0.0/16"]
+  location    = "uksouth"
+  dns_servers = ["1.1.1.1", "8.8.8.8"]
   tags = {
-    department = "CoE"
-    owner      = "Jon Kelly"
+    module     = "firewall"
+    owner      = "John Doe"
+    department = "Technical"
   }
 }
 
@@ -20,24 +20,19 @@ locals {
 # Global Resources
 #############
 
-resource "azurerm_resource_group" "main" {
-  name     = "tfmex-basic-fw-rg"
+resource "azurerm_resource_group" "example" {
+  name     = "firewall-rg"
   location = local.location
   tags     = local.tags
 }
 
-resource "azurerm_virtual_network" "main" {
-  name                = "tfmex-basic-fw-vnet"
-  location            = local.location
-  resource_group_name = azurerm_resource_group.main.name
-  address_space       = local.vnet_address_space
-  dns_servers         = local.dns_servers
+resource "azurerm_virtual_network" "example" {
+  name                = "vnet"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
   tags                = local.tags
 
-  subnet {
-    name           = "tfmex-basic-fw-snet1"
-    address_prefix = "10.0.0.0/24"
-  }
+  address_space = ["10.0.0.0/24"]
 }
 
 #############
@@ -47,15 +42,15 @@ resource "azurerm_virtual_network" "main" {
 module "firewall" {
   source = "../../../firewall"
 
-  resource_group_name = azurerm_resource_group.main.name
-  location            = local.location
+  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.example.location
   tags                = local.tags
 
-  virtual_network_name    = azurerm_virtual_network.main.name
-  pip_name                = "tfmex-basic-fw-pip"
-  subnet_address_prefixes = ["10.0.0.0/26"]
+  virtual_network_name    = azurerm_virtual_network.example.name
+  pip_name                = "fw-pip"
+  subnet_address_prefixes = azurerm_virtual_network.example.address_space
 
-  firewall_name        = "tfmex-basic-fw"
+  firewall_name        = "fw"
   firewall_sku_name    = "AZFW_VNet"
   firewall_sku_tier    = "Standard"
   firewall_dns_servers = local.dns_servers
@@ -70,7 +65,7 @@ module "firewall-policy" {
 
   firewall_policies = {
     tfmex-basic-fw-policy = {
-      resource_group_name      = azurerm_resource_group.main.name
+      resource_group_name      = azurerm_resource_group.example.name
       location                 = local.location
       tags                     = local.tags
       sku                      = "Standard"
@@ -88,7 +83,7 @@ module "firewall-policy" {
       rule_collection_groups = {
         ApplicationOne = {
           priority             = "100"
-          firewall_policy_name = "tfmex-basic-fw-policy"
+          firewall_policy_name = "fw-policy"
 
           application_rule_collection = {
             AppOne-App-Collection = {
@@ -101,7 +96,7 @@ module "firewall-policy" {
                     80  = "Http"
                     443 = "Https"
                   }
-                  source_addresses  = "${local.vnet_address_space}"
+                  source_addresses  = "${azurerm_virtual_network.example.address_space}"
                   destination_fqdns = ["*.microsoft.com"]
                 }
               }
@@ -111,12 +106,12 @@ module "firewall-policy" {
           network_rule_collection = {
             AppOne-Net-Collection = {
               action   = "Allow"
-              priority = "100"
+              priority = "101"
 
               rule = {
                 ntp = {
                   action                = "Allow"
-                  source_addresses      = "${local.vnet_address_space}"
+                  source_addresses      = "${azurerm_virtual_network.example.address_space}"
                   destination_ports     = ["123"]
                   destination_addresses = ["*"]
                   protocols             = ["UDP"]
@@ -127,13 +122,12 @@ module "firewall-policy" {
 
           nat_rule_collection = {
             AppOne-NAT-Collection = {
-              priority = "100"
-              action   = "Allow"
+              priority = "102"
 
               rule = {
                 DNS = {
                   protocols           = ["TCP", "UDP"]
-                  source_addresses    = "${local.vnet_address_space}"
+                  source_addresses    = "${azurerm_virtual_network.example.address_space}"
                   destination_ports   = ["53"]
                   destination_address = "${module.firewall.private_ip}"
                   translated_port     = "53"
