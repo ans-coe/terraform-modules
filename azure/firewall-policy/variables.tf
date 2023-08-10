@@ -24,12 +24,6 @@ variable "tags" {
 # Firewall Policy
 #############
 
-variable "test" {
-  description = "test"
-  type        = string
-  default     = null
-}
-
 variable "firewall_policies" {
   description = "List of Firewall Policies"
   type = map(object({
@@ -62,7 +56,7 @@ variable "firewall_policies" {
         action      = string
         priority    = string
         rule = map(object({
-          protocols             = optional(map(string))
+          protocols             = optional(map(string)) #Http, Https
           source_addresses      = optional(list(string))
           source_ip_groups      = optional(list(string))
           destination_addresses = optional(list(string))
@@ -90,7 +84,7 @@ variable "firewall_policies" {
       nat_rule_collection = optional(map(object({
         description = optional(string)
         priority    = string
-        action      = string
+        action      = optional(string) #Dnat only
         rule = map(object({
           protocols           = list(string) #TCP or UDP
           source_addresses    = optional(list(string))
