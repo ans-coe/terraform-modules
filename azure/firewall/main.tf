@@ -31,6 +31,7 @@ resource "azurerm_firewall" "main" {
   sku_tier            = var.firewall_sku_tier
   dns_servers         = var.firewall_dns_servers
   tags                = var.tags
+  firewall_policy_id  = var.firewall_policy_id
 
   ip_configuration {
     name                 = "configuration"
