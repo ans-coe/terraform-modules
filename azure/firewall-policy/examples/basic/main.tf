@@ -54,6 +54,7 @@ module "firewall" {
   firewall_sku_name    = "AZFW_VNet"
   firewall_sku_tier    = "Standard"
   firewall_dns_servers = local.dns_servers
+  firewall_policy_id   = module.firewall-policy.policy["fw-policy"].id
 }
 
 #############
@@ -64,7 +65,7 @@ module "firewall-policy" {
   source = "../.."
 
   firewall_policies = {
-    tfmex-basic-fw-policy = {
+    fw-policy = {
       resource_group_name      = azurerm_resource_group.example.name
       location                 = local.location
       tags                     = local.tags
