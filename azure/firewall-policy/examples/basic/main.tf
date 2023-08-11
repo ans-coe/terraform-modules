@@ -64,77 +64,74 @@ module "firewall" {
 module "firewall-policy" {
   source = "../.."
 
-  firewall_policies = {
-    fw-policy = {
-      resource_group_name      = azurerm_resource_group.example.name
-      location                 = local.location
-      tags                     = local.tags
-      sku                      = "Standard"
-      threat_intelligence_mode = "Alert"
+  name                     = "policy_name"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = local.location
+  tags                     = local.tags
+  sku                      = "Standard"
+  threat_intelligence_mode = "Alert"
 
-      dns = {
-        servers       = ["1.1.1.1", "8.8.8.8"]
-        proxy_enabled = false
+  dns = {
+    servers       = ["1.1.1.1", "8.8.8.8"]
+    proxy_enabled = false
+  }
+
+  #############
+  # Firewall Policy Rule Collection Group
+  #############
+
+  rule_collection_groups = {
+    ApplicationOne = {
+      priority             = "100"
+      firewall_policy_name = "fw-policy"
+
+      application_rule_collection = {
+        AppOne-App-Collection = {
+          action   = "Allow"
+          priority = "100"
+
+          rule = {
+            Windows_Updates = {
+              protocols = {
+                80  = "Http"
+                443 = "Https"
+              }
+              source_addresses  = "${azurerm_virtual_network.example.address_space}"
+              destination_fqdns = ["*.microsoft.com"]
+            }
+          }
+        }
       }
 
-      #############
-      # Firewall Policy Rule Collection Group
-      #############
+      network_rule_collection = {
+        AppOne-Net-Collection = {
+          action   = "Allow"
+          priority = "101"
 
-      rule_collection_groups = {
-        ApplicationOne = {
-          priority             = "100"
-          firewall_policy_name = "fw-policy"
-
-          application_rule_collection = {
-            AppOne-App-Collection = {
-              action   = "Allow"
-              priority = "100"
-
-              rule = {
-                Windows_Updates = {
-                  protocols = {
-                    80  = "Http"
-                    443 = "Https"
-                  }
-                  source_addresses  = "${azurerm_virtual_network.example.address_space}"
-                  destination_fqdns = ["*.microsoft.com"]
-                }
-              }
+          rule = {
+            ntp = {
+              action                = "Allow"
+              source_addresses      = "${azurerm_virtual_network.example.address_space}"
+              destination_ports     = ["123"]
+              destination_addresses = ["*"]
+              protocols             = ["UDP"]
             }
           }
+        }
+      }
 
-          network_rule_collection = {
-            AppOne-Net-Collection = {
-              action   = "Allow"
-              priority = "101"
+      nat_rule_collection = {
+        AppOne-NAT-Collection = {
+          priority = "102"
 
-              rule = {
-                ntp = {
-                  action                = "Allow"
-                  source_addresses      = "${azurerm_virtual_network.example.address_space}"
-                  destination_ports     = ["123"]
-                  destination_addresses = ["*"]
-                  protocols             = ["UDP"]
-                }
-              }
-            }
-          }
-
-          nat_rule_collection = {
-            AppOne-NAT-Collection = {
-              priority = "102"
-
-              rule = {
-                DNS = {
-                  protocols           = ["TCP", "UDP"]
-                  source_addresses    = "${azurerm_virtual_network.example.address_space}"
-                  destination_ports   = ["53"]
-                  destination_address = "${module.firewall.private_ip}"
-                  translated_port     = "53"
-                  translated_address  = "8.8.8.8"
-                }
-              }
+          rule = {
+            DNS = {
+              protocols           = ["TCP", "UDP"]
+              source_addresses    = "${azurerm_virtual_network.example.address_space}"
+              destination_ports   = ["53"]
+              destination_address = "0.0.0.0/0"
+              translated_port     = "53"
+              translated_address  = "8.8.8.8"
             }
           }
         }

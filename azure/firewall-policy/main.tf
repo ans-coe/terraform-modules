@@ -1,18 +1,18 @@
 #############
 # Firewall Policy
 #############
+
 resource "azurerm_firewall_policy" "main" {
-  for_each                 = var.firewall_policies
-  name                     = each.key
-  resource_group_name      = each.value.resource_group_name
-  location                 = each.value.location
-  sku                      = each.value.sku
-  base_policy_id           = each.value.base_policy_id
-  threat_intelligence_mode = each.value.threat_intelligence_mode
+  name                     = var.name
+  resource_group_name      = var.resource_group_name
+  location                 = var.location
+  sku                      = var.sku
+  base_policy_id           = var.base_policy_id
+  threat_intelligence_mode = var.threat_intelligence_mode
 
   dns {
-    servers       = each.value.dns.servers
-    proxy_enabled = each.value.dns.proxy_enabled
+    servers       = var.dns.servers
+    proxy_enabled = var.dns.proxy_enabled
   }
 
   dynamic "threat_intelligence_allowlist" {
@@ -28,15 +28,11 @@ resource "azurerm_firewall_policy" "main" {
 # Firewall Policy Rule Collection Group
 #############
 resource "azurerm_firewall_policy_rule_collection_group" "main" {
-  for_each = merge([
-    for policy_name, collection_group_map in {
-    for k, v in var.firewall_policies : k => v.rule_collection_groups }
-    : { for k, v in collection_group_map
-  : k => merge(v, { policy_name = policy_name }) }]...)
+  for_each = var.rule_collection_groups
 
   name               = each.key
   priority           = each.value.priority
-  #firewall_policy_id = azurerm_firewall_policy.main.id
+  firewall_policy_id = azurerm_firewall_policy.main[var.name].id
 
   dynamic "application_rule_collection" {
     for_each = each.value.application_rule_collection
@@ -56,7 +52,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
           destination_urls      = rule.value.destination_urls
           destination_fqdns     = rule.value.destination_fqdns
           destination_fqdn_tags = rule.value.destination_fqdn_tags
-          
+
           dynamic "protocols" {
             for_each = rule.value.protocols
             content {
@@ -71,7 +67,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
 
   dynamic "network_rule_collection" {
     for_each = each.value.network_rule_collection
-    
+
     content {
       name     = network_rule_collection.key
       priority = network_rule_collection.value.priority
@@ -79,7 +75,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
 
       dynamic "rule" {
         for_each = network_rule_collection.value.rule
-        
+
         content {
           name                  = rule.key
           protocols             = rule.value.protocols
