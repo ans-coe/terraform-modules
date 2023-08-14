@@ -50,10 +50,10 @@ module "firewall" {
   pip_name                = "fw-pip"
   subnet_address_prefixes = azurerm_virtual_network.example.address_space
 
-  firewall_name        = "fw"
-  firewall_sku_name    = "AZFW_VNet"
-  firewall_sku_tier    = "Standard"
-  firewall_policy_id   = module.firewall-policy.id
+  firewall_name      = "fw"
+  firewall_sku_name  = "AZFW_VNet"
+  firewall_sku_tier  = "Standard"
+  firewall_policy_id = module.firewall-policy.id
 }
 
 #############
