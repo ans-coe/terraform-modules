@@ -16,7 +16,7 @@ resource "azurerm_firewall_policy" "main" {
   }
 
   dynamic "threat_intelligence_allowlist" {
-    for_each = each.value.threat_intelligence_allow_list != null ? [each.value.threat_intelligence_allowlist] : []
+    for_each = var.threat_intelligence_allowlist != null ? [var.threat_intelligence_allowlist] : []
     content {
       ip_addresses = each.value.ip_addresses
       fqdns        = each.value.fqdns
@@ -25,14 +25,14 @@ resource "azurerm_firewall_policy" "main" {
 }
 
 #############
-# Firewall Policy Rule Collection Group
+# Firewall Policy Rule Collection Groups
 #############
 resource "azurerm_firewall_policy_rule_collection_group" "main" {
   for_each = var.rule_collection_groups
 
   name               = each.key
   priority           = each.value.priority
-  firewall_policy_id = azurerm_firewall_policy.main[var.name].id
+  firewall_policy_id = azurerm_firewall_policy.main.id
 
   dynamic "application_rule_collection" {
     for_each = each.value.application_rule_collection

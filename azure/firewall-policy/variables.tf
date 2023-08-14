@@ -23,17 +23,23 @@ variable "tags" {
   type        = map(string)
 }
 
+#############
+# Firewall 
+#############
+
 variable "sku" {
-  description = ""
-  type        = string
-}
-variable "base_policy_id" {
-  description = ""
+  description = "The SKU Tier of the Firewall Policy. Possible values are Standard, Premium and Basic"
   type        = string
 }
 
+variable "base_policy_id" {
+  description = "The ID of the base/parent Firewall Policy"
+  type        = string
+  default     = null
+}
+
 variable "dns" {
-  description = ""
+  description = "Whether to enable DNS proxy on Firewalls attached to this Firewall Policy and a list of custom DNS Server IPs"
   type = object({
     servers       = optional(list(string))
     proxy_enabled = optional(bool)
@@ -41,16 +47,18 @@ variable "dns" {
 }
 
 variable "threat_intelligence_mode" {
-  description = ""
+  description = "The operation mode for Threat Intelligence. Possible values are Alert, Deny and Off"
   type        = string
+  default     = "Alert"
 }
 
-variable "threat_intelligence_allow_list" {
-  description = ""
+variable "threat_intelligence_allowlist" {
+  description = "A list of FQDNs, IPs or CIDR ranges that will be skipped for threat detection."
   type = map(object({
     ip_addresses = list(string)
     fqdns        = list(string)
   }))
+  default = null
 }
 
 #############
@@ -108,79 +116,3 @@ variable "rule_collection_groups" {
     })))
   }))
 }
-
-# variable "firewall_policy" {
-#   description = "List of Firewall Policies"
-#   type = object({
-
-# location                 = string
-# resource_group_name      = string
-# sku                      = string
-# base_policy_id           = optional(string)
-# threat_intelligence_mode = string
-
-# dns = optional(object({
-#   servers       = optional(list(string))
-#   proxy_enabled = optional(bool)
-# }))
-
-# threat_intelligence_allow_list = optional(map(object({
-#   ip_addresses = list(string)
-#   fqdns        = list(string)
-# })))
-
-#############
-# Firewall Policy Rule Collection Group
-#############
-
-#     rule_collection_groups = map(object({
-#       priority = string
-
-#       application_rule_collection = optional(map(object({
-#         description = optional(string)
-#         action      = string
-#         priority    = string
-#         rule = map(object({
-#           protocols             = optional(map(string)) #Http, Https
-#           source_addresses      = optional(list(string))
-#           source_ip_groups      = optional(list(string))
-#           destination_addresses = optional(list(string))
-#           destination_urls      = optional(list(string))
-#           destination_fqdns     = optional(list(string))
-#           destination_fqdn_tags = optional(list(string))
-#         }))
-#       })))
-
-#       network_rule_collection = optional(map(object({
-#         description = optional(string)
-#         action      = string
-#         priority    = string
-#         rule = map(object({
-#           protocols             = list(string) #Any, TCP, UDP, ICMP
-#           source_addresses      = optional(list(string))
-#           source_ip_groups      = optional(list(string))
-#           destination_addresses = optional(list(string))
-#           destination_ip_groups = optional(list(string))
-#           destination_fqdns     = optional(list(string))
-#           destination_ports     = list(string)
-#         }))
-#       })))
-
-#       nat_rule_collection = optional(map(object({
-#         description = optional(string)
-#         priority    = string
-#         action      = optional(string) #Dnat only
-#         rule = map(object({
-#           protocols           = list(string) #TCP or UDP
-#           source_addresses    = optional(list(string))
-#           source_ip_groups    = optional(list(string))
-#           destination_address = optional(string)
-#           destination_ports   = optional(list(string))
-#           translated_address  = optional(string)
-#           translated_fqdn     = optional(string)
-#           translated_port     = string
-#         }))
-#       })))
-#     }))
-#   }))
-# }

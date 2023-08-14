@@ -1,21 +1,19 @@
-output "policy" {
-  description = "The ID of the Azure Firewall Policy"
-
-  value = {
-    for p in azurerm_firewall_policy.main
-    : p.name => {
-      id                       = p.id
-      resource_group_name      = p.resource_group_name
-      sku                      = p.sku
-      threat_intelligence_mode = p.threat_intelligence_mode
-    }
-  }
+output "id" {
+  description = "The ID of the Azure Firewall Policy."
+  value = azurerm_firewall_policy.main.id
 }
 
-# output "child_policies" {
-#   description = "Subnet configuration."
-#   value = {
-#     for p in azurerm_firewall_policy.main
-#     : p.name => p.child_policies 
-#   }
-# }
+output "child_policies" {
+  description = "A list of reference to child Firewall Policies of this Firewall Policy."
+  value = azurerm_firewall_policy.main.child_policies
+}
+
+output "firewalls" {
+  description = "A list of references to Azure Firewalls that this Firewall Policy is associated with."
+  value = azurerm_firewall_policy.main.firewalls
+}
+
+output "rule_collection_groups" {
+  description = "A list of references to Firewall Policy Rule Collection Groups that belongs to this Firewall Policy."
+  value = azurerm_firewall_policy.main.rule_collection_groups
+}

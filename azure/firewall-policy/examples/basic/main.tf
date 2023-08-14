@@ -53,8 +53,7 @@ module "firewall" {
   firewall_name        = "fw"
   firewall_sku_name    = "AZFW_VNet"
   firewall_sku_tier    = "Standard"
-  firewall_dns_servers = local.dns_servers
-  firewall_policy_id   = module.firewall-policy.policy["fw-policy"].id
+  firewall_policy_id   = module.firewall-policy.id
 }
 
 #############
@@ -64,7 +63,7 @@ module "firewall" {
 module "firewall-policy" {
   source = "../.."
 
-  name                     = "policy_name"
+  name                     = "fw-policy"
   resource_group_name      = azurerm_resource_group.example.name
   location                 = local.location
   tags                     = local.tags
@@ -72,7 +71,7 @@ module "firewall-policy" {
   threat_intelligence_mode = "Alert"
 
   dns = {
-    servers       = ["1.1.1.1", "8.8.8.8"]
+    servers       = local.dns_servers
     proxy_enabled = false
   }
 
@@ -129,7 +128,7 @@ module "firewall-policy" {
               protocols           = ["TCP", "UDP"]
               source_addresses    = "${azurerm_virtual_network.example.address_space}"
               destination_ports   = ["53"]
-              destination_address = "0.0.0.0/0"
+              destination_address = module.firewall.private_ip
               translated_port     = "53"
               translated_address  = "8.8.8.8"
             }
