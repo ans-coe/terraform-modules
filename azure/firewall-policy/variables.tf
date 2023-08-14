@@ -89,7 +89,7 @@ variable "rule_collection_groups" {
       action      = string
       priority    = number
       rule = map(object({
-        protocols             = list(string, "TCP") #Any, TCP, UDP, ICMP
+        protocols             = list(string) #Any, TCP, UDP, ICMP
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
         destination_addresses = optional(list(string))
