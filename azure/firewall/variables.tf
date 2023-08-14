@@ -5,7 +5,6 @@
 variable "location" {
   description = "The location of the firewall."
   type        = string
-  default     = "uksouth"
 }
 
 variable "resource_group_name" {

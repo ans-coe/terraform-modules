@@ -9,6 +9,7 @@ resource "azurerm_firewall_policy" "main" {
   sku                      = var.sku
   base_policy_id           = var.base_policy_id
   threat_intelligence_mode = var.threat_intelligence_mode
+  tags                     = var.tags
 
   dns {
     servers       = var.dns.servers
@@ -33,6 +34,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
   name               = each.key
   priority           = each.value.priority
   firewall_policy_id = azurerm_firewall_policy.main.id
+  tags               = var.tags
 
   dynamic "application_rule_collection" {
     for_each = each.value.application_rule_collection

@@ -1,4 +1,4 @@
-# Terraform (Module) - PLATFORM - NAME
+# Terraform (Module) - Azure - Firewall
 
 #### Table of Contents
 

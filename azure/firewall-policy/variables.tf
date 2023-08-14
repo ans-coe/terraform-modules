@@ -68,12 +68,12 @@ variable "threat_intelligence_allowlist" {
 variable "rule_collection_groups" {
   description = "Rule Collection Groups"
   type = map(object({
-    priority = string
+    priority = number
 
     application_rule_collection = optional(map(object({
       description = optional(string)
       action      = string
-      priority    = string
+      priority    = number
       rule = map(object({
         protocols             = optional(map(string)) #Http, Https
         source_addresses      = optional(list(string))
@@ -87,31 +87,31 @@ variable "rule_collection_groups" {
     network_rule_collection = optional(map(object({
       description = optional(string)
       action      = string
-      priority    = string
+      priority    = number
       rule = map(object({
-        protocols             = list(string) #Any, TCP, UDP, ICMP
+        protocols             = list(string, "TCP") #Any, TCP, UDP, ICMP
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
         destination_addresses = optional(list(string))
         destination_ip_groups = optional(list(string))
         destination_fqdns     = optional(list(string))
-        destination_ports     = list(string)
+        destination_ports     = list(number)
       }))
     })))
 
     nat_rule_collection = optional(map(object({
       description = optional(string)
-      priority    = string
-      action      = optional(string) #Dnat only
+      priority    = number
+      action      = optional(string, "Dnat") #Dnat only
       rule = map(object({
         protocols           = list(string) #TCP or UDP
         source_addresses    = optional(list(string))
         source_ip_groups    = optional(list(string))
         destination_address = optional(string)
-        destination_ports   = optional(list(string))
+        destination_ports   = optional(list(number))
         translated_address  = optional(string)
         translated_fqdn     = optional(string)
-        translated_port     = string
+        translated_port     = number
       }))
     })))
   }))
