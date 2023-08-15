@@ -12,13 +12,13 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "bastion"
-    example = "basic"
-    usage   = "demo"
+    module     = "bastion"
+    example    = "basic"
+    usage      = "demo"
     department = "technical"
-    owner = "Dee Vops"
+    owner      = "Dee Vops"
   }
-  resource_prefix = "tfex-bas-01"
+  resource_prefix = "tfmex-basic-bastion"
 }
 
 resource "azurerm_resource_group" "bastion" {
@@ -47,10 +47,9 @@ resource "azurerm_subnet" "bastion" {
 module "bastion" {
   source = "../../"
 
-  name                = "bas-${local.resource_prefix}"
-  resource_group_name = azurerm_resource_group.bastion.name
-  location            = local.location
-  tags                = local.tags
+  name     = "bas-${local.resource_prefix}"
+  location = local.location
+  tags     = local.tags
 
   subnet_id = azurerm_subnet.bastion.id
 }
