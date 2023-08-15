@@ -1,5 +1,12 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+    key_vault {
+      purge_soft_delete_on_destroy = true
+    }
+  }
 }
 
 locals {
@@ -9,17 +16,17 @@ locals {
     example = "basic"
     usage   = "demo"
   }
-  resource_prefix = "tfmex-basic-bst"
+  resource_prefix = "bas-bas-demo-uks-03"
 }
 
 resource "azurerm_resource_group" "bastion" {
-  name     = "${local.resource_prefix}-vnet-rg"
+  name     = "rg-${local.resource_prefix}"
   location = local.location
   tags     = local.tags
 }
 
 resource "azurerm_virtual_network" "bastion" {
-  name                = "${local.resource_prefix}-vnet"
+  name                = "vnet-${local.resource_prefix}"
   location            = local.location
   resource_group_name = azurerm_resource_group.bastion.name
   tags                = local.tags
@@ -38,7 +45,7 @@ resource "azurerm_subnet" "bastion" {
 module "bastion" {
   source = "../../"
 
-  name     = "${local.resource_prefix}-bst"
+  name     = "bas-${local.resource_prefix}"
   location = local.location
   tags     = local.tags
 

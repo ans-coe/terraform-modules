@@ -1,27 +1,11 @@
-#################
-# Resource Group
-#################
-
-resource "azurerm_resource_group" "main" {
-  count = var.resource_group_name == null ? 1 : 0
-
-  name     = "${var.name}-rg"
-  location = var.location
-  tags     = var.tags
-}
-
-locals {
-  resource_group_name = coalesce(one(azurerm_resource_group.main[*].name), var.resource_group_name)
-}
-
 ##########
 # Bastion
 ##########
 
 resource "azurerm_public_ip" "main" {
-  name                = var.public_ip_name == null ? "${var.name}-ip" : var.public_ip_name
+  name                = var.public_ip_name == null ? "pip-${var.name}" : var.public_ip_name
   location            = var.location
-  resource_group_name = local.resource_group_name
+  resource_group_name = var.resource_group_name
   tags                = var.tags
 
   sku               = "Standard"
@@ -31,7 +15,7 @@ resource "azurerm_public_ip" "main" {
 resource "azurerm_bastion_host" "main" {
   name                = var.name
   location            = var.location
-  resource_group_name = local.resource_group_name
+  resource_group_name = var.resource_group_name
   tags                = var.tags
 
   sku = var.sku
@@ -56,8 +40,8 @@ resource "azurerm_bastion_host" "main" {
 ######
 
 resource "azurerm_network_security_group" "main" {
-  name                = var.network_security_group_name == null ? "${var.name}-nsg" : var.network_security_group_name
-  resource_group_name = local.resource_group_name
+  name                = var.network_security_group_name == null ? "nsg-${var.name}" : var.network_security_group_name
+  resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
 
@@ -72,8 +56,8 @@ resource "azurerm_network_security_group" "main" {
     source_port_range      = "*"
     destination_port_range = "443"
 
-    source_address_prefix      = var.allowed_cidrs == null ? "Internet" : null
-    source_address_prefixes    = var.allowed_cidrs != null ? var.allowed_cidrs : null
+    source_address_prefix      = length(local.whitelist) == 1 ? local.whitelist[0] : null
+    source_address_prefixes    = length(local.whitelist) > 1 ? local.whitelist : null
     destination_address_prefix = "*"
   }
 
