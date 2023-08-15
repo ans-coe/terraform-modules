@@ -4,7 +4,7 @@ Please provide a summary of your changes and the reason the changes are being ma
 
 ## Type of change
 
-Please delete options that are not relevant.
+Please select the option that is relevant.
 
   - [ ] Bug fix (non-breaking change which fixes an issue)
   - [ ] New feature (non-breaking change which adds functionality)
