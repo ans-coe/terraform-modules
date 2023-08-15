@@ -15,8 +15,10 @@ locals {
     module  = "bastion"
     example = "basic"
     usage   = "demo"
+    department = "technical"
+    owner = "Dee Vops"
   }
-  resource_prefix = "bas-bas-demo-uks-03"
+  resource_prefix = "tfex-bas-01"
 }
 
 resource "azurerm_resource_group" "bastion" {
@@ -45,9 +47,10 @@ resource "azurerm_subnet" "bastion" {
 module "bastion" {
   source = "../../"
 
-  name     = "bas-${local.resource_prefix}"
-  location = local.location
-  tags     = local.tags
+  name                = "bas-${local.resource_prefix}"
+  resource_group_name = azurerm_resource_group.bastion.name
+  location            = local.location
+  tags                = local.tags
 
   subnet_id = azurerm_subnet.bastion.id
 }
