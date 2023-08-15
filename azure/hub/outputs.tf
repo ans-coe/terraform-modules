@@ -1,0 +1,44 @@
+output "network" {
+  description = "Output from the network module."
+  value       = module.network
+}
+
+output "firewall" {
+  description = "Output from the firewall."
+  value       = module.firewall
+}
+
+output "default_route_table" {
+  description = "Default route table passing traffic through the firewall."
+  value       = local.firewall_route_table
+}
+
+output "bastion" {
+  description = "Output from the bastion module."
+  value       = local.bastion
+}
+
+output "virtual_network_gateway" {
+  description = "Output from the virtual network gateway."
+  value       = local.virtual_network_gateway
+}
+
+output "private_resolver" {
+  description = "Output from the private resolver."
+  value       = local.private_resolver
+}
+
+output "private_resolver_inbound_endpoint" {
+  description = "Output from the private resolver inbound endpoint."
+  value       = local.private_resolver_inbound_endpoint
+}
+
+output "private_resolver_outbound_endpoint" {
+  description = "Output from the private resolver outbound endpoint."
+  value       = local.private_resolver_outbound_endpoint
+}
+
+output "network_watcher" {
+  description = "Output of the network watcher."
+  value       = one(azurerm_network_watcher.main)
+}
