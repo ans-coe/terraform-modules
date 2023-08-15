@@ -16,7 +16,7 @@ locals {
     example = "basic"
     usage   = "demo"
   }
-  resource_prefix = "hub-vnet-bas-demo-uks-03"
+  resource_prefix = "tfmex-basic-hub"
 }
 
 module "hub" {

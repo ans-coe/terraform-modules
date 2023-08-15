@@ -1,7 +1,7 @@
 module "bastion" {
-  count  = local.enable_bastion ? 1 : 0
+  count = local.enable_bastion ? 1 : 0
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://dev.azure.com/friss/Friss-Cloud-2/_git/fc-tf-modules//modules/bastion"
+  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/bastion"
 
   name                = var.bastion_config["name"]
   location            = var.location
