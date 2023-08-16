@@ -1,8 +1,16 @@
+##########
+# Resource Group
+##########
+
 resource "azurerm_resource_group" "main" {
   name     = var.resource_group_name
   location = var.location
   tags     = var.tags
 }
+
+##########
+# Hub VNet
+##########
 
 module "network" {
   source  = "ans-coe/virtual-network/azurerm"
@@ -85,6 +93,10 @@ module "network" {
     : zone.name => { resource_group_name = zone.resource_group_name }
   }
 }
+
+#############
+# Private DNS
+#############
 
 resource "azurerm_private_dns_zone" "main" {
   for_each = var.private_dns_domains

@@ -18,7 +18,7 @@ This module deploys a spoke network in Azure.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.0 |
 
 ## Inputs
@@ -43,6 +43,7 @@ This module deploys a spoke network in Azure.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_id"></a> [id](#output\_id) | The output of the network module. |
 | <a name="output_network"></a> [network](#output\_network) | The output of the network module. |
 | <a name="output_network_security_group"></a> [network\_security\_group](#output\_network\_security\_group) | The output of the network security group resource. |
 | <a name="output_network_watcher"></a> [network\_watcher](#output\_network\_watcher) | Output of the network watcher. |

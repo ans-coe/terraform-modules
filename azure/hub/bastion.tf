@@ -1,11 +1,12 @@
 module "bastion" {
   count = local.enable_bastion ? 1 : 0
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/bastion/?ref=389acfb5e5ae0939f59260cb8a07bea640bc4550"
+  # source = "git::https://github.com/ans-coe/terraform-modules.git//azure/bastion/?ref=389acfb5e5ae0939f59260cb8a07bea640bc4550"
+  source = "../bastion"
 
   name                = var.bastion_config["name"]
   location            = var.location
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = var.bastion_config["resource_group_name"] != "" ? var.bastion_config["resource_group_name"] : var.resource_group_name
   tags                = var.tags
 
   subnet_id                   = local.bastion_subnet.id

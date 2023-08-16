@@ -18,7 +18,7 @@ This module deploys a predefined hub network with the option to include focused 
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.0 |
 
 ## Inputs
@@ -29,7 +29,7 @@ This module deploys a predefined hub network with the option to include focused 
 | <a name="input_location"></a> [location](#input\_location) | Location to deploy to. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of the resource group created for the hub. | `string` | n/a | yes |
 | <a name="input_virtual_network_name"></a> [virtual\_network\_name](#input\_virtual\_network\_name) | Name of the virtual network. | `string` | n/a | yes |
-| <a name="input_bastion_config"></a> [bastion\_config](#input\_bastion\_config) | Configuration for the bastion if enabled. | <pre>object({<br>    name                        = string<br>    subnet_prefix               = string<br>    public_ip_name              = optional(string)<br>    network_security_group_name = optional(string)<br>    whitelist_cidrs             = optional(list(string), ["Internet"])<br>  })</pre> | `null` | no |
+| <a name="input_bastion_config"></a> [bastion\_config](#input\_bastion\_config) | Configuration for the bastion if enabled. | <pre>object({<br>    name                        = string<br>    resource_group_name         = optional(string)<br>    subnet_prefix               = string<br>    public_ip_name              = optional(string)<br>    network_security_group_name = optional(string)<br>    whitelist_cidrs             = optional(list(string), ["Internet"])<br>  })</pre> | `null` | no |
 | <a name="input_extra_subnets"></a> [extra\_subnets](#input\_extra\_subnets) | Miscelaneous additional subnets to add. | <pre>map(object({<br>    prefix                                        = string<br>    service_endpoints                             = optional(list(string))<br>    private_endpoint_network_policies_enabled     = optional(bool)<br>    private_link_service_network_policies_enabled = optional(bool)<br>    delegations = optional(map(<br>      object({<br>        service = string<br>        actions = list(string)<br>      })<br>    ), {})<br>  }))</pre> | `{}` | no |
 | <a name="input_firewall_config"></a> [firewall\_config](#input\_firewall\_config) | Configuration for the firewall if enabled. | <pre>object({<br>    name             = string<br>    subnet_prefix    = string<br>    public_ip_name   = optional(string)<br>    sku_tier         = optional(string, "Standard")<br>    route_table_name = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#input\_log\_analytics\_workspace\_id) | Log analytics workspace ID to forward diagnostics to. | `string` | `null` | no |
@@ -48,6 +48,7 @@ This module deploys a predefined hub network with the option to include focused 
 | <a name="output_bastion"></a> [bastion](#output\_bastion) | Output from the bastion module. |
 | <a name="output_default_route_table"></a> [default\_route\_table](#output\_default\_route\_table) | Default route table passing traffic through the firewall. |
 | <a name="output_firewall"></a> [firewall](#output\_firewall) | Output from the firewall. |
+| <a name="output_id"></a> [id](#output\_id) | Output from the network module. |
 | <a name="output_network"></a> [network](#output\_network) | Output from the network module. |
 | <a name="output_network_watcher"></a> [network\_watcher](#output\_network\_watcher) | Output of the network watcher. |
 | <a name="output_private_resolver"></a> [private\_resolver](#output\_private\_resolver) | Output from the private resolver. |
@@ -76,7 +77,7 @@ This module deploys a predefined hub network with the option to include focused 
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_bastion"></a> [bastion](#module\_bastion) | git::https://github.com/ans-coe/terraform-modules.git//azure/bastion/ | 389acfb5e5ae0939f59260cb8a07bea640bc4550 |
+| <a name="module_bastion"></a> [bastion](#module\_bastion) | ../bastion | n/a |
 | <a name="module_firewall"></a> [firewall](#module\_firewall) | git::https://github.com/ans-coe/terraform-modules.git//azure/firewall/ | b78fe8b96a456c7ffd3980b80e0b30c8c076ee29 |
 | <a name="module_network"></a> [network](#module\_network) | ans-coe/virtual-network/azurerm | 1.3.0 |
 <!-- END_TF_DOCS -->

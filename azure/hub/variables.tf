@@ -73,6 +73,7 @@ variable "bastion_config" {
   description = "Configuration for the bastion if enabled."
   type = object({
     name                        = string
+    resource_group_name         = optional(string)
     subnet_prefix               = string
     public_ip_name              = optional(string)
     network_security_group_name = optional(string)

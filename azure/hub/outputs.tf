@@ -3,6 +3,11 @@ output "network" {
   value       = module.network
 }
 
+output "id" {
+  description = "Output from the network module."
+  value       = module.network.id
+}
+
 output "firewall" {
   description = "Output from the firewall."
   value       = module.firewall
