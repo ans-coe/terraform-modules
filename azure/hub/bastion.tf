@@ -1,8 +1,6 @@
 module "bastion" {
   count = local.enable_bastion ? 1 : 0
-  # tflint-ignore: terraform_module_pinned_source
-  # source = "git::https://github.com/ans-coe/terraform-modules.git//azure/bastion/?ref=389acfb5e5ae0939f59260cb8a07bea640bc4550"
-  source = "../bastion"
+  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/bastion/?ref=e9b156203385f9d4b1fc2facad2b1e8052029da7"
 
   name                = var.bastion_config["name"]
   location            = var.location
