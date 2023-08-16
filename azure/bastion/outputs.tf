@@ -15,5 +15,5 @@ output "name" {
 
 output "resource_group_name" {
   description = "Name of the resource group."
-  value       = local.resource_group_name
+  value       = azurerm_resource_group.main[0].name
 }

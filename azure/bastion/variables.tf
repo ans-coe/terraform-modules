@@ -46,16 +46,16 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "allowed_cidrs" {
-  description = "A list of allowed CIDR ranges to give access to the bastion. Default to Internet service tag."
+variable "whitelist" {
+  description = "A list of allowed CIDR ranges or service tags to give access to the bastion. Default to Internet service tag."
   type        = list(string)
-  default     = null
+  default     = ["Internet"]
 }
 
 variable "sku" {
   description = "The SKU of the Bastion."
   type        = string
-  default     = "Standard"
+  default     = "Basic"
 }
 
 variable "scale_units" {
