@@ -1,12 +1,5 @@
 provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-    key_vault {
-      purge_soft_delete_on_destroy = true
-    }
-  }
+  features {}
 }
 
 locals {
@@ -32,7 +25,7 @@ module "hub" {
 
   address_space = ["10.0.0.0/16"]
   extra_subnets = {
-    "snet-default" = {
+    "snet-hub" = {
       prefix = "10.0.0.0/24"
     }
   }
@@ -59,5 +52,8 @@ module "hub" {
     outbound_subnet_prefix = "10.0.14.240/28"
   }
 
-  network_watcher_config = {}
+  network_watcher_config = {
+    name                = "NetworkWatcher_UKSouth-${local.resource_prefix}"
+    resource_group_name = "rg-nw-${local.resource_prefix}"
+  }
 }

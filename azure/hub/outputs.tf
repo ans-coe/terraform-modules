@@ -10,7 +10,7 @@ output "id" {
 
 output "firewall" {
   description = "Output from the firewall."
-  value       = module.firewall
+  value       = one(module.firewall)
 }
 
 output "default_route_table" {

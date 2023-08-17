@@ -25,3 +25,7 @@ No resources.
 |------|--------|---------|
 | <a name="module_hub"></a> [hub](#module\_hub) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

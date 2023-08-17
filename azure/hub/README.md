@@ -11,7 +11,15 @@
 
 ## Usage
 
-This module deploys a predefined hub network with the option to include focused features such as application gateway.
+This module deploys a predefined hub network with the option to include focused features such as a firewall, bastion, etc.
+
+### Network Watcher
+In order to manage network watcher via Terraform, the automatic creation of Network Watcher in Azure needs to be disabled in the subscription. Otherwise Terraform will error out.
+
+az account set -s "SUBSCRIPTION NAME"
+az feature register --name DisableNetworkWatcherAutocreation --namespace Microsoft.Network
+az provider register -n Microsoft.Network
+
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -77,7 +85,11 @@ This module deploys a predefined hub network with the option to include focused 
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_bastion"></a> [bastion](#module\_bastion) | ../bastion | n/a |
+| <a name="module_bastion"></a> [bastion](#module\_bastion) | git::https://github.com/ans-coe/terraform-modules.git//azure/bastion/ | e9b156203385f9d4b1fc2facad2b1e8052029da7 |
 | <a name="module_firewall"></a> [firewall](#module\_firewall) | git::https://github.com/ans-coe/terraform-modules.git//azure/firewall/ | b78fe8b96a456c7ffd3980b80e0b30c8c076ee29 |
 | <a name="module_network"></a> [network](#module\_network) | ans-coe/virtual-network/azurerm | 1.3.0 |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

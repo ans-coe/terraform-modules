@@ -1,12 +1,5 @@
 provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-    key_vault {
-      purge_soft_delete_on_destroy = true
-    }
-  }
+  features {}
 }
 
 locals {
@@ -41,5 +34,8 @@ module "spoke" {
   route_table_name            = "rt-${local.resource_prefix}"
   default_route_ip            = "192.168.0.1"
 
-  # hub_virtual_network_id = ""
+  network_watcher_config = {
+    name                = "NetworkWatcher_${locals.location}_${local.resource_prefix}"
+    resource_group_name = "rg-nw-${local.resource_prefix}"
+  }
 }

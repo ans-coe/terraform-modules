@@ -1,9 +1,5 @@
 provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
+  features {}
 }
 
 locals {
@@ -39,8 +35,10 @@ module "hub" {
   }
 
   firewall_config = {
-    name          = "fw-${local.resource_prefix}-hub"
-    subnet_prefix = "10.0.15.192/26"
+    name             = "fw-${local.resource_prefix}-hub"
+    subnet_prefix    = "10.0.15.192/26"
+    public_ip_name   = "fw-pip${local.resource_prefix}-hub"
+    route_table_name = "rt-${local.resource_prefix}-hub"
   }
 
   bastion_config = {
@@ -59,6 +57,11 @@ module "hub" {
     inbound_subnet_prefix  = "10.0.14.224/28"
     outbound_subnet_prefix = "10.0.14.240/28"
   }
+
+  network_watcher_config = {
+    name                = "NetworkWatcher_UKSouth-${local.resource_prefix}"
+    resource_group_name = "rg-nw-${local.resource_prefix}"
+  }
 }
 
 ########
@@ -76,13 +79,14 @@ module "spoke-mgmt" {
 
   address_space = ["10.1.0.0/16"]
   subnets = {
-    "spoke-mgmt-net-default" = {
+    "snet-mgmt-tfmex-adv-hub" = {
       prefix = "10.1.0.0/24"
     }
   }
 
   network_security_group_name = "nsg-mgmt-${local.resource_prefix}-spoke"
   route_table_name            = "rt-mgmt-${local.resource_prefix}-spoke"
+  default_route_ip            = module.hub.firewall.private_ip
 }
 
 module "spoke-prd" {
@@ -96,13 +100,14 @@ module "spoke-prd" {
 
   address_space = ["10.2.0.0/16"]
   subnets = {
-    "spoke-prd-net-default" = {
+    "snet-prd-tfmex-adv-spoke" = {
       prefix = "10.2.0.0/24"
     }
   }
 
   network_security_group_name = "nsg-prd-${local.resource_prefix}-spoke"
   route_table_name            = "rt-prd-${local.resource_prefix}-spoke"
+  default_route_ip            = module.hub.firewall.private_ip
 }
 
 #########

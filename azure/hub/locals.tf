@@ -2,7 +2,7 @@ locals {
   enable_private_endpoint_subnet = var.private_endpoint_subnet != null
 
   enable_firewall      = var.firewall_config != null
-  firewall             = one(module.firewall)
+#  firewall             = one(module.firewall)     tflint - unused
   firewall_route_table = one(azurerm_route_table.firewall)
 
   enable_bastion = var.bastion_config != null

@@ -25,3 +25,7 @@ No resources.
 |------|--------|---------|
 | <a name="module_spoke"></a> [spoke](#module\_spoke) | ../../ | n/a |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

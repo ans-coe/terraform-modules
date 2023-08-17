@@ -18,7 +18,7 @@ module "firewall" {
 resource "azurerm_route_table" "firewall" {
   count = local.enable_firewall ? 1 : 0
 
-  name                = var.firewall_config["route_table_name"] != null ? var.firewall_config["route_table_name"] : "rt-default-${module.network.name}"
+  name                = var.firewall_config["route_table_name"] != null ? var.firewall_config["route_table_name"] : "rt-hub-${module.network.name}"
   resource_group_name = azurerm_resource_group.main.name
   location            = var.location
   tags                = var.tags
