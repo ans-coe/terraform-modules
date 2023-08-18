@@ -1,6 +1,6 @@
 module "bastion" {
   count  = local.enable_bastion ? 1 : 0
-  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/bastion/?ref=e36aab78f84662cc792382162c384ff56451cad8"
+  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/bastion/?ref=49a9309b2ffebadae7ebcba83c91945b49594092"
 
   name                = var.bastion_config["name"]
   location            = var.location
