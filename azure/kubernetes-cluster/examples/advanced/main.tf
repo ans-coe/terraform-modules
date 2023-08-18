@@ -77,7 +77,7 @@ resource "azurerm_user_assigned_identity" "akc_nodepool" {
   tags                = local.tags
 }
 
-resource "azurerm_role_assignment" "main_aks_nodepool_acr_pull" {
+resource "azurerm_role_assignment" "akc_nodepool_acr_pull" {
   principal_id         = azurerm_user_assigned_identity.akc_nodepool.principal_id
   scope                = azurerm_container_registry.akc.id
   role_definition_name = "AcrPull"

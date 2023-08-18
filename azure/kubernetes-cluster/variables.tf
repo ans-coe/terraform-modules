@@ -318,28 +318,15 @@ variable "ingress_application_gateway" {
   default = {}
 }
 
-variable "enable_blob_driver" {
-  description = "Enable blob_driver feature on the storage profile of the cluster."
-  type        = bool
-  default     = null
-}
-
-variable "enable_disk_driver" {
-  description = "Enable disk_driver feature on the storage profile of the cluster."
-  type        = bool
-  default     = null
-}
-
-variable "disk_driver_version" {
-  description = "Version of the disk_driver feature on the storage profile of the cluster."
-  type        = bool
-  default     = null
-}
-
-variable "enable_file_driver" {
-  description = "Enable file_driver feature on the storage profile of the cluster."
-  type        = bool
-  default     = null
+variable "storage_profile" {
+  description = "Storage profile of the cluster."
+  type = object({
+    blob_driver_enabled = optional(bool)
+    file_driver_enabled = optional(bool)
+    disk_driver_enabled = optional(bool)
+    disk_driver_version = optional(string)
+  })
+  default = {}
 }
 
 variable "key_vault_secrets_provider" {

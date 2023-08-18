@@ -140,10 +140,10 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   storage_profile {
-    blob_driver_enabled = var.enable_blob_driver
-    disk_driver_enabled = var.enable_disk_driver
-    disk_driver_version = var.disk_driver_version
-    file_driver_enabled = var.enable_file_driver
+    blob_driver_enabled = var.storage_profile["blob_driver_enabled"]
+    file_driver_enabled = var.storage_profile["file_driver_enabled"]
+    disk_driver_enabled = var.storage_profile["disk_driver_enabled"]
+    disk_driver_version = var.storage_profile["disk_driver_version"]
   }
 
   dynamic "key_vault_secrets_provider" {
@@ -197,7 +197,7 @@ resource "azurerm_role_assignment" "main_aks_cluster_network_contributor" {
 }
 
 resource "azurerm_role_assignment" "main_aks_cluster_private_dns_zone_contributor" {
-  count = var.cluster_identity != null && var.private_dns_zone_id != "System"  ? 1 : 0
+  count = var.cluster_identity != null && var.private_dns_zone_id != "System" ? 1 : 0
 
   principal_id         = coalesce(var.cluster_identity["principal_id"], "UNUSED")
   scope                = coalesce(var.private_dns_zone_id, "UNUSED")
