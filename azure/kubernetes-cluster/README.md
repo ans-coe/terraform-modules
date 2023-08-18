@@ -60,7 +60,7 @@ Examples can be found under the [examples](./examples/) directory.
 | <a name="input_private_dns_zone_id"></a> [private\_dns\_zone\_id](#input\_private\_dns\_zone\_id) | The Private DNS Zone ID - can alternatively by System to be AKS-managed or None to bring your own DNS. | `string` | `"System"` | no |
 | <a name="input_service_cidr"></a> [service\_cidr](#input\_service\_cidr) | Service CIDR for AKS. | `string` | `"10.0.0.0/16"` | no |
 | <a name="input_sku_tier"></a> [sku\_tier](#input\_sku\_tier) | The SKU tier of AKS. | `string` | `"Free"` | no |
-| <a name="input_storage_profile"></a> [storage\_profile](#input\_storage\_profile) | Storage profile of the cluster. | <pre>object({<br>    blob_driver_enabled = optional(bool)<br>    file_driver_enabled = optional(bool)<br>    disk_driver_enabled = optional(bool)<br>    disk_driver_version = optional(string)<br>  })</pre> | `{}` | no |
+| <a name="input_storage_profile"></a> [storage\_profile](#input\_storage\_profile) | Storage profile of the cluster. | <pre>object({<br>    blob_driver_enabled         = optional(bool)<br>    file_driver_enabled         = optional(bool)<br>    disk_driver_enabled         = optional(bool)<br>    disk_driver_version         = optional(string)<br>    snapshot_controller_enabled = optional(bool)<br>  })</pre> | `{}` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID to use with the default nodepool if using Azure CNI. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |
 | <a name="input_use_azure_cni"></a> [use\_azure\_cni](#input\_use\_azure\_cni) | Use Azure CNI. | `bool` | `false` | no |

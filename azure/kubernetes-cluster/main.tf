@@ -140,10 +140,11 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   storage_profile {
-    blob_driver_enabled = var.storage_profile["blob_driver_enabled"]
-    file_driver_enabled = var.storage_profile["file_driver_enabled"]
-    disk_driver_enabled = var.storage_profile["disk_driver_enabled"]
-    disk_driver_version = var.storage_profile["disk_driver_version"]
+    blob_driver_enabled         = var.storage_profile["blob_driver_enabled"]
+    file_driver_enabled         = var.storage_profile["file_driver_enabled"]
+    disk_driver_enabled         = var.storage_profile["disk_driver_enabled"]
+    disk_driver_version         = var.storage_profile["disk_driver_version"]
+    snapshot_controller_enabled = var.storage_profile["snapshot_controller_enabled"]
   }
 
   dynamic "key_vault_secrets_provider" {

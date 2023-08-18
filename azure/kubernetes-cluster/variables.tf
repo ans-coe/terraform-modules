@@ -321,10 +321,11 @@ variable "ingress_application_gateway" {
 variable "storage_profile" {
   description = "Storage profile of the cluster."
   type = object({
-    blob_driver_enabled = optional(bool)
-    file_driver_enabled = optional(bool)
-    disk_driver_enabled = optional(bool)
-    disk_driver_version = optional(string)
+    blob_driver_enabled         = optional(bool)
+    file_driver_enabled         = optional(bool)
+    disk_driver_enabled         = optional(bool)
+    disk_driver_version         = optional(string)
+    snapshot_controller_enabled = optional(bool)
   })
   default = {}
 }
