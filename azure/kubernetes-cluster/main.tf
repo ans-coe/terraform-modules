@@ -185,14 +185,14 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 }
 
-// NOTE: principal_id and scope has been coalesced as below to prevent the value from becoming null
+// NOTE: principal_id and scope has been set up as below to prevent the value from becoming null
 //       and failing the resource checks if it's not enabled.
 
 resource "azurerm_role_assignment" "main_aks_system_identity_network_contributor" {
   count = var.use_azure_cni && var.subnet_id != null && var.cluster_identity == null ? 1 : 0
 
   principal_id         = one(azurerm_kubernetes_cluster.main.identity[*].principal_id)
-  scope                = coalesce(var.subnet_id, "UNUSED")
+  scope                = try(one(regex("(/.*)/subnets", var.subnet_id)), "UNUSED")
   role_definition_name = "Network Contributor"
 
   skip_service_principal_aad_check = true
@@ -202,7 +202,7 @@ resource "azurerm_role_assignment" "main_aks_user_identity_network_contributor" 
   count = var.use_azure_cni && var.subnet_id != null && var.cluster_identity != null ? 1 : 0
 
   principal_id         = coalesce(var.cluster_identity["principal_id"], "UNUSED")
-  scope                = coalesce(var.subnet_id, "UNUSED")
+  scope                = try(one(regex("(/.*)/subnets", var.subnet_id)), "UNUSED")
   role_definition_name = "Network Contributor"
 
   skip_service_principal_aad_check = true
