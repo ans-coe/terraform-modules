@@ -172,8 +172,9 @@ resource "azurerm_kubernetes_cluster" "main" {
     // NOTE: Not required as this functions with the user or system managed identity.
     # azurerm_role_assignment.main_aks_cluster_network_contributor,
     // NOTE: Required as this functions with the user identity.
-    azurerm_role_assignment.main_aks_cluster_private_dns_zone_contributor,
-    azurerm_role_assignment.main_aks_cluster_kubelet_identity_contributor,
+    azurerm_role_assignment.main_aks_user_identity_network_contributor,
+    azurerm_role_assignment.main_aks_user_identity_private_dns_zone_contributor,
+    azurerm_role_assignment.main_aks_user_identity_kubelet_identity_contributor,
   ]
 
   lifecycle {
