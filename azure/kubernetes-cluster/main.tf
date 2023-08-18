@@ -187,17 +187,27 @@ resource "azurerm_kubernetes_cluster" "main" {
 // NOTE: principal_id and scope has been coalesced as below to prevent the value from becoming null
 //       and failing the resource checks if it's not enabled.
 
-resource "azurerm_role_assignment" "main_aks_cluster_network_contributor" {
-  count = var.use_azure_cni && var.subnet_id != null ? 1 : 0
+resource "azurerm_role_assignment" "main_aks_system_identity_network_contributor" {
+  count = var.use_azure_cni && var.subnet_id != null && var.cluster_identity == null ? 1 : 0
 
-  principal_id         = var.cluster_identity != null ? var.cluster_identity["principal_id"] : one(azurerm_kubernetes_cluster.main.identity[*].principal_id)
+  principal_id         = one(azurerm_kubernetes_cluster.main.identity[*].principal_id)
   scope                = coalesce(var.subnet_id, "UNUSED")
   role_definition_name = "Network Contributor"
 
   skip_service_principal_aad_check = true
 }
 
-resource "azurerm_role_assignment" "main_aks_cluster_private_dns_zone_contributor" {
+resource "azurerm_role_assignment" "main_aks_user_identity_network_contributor" {
+  count = var.use_azure_cni && var.subnet_id != null && var.cluster_identity != null ? 1 : 0
+
+  principal_id         = coalesce(var.cluster_identity["principal_id"], "UNUSED")
+  scope                = coalesce(var.subnet_id, "UNUSED")
+  role_definition_name = "Network Contributor"
+
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "main_aks_user_identity_private_dns_zone_contributor" {
   count = var.cluster_identity != null && var.private_dns_zone_id != "System" ? 1 : 0
 
   principal_id         = coalesce(var.cluster_identity["principal_id"], "UNUSED")
@@ -207,7 +217,7 @@ resource "azurerm_role_assignment" "main_aks_cluster_private_dns_zone_contributo
   skip_service_principal_aad_check = true
 }
 
-resource "azurerm_role_assignment" "main_aks_cluster_kubelet_identity_contributor" {
+resource "azurerm_role_assignment" "main_aks_user_identity_kubelet_identity_contributor" {
   count = var.cluster_identity != null && var.kubelet_identity != null ? 1 : 0
 
   principal_id         = coalesce(var.cluster_identity["principal_id"], "UNUSED")
