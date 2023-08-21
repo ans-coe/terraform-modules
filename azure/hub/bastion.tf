@@ -4,7 +4,7 @@ module "bastion" {
 
   name                = var.bastion_config["name"]
   location            = var.location
-  resource_group_name = var.bastion_config["resource_group_name"] != "" ? var.bastion_config["resource_group_name"] : var.resource_group_name
+  resource_group_name = azurerm_resource_group.main.name
   tags                = var.tags
 
   subnet_id                   = local.bastion_subnet.id

@@ -23,6 +23,7 @@ module "network" {
 
   address_space = var.address_space
   subnets       = local.subnets
+  dns_servers   = var.dns_servers != "" ? var.dns_servers : []
 
   peer_networks = var.hub_virtual_network_id != null ? {
     "hub" = {
