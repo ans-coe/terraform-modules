@@ -11,7 +11,7 @@
 
 ## Usage
 
-This module deploys a predefined hub network with the option to include focused features such as a firewall, bastion, etc.
+This module deploys a predefined hub network with the option to include focused features - Firewall, Bastion, Virtual Network Gateway & Private DNS Resolver.
 
 ### Network Watcher
 In order to manage network watcher via Terraform, the automatic creation of Network Watcher in Azure needs to be disabled in the subscription. Otherwise Terraform will error out.

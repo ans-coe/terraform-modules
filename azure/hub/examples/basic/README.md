@@ -1,6 +1,6 @@
-# Example - Basic
+# Example - Hub - Basic
 
-This example is used to illustrate the basic usage of this module.
+This example is used to illustrate the basic usage of this module.  It deploys a hub network with a Firewall, Bastion, a Virtual Network Gateway and Private DNS Resolver.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

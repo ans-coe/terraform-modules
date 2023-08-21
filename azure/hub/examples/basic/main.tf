@@ -11,7 +11,7 @@ locals {
     department = "technical"
     owner      = "Dee Vops"
   }
-  resource_prefix = "tfmex-basic-hub"
+  resource_prefix = "tfmex-basic"
 }
 
 module "hub" {
@@ -20,8 +20,8 @@ module "hub" {
   location = local.location
   tags     = local.tags
 
-  resource_group_name  = "rg-${local.resource_prefix}"
-  virtual_network_name = "vnet-${local.resource_prefix}"
+  resource_group_name  = "rg-hub-${local.resource_prefix}"
+  virtual_network_name = "vnet-hub-${local.resource_prefix}"
 
   address_space = ["10.0.0.0/16"]
   extra_subnets = {
@@ -31,23 +31,22 @@ module "hub" {
   }
 
   firewall_config = {
-    name          = "fw-${local.resource_prefix}"
+    name          = "fw-hub-${local.resource_prefix}"
     subnet_prefix = "10.0.15.192/26"
   }
 
   bastion_config = {
-    name                = "bas-${local.resource_prefix}"
-    resource_group_name = "rg-bas-${local.resource_prefix}"
+    name                = "bas-hub-${local.resource_prefix}"
     subnet_prefix       = "10.0.15.0/26"
   }
 
   virtual_network_gateway_config = {
-    name          = "vpngw-${local.resource_prefix}"
+    name          = "vpngw-hub-${local.resource_prefix}"
     subnet_prefix = "10.0.15.128/26"
   }
 
   private_resolver_config = {
-    name                   = "dnspr-${local.resource_prefix}"
+    name                   = "dnspr-hub-${local.resource_prefix}"
     inbound_subnet_prefix  = "10.0.14.224/28"
     outbound_subnet_prefix = "10.0.14.240/28"
   }

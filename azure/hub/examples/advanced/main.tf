@@ -24,8 +24,8 @@ module "hub" {
   location = local.location
   tags     = local.tags
 
-  resource_group_name  = "rg-${local.resource_prefix}-hub"
-  virtual_network_name = "vnet-${local.resource_prefix}-hub"
+  resource_group_name  = "rg-hub-${local.resource_prefix}"
+  virtual_network_name = "vnet-hub-${local.resource_prefix}"
 
   address_space = ["10.0.0.0/16"]
   extra_subnets = {
@@ -35,25 +35,24 @@ module "hub" {
   }
 
   firewall_config = {
-    name             = "fw-${local.resource_prefix}-hub"
+    name             = "fw-hub-${local.resource_prefix}"
     subnet_prefix    = "10.0.15.192/26"
-    public_ip_name   = "fw-pip${local.resource_prefix}-hub"
-    route_table_name = "rt-${local.resource_prefix}-hub"
+    public_ip_name   = "fw-pip-hub-${local.resource_prefix}"
+    route_table_name = "rt-hub-${local.resource_prefix}"
   }
 
   bastion_config = {
-    name                = "bas-${local.resource_prefix}-hub"
-    resource_group_name = "rg-bas-${local.resource_prefix}-hub"
+    name                = "bas-hub-${local.resource_prefix}"
     subnet_prefix       = "10.0.15.0/26"
   }
 
   virtual_network_gateway_config = {
-    name          = "vpngw-${local.resource_prefix}-hub"
+    name          = "vpngw-hub-${local.resource_prefix}"
     subnet_prefix = "10.0.15.128/26"
   }
 
   private_resolver_config = {
-    name                   = "dnspr-${local.resource_prefix}-hub"
+    name                   = "dnspr-hub-${local.resource_prefix}"
     inbound_subnet_prefix  = "10.0.14.224/28"
     outbound_subnet_prefix = "10.0.14.240/28"
   }
@@ -74,8 +73,8 @@ module "spoke-mgmt" {
   location = local.location
   tags     = local.tags
 
-  resource_group_name  = "rg-mgmt-${local.resource_prefix}-spoke"
-  virtual_network_name = "vnet-mgmt-${local.resource_prefix}-spoke"
+  resource_group_name  = "rg-spoke-mgmt-${local.resource_prefix}"
+  virtual_network_name = "vnet-spoke-mgmt-${local.resource_prefix}"
 
   address_space = ["10.1.0.0/16"]
   subnets = {
@@ -84,8 +83,8 @@ module "spoke-mgmt" {
     }
   }
 
-  network_security_group_name = "nsg-mgmt-${local.resource_prefix}-spoke"
-  route_table_name            = "rt-mgmt-${local.resource_prefix}-spoke"
+  network_security_group_name = "nsg-spoke-mgmt-${local.resource_prefix}"
+  route_table_name            = "rt-spoke-mgmt-${local.resource_prefix}"
   default_route_ip            = module.hub.firewall.private_ip
 }
 
@@ -95,8 +94,8 @@ module "spoke-prd" {
   location = local.location
   tags     = local.tags
 
-  resource_group_name  = "rg-prd-${local.resource_prefix}-spoke"
-  virtual_network_name = "vnet-prd-${local.resource_prefix}-spoke"
+  resource_group_name  = "rg-spoke-prd-${local.resource_prefix}"
+  virtual_network_name = "vnet-spoke-prd-${local.resource_prefix}"
 
   address_space = ["10.2.0.0/16"]
   subnets = {
@@ -105,8 +104,8 @@ module "spoke-prd" {
     }
   }
 
-  network_security_group_name = "nsg-prd-${local.resource_prefix}-spoke"
-  route_table_name            = "rt-prd-${local.resource_prefix}-spoke"
+  network_security_group_name = "nsg-spoke-prd-${local.resource_prefix}"
+  route_table_name            = "rt-spoke-prd-${local.resource_prefix}"
   default_route_ip            = module.hub.firewall.private_ip
 }
 
