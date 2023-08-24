@@ -36,8 +36,8 @@ module "hub" {
   }
 
   bastion_config = {
-    name                = "bas-hub-${local.resource_prefix}"
-    subnet_prefix       = "10.0.15.0/26"
+    name          = "bas-hub-${local.resource_prefix}"
+    subnet_prefix = "10.0.15.0/26"
   }
 
   virtual_network_gateway_config = {

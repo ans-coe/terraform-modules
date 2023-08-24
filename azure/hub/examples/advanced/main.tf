@@ -14,9 +14,9 @@ locals {
   resource_prefix = "tfmex-adv"
 }
 
-#####
+######
 # Hub
-#####
+######
 
 module "hub" {
   source = "../../"
@@ -42,8 +42,8 @@ module "hub" {
   }
 
   bastion_config = {
-    name                = "bas-hub-${local.resource_prefix}"
-    subnet_prefix       = "10.0.15.0/26"
+    name          = "bas-hub-${local.resource_prefix}"
+    subnet_prefix = "10.0.15.0/26"
   }
 
   virtual_network_gateway_config = {
@@ -63,9 +63,9 @@ module "hub" {
   }
 }
 
-########
+#########
 # Spokes
-########
+#########
 
 module "spoke-mgmt" {
   source = "../../../spoke"
@@ -109,9 +109,9 @@ module "spoke-prd" {
   default_route_ip            = module.hub.firewall.private_ip
 }
 
-#########
+##########
 # Peering
-#########
+##########
 
 resource "azurerm_virtual_network_peering" "hub-mgmt" {
   name                         = "peer-hub-mgmt-${local.resource_prefix}"

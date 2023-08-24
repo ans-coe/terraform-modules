@@ -1,3 +1,7 @@
+###################
+# Private Resolver
+###################
+
 resource "azurerm_private_dns_resolver" "main" {
   count = local.enable_private_resolver ? 1 : 0
 

@@ -13,6 +13,8 @@
 
 This module deploys a predefined hub network with the option to include focused features - Firewall, Bastion, Virtual Network Gateway & Private DNS Resolver.
 
+This module creates a single resource group for all hub related resources.  
+
 ### Network Watcher
 In order to manage network watcher via Terraform, the automatic creation of Network Watcher in Azure needs to be disabled in the subscription. Otherwise Terraform will error out.
 
@@ -44,10 +46,10 @@ az provider register -n Microsoft.Network
 | <a name="input_network_watcher_config"></a> [network\_watcher\_config](#input\_network\_watcher\_config) | Configuration for the network watcher resource. | <pre>object({<br>    name                = optional(string)<br>    resource_group_name = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_private_dns_domains"></a> [private\_dns\_domains](#input\_private\_dns\_domains) | A set of private domains to configure. | `set(string)` | `[]` | no |
 | <a name="input_private_endpoint_subnet"></a> [private\_endpoint\_subnet](#input\_private\_endpoint\_subnet) | Configuration for the Private Endpoint subnet. | <pre>object({<br>    subnet_name   = optional(string, "snet-pe")<br>    subnet_prefix = string<br>    service_endpoints = optional(list(string), [<br>      "Microsoft.AzureActiveDirectory", "Microsoft.AzureCosmosDB",<br>      "Microsoft.ContainerRegistry", "Microsoft.EventHub",<br>      "Microsoft.KeyVault", "Microsoft.ServiceBus",<br>      "Microsoft.Sql", "Microsoft.Storage",<br>      "Microsoft.Web"<br>    ])<br>  })</pre> | `null` | no |
-| <a name="input_private_resolver_config"></a> [private\_resolver\_config](#input\_private\_resolver\_config) | Configuration for virtual network gateway if enabled. | <pre>object({<br>    name                   = string<br>    inbound_endpoint_name  = optional(string)<br>    inbound_subnet_name    = optional(string, "snet-dnspr-in")<br>    inbound_subnet_prefix  = string<br>    outbound_endpoint_name = optional(string)<br>    outbound_subnet_name   = optional(string, "snet-dnspr-out")<br>    outbound_subnet_prefix = string<br>  })</pre> | `null` | no |
+| <a name="input_private_resolver_config"></a> [private\_resolver\_config](#input\_private\_resolver\_config) | Configuration for virtual network gateway if enabled. | <pre>object({<br>    name                   = string<br>    inbound_endpoint_name  = optional(string)<br>    inbound_subnet_name    = optional(string)<br>    inbound_subnet_prefix  = string<br>    outbound_endpoint_name = optional(string)<br>    outbound_subnet_name   = optional(string)<br>    outbound_subnet_prefix = string<br>  })</pre> | `null` | no |
 | <a name="input_spoke_networks"></a> [spoke\_networks](#input\_spoke\_networks) | Maps of network name to network ID. | `map(string)` | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to append to resources. | `map(string)` | `{}` | no |
-| <a name="input_virtual_network_gateway_config"></a> [virtual\_network\_gateway\_config](#input\_virtual\_network\_gateway\_config) | Configuration for virtual network gateway if enabled. | <pre>object({<br>    name           = string<br>    subnet_prefix  = string<br>    public_ip_name = optional(string)<br>    sku            = optional(string, "VpnGw1")<br>  })</pre> | `null` | no |
+| <a name="input_virtual_network_gateway_config"></a> [virtual\_network\_gateway\_config](#input\_virtual\_network\_gateway\_config) | Configuration for virtual network gateway if enabled. | <pre>object({<br>    name           = string<br>    subnet_prefix  = string<br>    public_ip_name = optional(string)<br>    generation     = optional(string, "Generation1")<br>    sku            = optional(string, "VpnGw1")<br>    type           = optional(string, "Vpn")<br>    vpn_type       = optional(string, "RouteBased")<br>  })</pre> | `null` | no |
 
 ## Outputs
 

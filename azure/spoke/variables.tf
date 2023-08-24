@@ -1,3 +1,7 @@
+###################
+# Global Variables
+###################
+
 variable "location" {
   description = "The location of created resources."
   type        = string
@@ -13,6 +17,10 @@ variable "resource_group_name" {
   description = "The name of the resource group this module will use."
   type        = string
 }
+
+##########
+# Network
+##########
 
 variable "network_security_group_name" {
   description = "The name of the network security group."
@@ -30,6 +38,11 @@ variable "default_route_ip" {
   description = "The IP address to use for the default route if creating a route table."
   type        = string
   default     = null
+
+  validation {
+    condition     = can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.default_route_ip))
+    error_message = "Invalid IP address provided."
+  }
 }
 
 variable "virtual_network_name" {
@@ -46,6 +59,11 @@ variable "dns_servers" {
 variable "address_space" {
   description = "The address spaces of the virtual network."
   type        = list(string)
+
+  validation {
+    error_message = "Must be valid IPv4 CIDR."
+    condition     = can(cidrhost(one(var.address_space[*]), 0))
+  }
 }
 
 variable "subnets" {
@@ -63,6 +81,11 @@ variable "subnets" {
     ), {})
   }))
   default = {}
+
+  validation {
+    error_message = "Must be valid IPv4 CIDR."
+    condition     = alltrue([for k, v in var.subnets : can(cidrhost(v.prefix, 0))])
+  }
 }
 
 variable "hub_virtual_network_id" {

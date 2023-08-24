@@ -1,3 +1,7 @@
+##################
+# Network Watcher
+##################
+
 resource "azurerm_resource_group" "network_watcher" {
   count = local.enable_network_watcher ? 1 : 0
 

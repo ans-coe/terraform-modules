@@ -1,3 +1,7 @@
+##########################
+# Birtual Network Gateway
+##########################
+
 resource "azurerm_public_ip" "virtual_network_gateway" {
   count = local.enable_virtual_network_gateway ? 1 : 0
 
@@ -18,9 +22,11 @@ resource "azurerm_virtual_network_gateway" "main" {
   resource_group_name = azurerm_resource_group.main.name
   tags                = var.tags
 
-  sku      = var.virtual_network_gateway_config["sku"]
-  type     = "Vpn"
-  vpn_type = "RouteBased"
+  generation = var.virtual_network_gateway_config["generation"]
+  sku        = var.virtual_network_gateway_config["sku"]
+  type       = var.virtual_network_gateway_config["type"]
+  vpn_type   = var.virtual_network_gateway_config["vpn_type"]
+
   ip_configuration {
     name                 = "default"
     subnet_id            = local.virtual_network_gateway_subnet.id

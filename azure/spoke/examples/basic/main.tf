@@ -25,8 +25,8 @@ module "spoke" {
 
   address_space = ["10.0.0.0/16"]
   subnets = {
-    "snet-default" = {
-      prefix = "10.1.0.0/24"
+    snet-default = {
+      prefix = "10.0.1.0/24"
     }
   }
 
@@ -35,7 +35,7 @@ module "spoke" {
   default_route_ip            = "192.168.0.1"
 
   network_watcher_config = {
-    name                = "NetworkWatcher_${locals.location}_${local.resource_prefix}"
+    name                = "NetworkWatcher_${local.location}_${local.resource_prefix}"
     resource_group_name = "rg-nw-${local.resource_prefix}"
   }
 }

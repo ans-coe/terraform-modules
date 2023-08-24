@@ -1,6 +1,6 @@
-##########
+#################
 # Resource Group
-##########
+#################
 
 resource "azurerm_resource_group" "main" {
   name     = var.resource_group_name
@@ -31,12 +31,7 @@ module "network" {
         private_link_service_network_policies_enabled = false
       }
     } : {},
-    # NOTE: This is created and managed by module.firewall in firewall.tf
-    # local.enable_firewall ? {
-    #   "AzureFirewallSubnet" = {
-    #     prefix = var.firewall_config["subnet_prefix"]
-    #   }
-    # } : {},
+
     local.enable_bastion ? {
       "AzureBastionSubnet" = {
         prefix = var.bastion_config["subnet_prefix"]
