@@ -36,7 +36,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
   firewall_policy_id = azurerm_firewall_policy.main.id
 
   dynamic "application_rule_collection" {
-    for_each = each.value.application_rule_collection
+    for_each = each.value.application_rule_collection != null ? each.value.application_rule_collection : {}
 
     content {
       name     = application_rule_collection.key
@@ -67,7 +67,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
   }
 
   dynamic "network_rule_collection" {
-    for_each = each.value.network_rule_collection
+    for_each = each.value.network_rule_collection != null ? each.value.network_rule_collection : {}
 
     content {
       name     = network_rule_collection.key
@@ -92,7 +92,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
   }
 
   dynamic "nat_rule_collection" {
-    for_each = each.value.nat_rule_collection
+    for_each = each.value.nat_rule_collection != null ? each.value.nat_rule_collection : {}
     content {
       name     = nat_rule_collection.key
       priority = nat_rule_collection.value.priority

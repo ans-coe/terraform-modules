@@ -44,6 +44,7 @@ variable "dns" {
     servers       = optional(list(string))
     proxy_enabled = optional(bool)
   })
+  default = {}
 }
 
 variable "threat_intelligence_mode" {
