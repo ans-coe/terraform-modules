@@ -46,7 +46,7 @@ az provider register -n Microsoft.Network
 | <a name="input_network_watcher_config"></a> [network\_watcher\_config](#input\_network\_watcher\_config) | Configuration for the network watcher resource. | <pre>object({<br>    name                = optional(string)<br>    resource_group_name = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_private_dns_domains"></a> [private\_dns\_domains](#input\_private\_dns\_domains) | A set of private domains to configure. | `set(string)` | `[]` | no |
 | <a name="input_private_endpoint_subnet"></a> [private\_endpoint\_subnet](#input\_private\_endpoint\_subnet) | Configuration for the Private Endpoint subnet. | <pre>object({<br>    subnet_name   = optional(string, "snet-pe")<br>    subnet_prefix = string<br>    service_endpoints = optional(list(string), [<br>      "Microsoft.AzureActiveDirectory", "Microsoft.AzureCosmosDB",<br>      "Microsoft.ContainerRegistry", "Microsoft.EventHub",<br>      "Microsoft.KeyVault", "Microsoft.ServiceBus",<br>      "Microsoft.Sql", "Microsoft.Storage",<br>      "Microsoft.Web"<br>    ])<br>  })</pre> | `null` | no |
-| <a name="input_private_resolver_config"></a> [private\_resolver\_config](#input\_private\_resolver\_config) | Configuration for virtual network gateway if enabled. | <pre>object({<br>    name                   = string<br>    inbound_endpoint_name  = optional(string)<br>    inbound_subnet_name    = optional(string)<br>    inbound_subnet_prefix  = string<br>    outbound_endpoint_name = optional(string)<br>    outbound_subnet_name   = optional(string)<br>    outbound_subnet_prefix = string<br>  })</pre> | `null` | no |
+| <a name="input_private_resolver_config"></a> [private\_resolver\_config](#input\_private\_resolver\_config) | Configuration for virtual network gateway if enabled. | <pre>object({<br>    name                   = string<br>    inbound_endpoint_name  = optional(string)<br>    inbound_subnet_name    = optional(string, "snet-dnspr-in")<br>    inbound_subnet_prefix  = string<br>    outbound_endpoint_name = optional(string)<br>    outbound_subnet_name   = optional(string, "snet-dnspr-out")<br>    outbound_subnet_prefix = string<br>  })</pre> | `null` | no |
 | <a name="input_spoke_networks"></a> [spoke\_networks](#input\_spoke\_networks) | Maps of network name to network ID. | `map(string)` | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to append to resources. | `map(string)` | `{}` | no |
 | <a name="input_virtual_network_gateway_config"></a> [virtual\_network\_gateway\_config](#input\_virtual\_network\_gateway\_config) | Configuration for virtual network gateway if enabled. | <pre>object({<br>    name           = string<br>    subnet_prefix  = string<br>    public_ip_name = optional(string)<br>    generation     = optional(string, "Generation1")<br>    sku            = optional(string, "VpnGw1")<br>    type           = optional(string, "Vpn")<br>    vpn_type       = optional(string, "RouteBased")<br>  })</pre> | `null` | no |
@@ -87,8 +87,8 @@ az provider register -n Microsoft.Network
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_bastion"></a> [bastion](#module\_bastion) | git::https://github.com/ans-coe/terraform-modules.git//azure/bastion/ | a63e6c9eb16019abd462e1b2843e24fb1b76169c |
-| <a name="module_firewall"></a> [firewall](#module\_firewall) | git::https://github.com/ans-coe/terraform-modules.git//azure/firewall/ | e36aab78f84662cc792382162c384ff56451cad8 |
+| <a name="module_bastion"></a> [bastion](#module\_bastion) | ../bastion | n/a |
+| <a name="module_firewall"></a> [firewall](#module\_firewall) | ../firewall | n/a |
 | <a name="module_network"></a> [network](#module\_network) | ans-coe/virtual-network/azurerm | 1.3.0 |
 <!-- END_TF_DOCS -->
 _______________

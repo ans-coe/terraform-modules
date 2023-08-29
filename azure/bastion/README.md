@@ -32,7 +32,7 @@ This module deploys a Bastion service to an existing Azure Bastion subnet with N
 | <a name="input_public_ip_name"></a> [public\_ip\_name](#input\_public\_ip\_name) | The name of the public IP for this Bastion. | `string` | `null` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | `null` | no |
 | <a name="input_scale_units"></a> [scale\_units](#input\_scale\_units) | Number of scale units in this Bastion. | `number` | `2` | no |
-| <a name="input_sku"></a> [sku](#input\_sku) | The SKU of the Bastion. | `string` | `"Basic"` | no |
+| <a name="input_sku"></a> [sku](#input\_sku) | The SKU of the Bastion. | `string` | `"Standard"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |
 | <a name="input_whitelist"></a> [whitelist](#input\_whitelist) | A list of allowed CIDR ranges or service tags to give access to the bastion. Default to Internet service tag. | `list(string)` | <pre>[<br>  "Internet"<br>]</pre> | no |
 
@@ -52,7 +52,6 @@ This module deploys a Bastion service to an existing Azure Bastion subnet with N
 | [azurerm_bastion_host.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/bastion_host) | resource |
 | [azurerm_network_security_group.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) | resource |
 | [azurerm_public_ip.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
-| [azurerm_resource_group.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_subnet_network_security_group_association.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet_network_security_group_association) | resource |
 
 ## Modules

@@ -5,7 +5,7 @@
 locals {
   enable_private_endpoint_subnet = var.private_endpoint_subnet != null
 
-  enable_firewall = var.firewall_config != null
+  enable_firewall      = var.firewall_config != null
   firewall             = one(module.firewall)
   firewall_route_table = one(azurerm_route_table.firewall)
 

@@ -41,13 +41,13 @@ module "network" {
         prefix = var.bastion_config["subnet_prefix"]
       }
     } : {},
-    
+
     local.enable_virtual_network_gateway ? {
       "GatewaySubnet" = {
         prefix = var.virtual_network_gateway_config["subnet_prefix"]
       }
     } : {},
-    
+
     local.enable_private_resolver ? {
       (var.private_resolver_config["inbound_subnet_name"]) = {
         prefix         = var.private_resolver_config["inbound_subnet_prefix"]

@@ -65,7 +65,7 @@ This module deploys a spoke network in Azure.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_network"></a> [network](#module\_network) | ans-coe/virtual-network/azurerm | 1.3.0 |
-| <a name="module_network_security_group"></a> [network\_security\_group](#module\_network\_security\_group) | git::https://github.com/ans-coe/terraform-modules.git//azure/network-security-group/ | 745f0256ad0499aefe97f7b2a8b7e6027ec92e88 |
+| <a name="module_network_security_group"></a> [network\_security\_group](#module\_network\_security\_group) | ../network-security-group | n/a |
 <!-- END_TF_DOCS -->
 _______________
 | Classified  |
