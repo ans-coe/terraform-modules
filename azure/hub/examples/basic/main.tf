@@ -52,7 +52,7 @@ module "hub" {
   }
 
   network_watcher_config = {
-    name                = "NetworkWatcher_UKSouth-${local.resource_prefix}"
+    name                = "nw_uksouth-${local.resource_prefix}"
     resource_group_name = "rg-nw-${local.resource_prefix}"
   }
 }
