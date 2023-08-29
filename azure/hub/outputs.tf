@@ -1,3 +1,7 @@
+##########
+# Outputs
+##########
+
 output "network" {
   description = "Output from the network module."
   value       = module.network
@@ -10,7 +14,7 @@ output "id" {
 
 output "firewall" {
   description = "Output from the firewall."
-  value       = one(module.firewall)
+  value       = local.firewall
 }
 
 output "default_route_table" {

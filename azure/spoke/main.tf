@@ -35,7 +35,7 @@ module "network" {
 
 module "network_security_group" {
   count  = var.network_security_group_name != null ? 1 : 0
-  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/network-security-group/?ref=745f0256ad0499aefe97f7b2a8b7e6027ec92e88"
+  source = "../network-security-group"
 
   name                = var.network_security_group_name
   location            = var.location

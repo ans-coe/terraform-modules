@@ -18,7 +18,7 @@ resource "azurerm_private_dns_resolver_inbound_endpoint" "main" {
 
   name                    = var.private_resolver_config["inbound_endpoint_name"] == null ? format("%s-in", var.private_resolver_config["name"]) : var.private_resolver_config["inbound_endpoint_name"]
   location                = var.location
-  private_dns_resolver_id = azurerm_private_dns_resolver.main[count.index].id
+  private_dns_resolver_id = azurerm_private_dns_resolver.main[0].id
   tags                    = var.tags
 
   ip_configurations {
@@ -31,7 +31,7 @@ resource "azurerm_private_dns_resolver_outbound_endpoint" "main" {
 
   name                    = var.private_resolver_config["outbound_endpoint_name"] == null ? format("%s-out", var.private_resolver_config["name"]) : var.private_resolver_config["outbound_endpoint_name"]
   location                = var.location
-  private_dns_resolver_id = azurerm_private_dns_resolver.main[count.index].id
+  private_dns_resolver_id = azurerm_private_dns_resolver.main[0].id
   tags                    = var.tags
 
   subnet_id = local.private_resolver_outbound_subnet.id

@@ -4,7 +4,7 @@
 
 module "firewall" {
   count  = local.enable_firewall ? 1 : 0
-  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/firewall/?ref=e36aab78f84662cc792382162c384ff56451cad8"
+  source = "../firewall"
 
   firewall_name       = var.firewall_config["name"]
   resource_group_name = azurerm_resource_group.main.name

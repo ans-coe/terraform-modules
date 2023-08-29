@@ -1,3 +1,7 @@
+######### 
+# Locals
+#########
+
 locals {
-  whitelist = try(length(var.whitelist) == 0, false) ? ["Internet"] : var.whitelist
+  whitelist = length(var.whitelist) >= 1 ? var.whitelist : ["Internet"]
 }

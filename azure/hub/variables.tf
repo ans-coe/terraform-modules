@@ -112,9 +112,9 @@ variable "firewall_config" {
   }
 }
 
-###########
+##########
 # Bastion
-###########
+##########
 
 variable "bastion_config" {
   description = "Configuration for the bastion if enabled."

@@ -1,5 +1,5 @@
 ##########################
-# Birtual Network Gateway
+# Virtual Network Gateway
 ##########################
 
 resource "azurerm_public_ip" "virtual_network_gateway" {

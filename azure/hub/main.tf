@@ -32,16 +32,22 @@ module "network" {
       }
     } : {},
 
+    # The firewall subnet is managed by the module found in firewall.tf
+    #   count  = local.enable_firewall ? 1 : 0
+    #   subnet_address_prefixes = [var.firewall_config["subnet_prefix"]
+
     local.enable_bastion ? {
       "AzureBastionSubnet" = {
         prefix = var.bastion_config["subnet_prefix"]
       }
     } : {},
+    
     local.enable_virtual_network_gateway ? {
       "GatewaySubnet" = {
         prefix = var.virtual_network_gateway_config["subnet_prefix"]
       }
     } : {},
+    
     local.enable_private_resolver ? {
       (var.private_resolver_config["inbound_subnet_name"]) = {
         prefix         = var.private_resolver_config["inbound_subnet_prefix"]
