@@ -2,6 +2,11 @@
 # Outputs
 ##########
 
+output "resource_group_name" {
+  description = "Output of the Resource Group name created by the Hub module"
+  value       = azurerm_resource_group.main.name
+}
+
 output "network" {
   description = "Output from the network module."
   value       = module.network

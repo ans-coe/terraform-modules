@@ -93,11 +93,12 @@ variable "private_endpoint_subnet" {
 variable "firewall_config" {
   description = "Configuration for the firewall if enabled."
   type = object({
-    name             = string
-    subnet_prefix    = string
-    public_ip_name   = optional(string)
-    sku_tier         = optional(string, "Standard")
-    route_table_name = optional(string)
+    name               = string
+    subnet_prefix      = string
+    public_ip_name     = optional(string)
+    sku_tier           = optional(string, "Standard")
+    route_table_name   = optional(string)
+    firewall_policy_id = optional(string)
   })
   default = null
 

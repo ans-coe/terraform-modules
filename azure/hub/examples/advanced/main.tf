@@ -35,10 +35,11 @@ module "hub" {
   }
 
   firewall_config = {
-    name             = "fw-hub-${local.resource_prefix}"
-    subnet_prefix    = "10.0.15.192/26"
-    public_ip_name   = "fw-pip-hub-${local.resource_prefix}"
-    route_table_name = "rt-hub-${local.resource_prefix}"
+    name               = "fw-hub-${local.resource_prefix}"
+    subnet_prefix      = "10.0.15.192/26"
+    public_ip_name     = "fw-pip-hub-${local.resource_prefix}"
+    route_table_name   = "rt-hub-${local.resource_prefix}"
+    firewall_policy_id = module.firewall-policy.id
   }
 
   bastion_config = {
@@ -60,6 +61,24 @@ module "hub" {
   network_watcher_config = {
     name                = "nw_uks-${local.resource_prefix}"
     resource_group_name = "rg-nw-${local.resource_prefix}"
+  }
+}
+
+module "firewall-policy" {
+  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/firewall-policy/?ref=079d443bdb640628368408e547acfbf8bf18f9b7"
+
+  name                     = "fwpol-${local.resource_prefix}"
+  resource_group_name      = module.hub.resource_group_name
+  location                 = local.location
+  tags                     = local.tags
+  sku                      = "Standard"
+  threat_intelligence_mode = "Alert"
+
+  rule_collection_groups = {
+    ApplicationOne = {
+      priority             = "100"
+      firewall_policy_name = "fw-policy"
+    }
   }
 }
 
