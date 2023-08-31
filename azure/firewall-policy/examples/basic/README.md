@@ -27,7 +27,7 @@ No outputs.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_firewall"></a> [firewall](#module\_firewall) | ../../../firewall | n/a |
-| <a name="module_firewall-policy"></a> [firewall-policy](#module\_firewall-policy) | ../.. | n/a |
+| <a name="module_firewall_policy"></a> [firewall\_policy](#module\_firewall\_policy) | ../.. | n/a |
 <!-- END_TF_DOCS -->
 _______________
 | Classified  |

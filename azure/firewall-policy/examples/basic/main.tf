@@ -2,23 +2,22 @@ provider "azurerm" {
   features {}
 }
 
-#############
+#########
 # Locals
-#############
+#########
 
 locals {
-  location    = "uksouth"
-  dns_servers = ["1.1.1.1", "8.8.8.8"]
+  location = "uksouth"
   tags = {
-    module     = "firewall"
-    owner      = "John Doe"
+    module     = "Firewall"
+    owner      = "Dee Vops"
     department = "Technical"
   }
 }
 
-#############
+###################
 # Global Resources
-#############
+###################
 
 resource "azurerm_resource_group" "example" {
   name     = "firewall-rg"
@@ -35,9 +34,9 @@ resource "azurerm_virtual_network" "example" {
   address_space = ["10.0.0.0/24"]
 }
 
-#############
+###########
 # Firewall
-#############
+###########
 
 module "firewall" {
   source = "../../../firewall"
@@ -53,14 +52,14 @@ module "firewall" {
   firewall_name      = "fw"
   firewall_sku_name  = "AZFW_VNet"
   firewall_sku_tier  = "Standard"
-  firewall_policy_id = module.firewall-policy.id
+  firewall_policy_id = module.firewall_policy.id
 }
 
-#############
+##################
 # Firewall Policy
-#############
+##################
 
-module "firewall-policy" {
+module "firewall_policy" {
   source = "../.."
 
   name                     = "fw-policy"
@@ -70,14 +69,9 @@ module "firewall-policy" {
   sku                      = "Standard"
   threat_intelligence_mode = "Alert"
 
-  dns = {
-    servers       = local.dns_servers
-    proxy_enabled = false
-  }
-
-  #############
+  ########################################
   # Firewall Policy Rule Collection Group
-  #############
+  ########################################
 
   rule_collection_groups = {
     ApplicationOne = {
@@ -95,8 +89,8 @@ module "firewall-policy" {
                 80  = "Http"
                 443 = "Https"
               }
-              source_addresses  = "${azurerm_virtual_network.example.address_space}"
-              destination_fqdns = ["*.microsoft.com"]
+              source_addresses      = azurerm_virtual_network.example.address_space
+              destination_fqdn_tags = ["WindowsUpdate"]
             }
           }
         }
@@ -110,27 +104,10 @@ module "firewall-policy" {
           rule = {
             ntp = {
               action                = "Allow"
-              source_addresses      = "${azurerm_virtual_network.example.address_space}"
+              source_addresses      = azurerm_virtual_network.example.address_space
               destination_ports     = ["123"]
               destination_addresses = ["*"]
               protocols             = ["UDP"]
-            }
-          }
-        }
-      }
-
-      nat_rule_collection = {
-        AppOne-NAT-Collection = {
-          priority = "102"
-
-          rule = {
-            DNS = {
-              protocols           = ["TCP", "UDP"]
-              source_addresses    = "${azurerm_virtual_network.example.address_space}"
-              destination_ports   = ["53"]
-              destination_address = module.firewall.private_ip
-              translated_port     = "53"
-              translated_address  = "8.8.8.8"
             }
           }
         }
