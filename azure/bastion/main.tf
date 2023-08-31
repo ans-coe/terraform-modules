@@ -56,8 +56,8 @@ resource "azurerm_network_security_group" "main" {
     source_port_range      = "*"
     destination_port_range = "443"
 
-    source_address_prefix      = length(local.whitelist) == 1 ? local.whitelist[0] : null
-    source_address_prefixes    = length(local.whitelist) > 1 ? local.whitelist : null
+    source_address_prefix      = length(var.whitelist) == 1 ? var.whitelist[0] : null
+    source_address_prefixes    = length(var.whitelist) > 1 ? var.whitelist : null
     destination_address_prefix = "*"
   }
 
