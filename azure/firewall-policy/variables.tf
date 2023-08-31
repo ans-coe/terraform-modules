@@ -42,7 +42,7 @@ variable "dns" {
   description = "Whether to enable DNS proxy on Firewalls attached to this Firewall Policy and a list of custom DNS Server IPs"
   type = object({
     servers       = optional(list(string))
-    proxy_enabled = optional(bool)
+    proxy_enabled = optional(bool, true)
   })
   default = {}
 }
@@ -75,7 +75,7 @@ variable "rule_collection_groups" {
       description = optional(string)
       action      = string
       priority    = number
-      rule = map(object({
+      rule = optional(map(object({
         protocols             = optional(map(string)) #Http, Https
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
@@ -83,8 +83,9 @@ variable "rule_collection_groups" {
         destination_urls      = optional(list(string))
         destination_fqdns     = optional(list(string))
         destination_fqdn_tags = optional(list(string))
-      }))
+      })), {})
     })))
+
     network_rule_collection = optional(map(object({
       description = optional(string)
       action      = string
@@ -98,7 +99,7 @@ variable "rule_collection_groups" {
         destination_fqdns     = optional(list(string))
         destination_ports     = list(number)
       }))
-    })))
+    })), {})
 
     nat_rule_collection = optional(map(object({
       description = optional(string)
@@ -114,6 +115,6 @@ variable "rule_collection_groups" {
         translated_fqdn     = optional(string)
         translated_port     = number
       }))
-    })))
+    })), {})
   }))
 }

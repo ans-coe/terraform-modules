@@ -52,14 +52,14 @@ module "firewall" {
   firewall_name      = "fw"
   firewall_sku_name  = "AZFW_VNet"
   firewall_sku_tier  = "Standard"
-  firewall_policy_id = module.firewall-policy.id
+  firewall_policy_id = module.firewall_policy.id
 }
 
 ##################
 # Firewall Policy
 ##################
 
-module "firewall-policy" {
+module "firewall_policy" {
   source = "../.."
 
   name                     = "fw-policy"
