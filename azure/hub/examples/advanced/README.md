@@ -28,7 +28,7 @@ No outputs.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_firewall-policy"></a> [firewall-policy](#module\_firewall-policy) | git::https://github.com/ans-coe/terraform-modules.git//azure/firewall-policy/ | 079d443bdb640628368408e547acfbf8bf18f9b7 |
+| <a name="module_firewall-policy"></a> [firewall-policy](#module\_firewall-policy) | ../../../firewall-policy | n/a |
 | <a name="module_hub"></a> [hub](#module\_hub) | ../../ | n/a |
 | <a name="module_spoke-mgmt"></a> [spoke-mgmt](#module\_spoke-mgmt) | ../../../spoke | n/a |
 | <a name="module_spoke-prd"></a> [spoke-prd](#module\_spoke-prd) | ../../../spoke | n/a |

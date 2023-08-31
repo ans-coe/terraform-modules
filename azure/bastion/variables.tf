@@ -53,7 +53,7 @@ variable "whitelist" {
 
   validation {
     error_message = "Whitelist can not be an empty list."
-    condition     = length(var.whitelist) != 0
+    condition     = length(var.whitelist) >= 1
   }
 }
 

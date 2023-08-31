@@ -65,7 +65,7 @@ module "hub" {
 }
 
 module "firewall-policy" {
-  source = "git::https://github.com/ans-coe/terraform-modules.git//azure/firewall-policy/?ref=079d443bdb640628368408e547acfbf8bf18f9b7"
+  source = "../../../firewall-policy"
 
   name                     = "fwpol-${local.resource_prefix}"
   resource_group_name      = module.hub.resource_group_name
