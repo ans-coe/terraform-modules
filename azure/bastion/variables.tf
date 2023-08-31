@@ -20,9 +20,9 @@ variable "tags" {
   default     = null
 }
 
-########################
-# Bastion Configuration
-########################
+##########
+# Bastion 
+##########
 
 variable "name" {
   description = "The name of the Bastion."
@@ -46,10 +46,15 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "allowed_cidrs" {
-  description = "A list of allowed CIDR ranges to give access to the bastion. Default to Internet service tag."
+variable "whitelist" {
+  description = "A list of allowed CIDR ranges or service tags to give access to the bastion. Default to Internet service tag."
   type        = list(string)
-  default     = null
+  default     = ["Internet"]
+
+  validation {
+    error_message = "Whitelist can not be an empty list."
+    condition     = length(var.whitelist) >= 1
+  }
 }
 
 variable "sku" {

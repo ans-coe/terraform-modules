@@ -17,9 +17,9 @@ variable "tags" {
   type        = map(string)
 }
 
-#############
+##########
 # Network
-#############
+##########
 
 variable "virtual_network_name" {
   description = "Name of your Azure Virtual Network"

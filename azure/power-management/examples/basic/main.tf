@@ -35,7 +35,7 @@ module "power_management" {
   resource_group_name = azurerm_resource_group.power_management.name
   tags                = local.tags
 
-  timezone        = "Europe/London"
+  timezone = "Europe/London"
   scheduled_hours = {
     "morning" = "0830"
     "evening" = "1800"
