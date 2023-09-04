@@ -24,16 +24,20 @@ resource "azurerm_firewall_policy" "main" {
     }
   }
 
-  insights {
-    enabled                            = var.insights.enabled
-    default_log_analytics_workspace_id = var.insights.id
-    retention_in_days                  = var.insights.retention
+  dynamic "insights" {
+    for_each = var.insights
+    
+    content {
+      enabled                            = var.insights.enabled
+      default_log_analytics_workspace_id = var.insights.id
+      retention_in_days                  = var.insights.retention
 
-    dynamic "log_analytics_workspace" {
-      for_each = var.insights.log_analytics_workspace
-        content {
-          firewall_location = log_analytics_workspace.value.firewall_location
-          id                = log_analytics_workspace.value.id
+      dynamic "log_analytics_workspace" {
+        for_each = var.insights.log_analytics_workspace
+          content {
+            firewall_location = log_analytics_workspace.value.firewall_location
+            id                = log_analytics_workspace.value.id
+        }
       }
     }
   }

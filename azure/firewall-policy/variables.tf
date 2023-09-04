@@ -79,7 +79,7 @@ variable "insights" {
       id = string
     })), {})
   })
-  default = null
+  default = {}
 }
 
 #############
