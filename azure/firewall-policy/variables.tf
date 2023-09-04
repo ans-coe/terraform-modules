@@ -30,6 +30,7 @@ variable "tags" {
 variable "sku" {
   description = "The SKU Tier of the Firewall Policy. Possible values are Standard, Premium and Basic"
   type        = string
+  default     = "Standard"
 }
 
 variable "base_policy_id" {
@@ -59,6 +60,25 @@ variable "threat_intelligence_allowlist" {
     ip_addresses = list(string)
     fqdns        = list(string)
   }))
+  default = null
+}
+
+#############
+# Monitoring
+#############
+
+variable "insights" {
+  description = "Details for configuring a Log Analytics Workspace for the policy."
+  type = object({
+    enabled   = optional(bool, false)
+    id        = optional(string)
+    retention = optional(number, 30)
+
+    log_analytics_workspace = optional(map(object({
+      firewall_location = string
+      id = string
+    })), {})
+  })
   default = null
 }
 
