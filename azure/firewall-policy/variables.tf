@@ -104,13 +104,13 @@ variable "rule_collection_groups" {
         destination_fqdns     = optional(list(string))
         destination_fqdn_tags = optional(list(string))
       })), {})
-    })))
+    })), {})
 
     network_rule_collection = optional(map(object({
       description = optional(string)
       action      = string
       priority    = number
-      rule = map(object({
+      rule = optional(map(object({
         protocols             = list(string) #Any, TCP, UDP, ICMP
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
@@ -118,14 +118,14 @@ variable "rule_collection_groups" {
         destination_ip_groups = optional(list(string))
         destination_fqdns     = optional(list(string))
         destination_ports     = list(number)
-      }))
+      })), {})
     })), {})
 
     nat_rule_collection = optional(map(object({
       description = optional(string)
       priority    = number
       action      = optional(string, "Dnat") #Dnat only
-      rule = map(object({
+      rule = optional(map(object({
         protocols           = list(string) #TCP or UDP
         source_addresses    = optional(list(string))
         source_ip_groups    = optional(list(string))
@@ -134,7 +134,7 @@ variable "rule_collection_groups" {
         translated_address  = optional(string)
         translated_fqdn     = optional(string)
         translated_port     = number
-      }))
+      })), {})
     })), {})
   }))
 }
