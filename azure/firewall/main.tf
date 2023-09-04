@@ -30,11 +30,13 @@ resource "azurerm_firewall" "main" {
   sku_name            = var.firewall_sku_name
   sku_tier            = var.firewall_sku_tier
   dns_servers         = var.firewall_dns_servers
+  private_ip_ranges   = var.private_ip_ranges
   tags                = var.tags
   firewall_policy_id  = var.firewall_policy_id
+  zones               = var.firewall_zones
 
   ip_configuration {
-    name                 = "configuration"
+    name                 = "ip_configuration"
     subnet_id            = azurerm_subnet.main.id
     public_ip_address_id = azurerm_public_ip.main.id
   }
