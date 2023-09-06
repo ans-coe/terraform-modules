@@ -9,7 +9,7 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module     = "Firewall"
+    module     = "Firewall-Policy"
     owner      = "Dee Vops"
     department = "Technical"
   }

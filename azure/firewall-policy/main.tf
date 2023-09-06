@@ -17,16 +17,15 @@ resource "azurerm_firewall_policy" "main" {
   }
 
   dynamic "threat_intelligence_allowlist" {
-    for_each = var.threat_intelligence_allowlist != null ? [var.threat_intelligence_allowlist] : []
+    for_each = var.threat_intelligence_allowlist != null ? [0] : []
     content {
-      ip_addresses = each.value.ip_addresses
-      fqdns        = each.value.fqdns
+      ip_addresses = threat_intelligence_allowlist.ip_addresses
+      fqdns        = threat_intelligence_allowlist.fqdns
     }
   }
 
   dynamic "insights" {
-    for_each = var.insights
-    
+    for_each = var.insights != null ? [0] : []
     content {
       enabled                            = var.insights.enabled
       default_log_analytics_workspace_id = var.insights.id
@@ -34,9 +33,9 @@ resource "azurerm_firewall_policy" "main" {
 
       dynamic "log_analytics_workspace" {
         for_each = var.insights.log_analytics_workspace
-          content {
-            firewall_location = log_analytics_workspace.value.firewall_location
-            id                = log_analytics_workspace.value.id
+        content {
+          firewall_location = log_analytics_workspace.key
+          id                = log_analytics_workspace.value
         }
       }
     }
