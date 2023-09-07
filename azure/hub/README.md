@@ -19,7 +19,9 @@ This module creates a single resource group for all hub related resources.
 In order to manage network watcher via Terraform, the automatic creation of Network Watcher in Azure needs to be disabled in the subscription. Otherwise Terraform will error out.
 
 az account set -s "SUBSCRIPTION NAME"
+
 az feature register --name DisableNetworkWatcherAutocreation --namespace Microsoft.Network
+
 az provider register -n Microsoft.Network
 
 
