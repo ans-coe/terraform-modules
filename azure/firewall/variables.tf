@@ -78,6 +78,11 @@ variable "private_ip_ranges" {
   description = "A list of SNAT private CIDR IP ranges, or the special string IANAPrivateRanges, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918."
   type        = list(string)
   default     = null
+
+  validation {
+    error_message = "All elements must be valid IPv4 CIDR block addresses."
+    condition     = (var.private_ip_ranges == null || can([for v in var.private_ip_ranges : cidrhost(v, 0)]))
+  }
 }
 
 variable "firewall_policy_id" {

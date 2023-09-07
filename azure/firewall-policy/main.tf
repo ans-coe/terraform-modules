@@ -19,8 +19,8 @@ resource "azurerm_firewall_policy" "main" {
   dynamic "threat_intelligence_allowlist" {
     for_each = var.threat_intelligence_allowlist != null ? [0] : []
     content {
-      ip_addresses = threat_intelligence_allowlist.ip_addresses
-      fqdns        = threat_intelligence_allowlist.fqdns
+      ip_addresses = var.threat_intelligence_allowlist.ip_addresses
+      fqdns        = var.threat_intelligence_allowlist.fqdns
     }
   }
 
