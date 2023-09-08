@@ -17,6 +17,16 @@ No outputs.
 
 ## Resources
 
+| Name | Type |
+|------|------|
+| [azurerm_resource_group.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [azurerm_virtual_network.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_firewall"></a> [firewall](#module\_firewall) | ../../ | n/a |
 <!-- END_TF_DOCS -->
 _______________
 | Classified  |

@@ -74,33 +74,25 @@ variable "firewall_dns_servers" {
   default     = null
 }
 
+variable "private_ip_ranges" {
+  description = "A list of SNAT private CIDR IP ranges, or the special string IANAPrivateRanges, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918."
+  type        = list(string)
+  default     = null
+
+  validation {
+    error_message = "All elements must be valid IPv4 CIDR block addresses."
+    condition     = (var.private_ip_ranges == null || can([for v in var.private_ip_ranges : cidrhost(v, 0)]))
+  }
+}
+
 variable "firewall_policy_id" {
   description = "The ID of the Firewall Policy applied to this Firewall"
   type        = string
   default     = null
 }
 
-
-#############
-# Monitoring
-#############
-
-# variable "firewall_pip_diag_logs" {
-#   description = "Firewall Public IP Monitoring Category details for Azure Diagnostic setting"
-#   default     = ["DDoSProtectionNotifications", "DDoSMitigationFlowLogs", "DDoSMitigationReports"]
-# }
-
-# variable "firewall_diag_logs" {
-#   description = "Firewall Monitoring Category details for Azure Diagnostic setting"
-#   default     = ["AzureFirewallApplicationRule", "AzureFirewallNetworkRule", "AzureFirewallDnsProxy"]
-# }
-
-# variable "log_analytics_workspace_id" {
-#   description = "The resource id of log analytics workspace"
-#   default     = null
-# }
-
-# variable "log_storage_account_name" {
-#   description = "The name of the hub storage account to store logs"
-#   default     = null
-# }
+variable "firewall_zones" {
+  description = "Specifies a list of Availability Zones in which this Azure Firewall should be located."
+  type        = list(string)
+  default     = null
+}
