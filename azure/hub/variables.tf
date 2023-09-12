@@ -170,7 +170,6 @@ variable "virtual_network_gateway_config" {
   validation {
     error_message = "If the sku is set to Basic, VpnGw1 or VpnGw1AZ, then generation must be set to Generation1."
     condition     = contains(["Basic", "VpnGw1", "VpnGw1AZ"], try(var.virtual_network_gateway_config.sku,[])) ? var.virtual_network_gateway_config.generation == "Generation1" : true
-
   }
 
   validation {
