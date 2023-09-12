@@ -21,6 +21,7 @@ variable "resource_group_name" {
 variable "tags" {
   description = "Tags applied to created resources."
   type        = map(string)
+  default     = null
 }
 
 #############
@@ -30,6 +31,7 @@ variable "tags" {
 variable "sku" {
   description = "The SKU Tier of the Firewall Policy. Possible values are Standard, Premium and Basic"
   type        = string
+  default     = "Standard"
 }
 
 variable "base_policy_id" {
@@ -55,16 +57,33 @@ variable "threat_intelligence_mode" {
 
 variable "threat_intelligence_allowlist" {
   description = "A list of FQDNs, IPs or CIDR ranges that will be skipped for threat detection."
-  type = map(object({
-    ip_addresses = list(string)
-    fqdns        = list(string)
-  }))
+  type = object({
+    ip_addresses = optional(list(string), [])
+    fqdns        = optional(list(string), [])
+  })
+  default = null
+}
+
+#############
+# Monitoring
+#############
+
+variable "insights" {
+  description = "Details for configuring a Log Analytics Workspace for the policy."
+  type = object({
+    enabled   = optional(bool, false)
+    id        = optional(string)
+    retention = optional(number, 30)
+
+    log_analytics_workspace = optional(map(string), {})
+  })
   default = null
 }
 
 #############
 # Firewall Policy
 #############
+
 
 variable "rule_collection_groups" {
   description = "Rule Collection Groups"
@@ -75,7 +94,7 @@ variable "rule_collection_groups" {
       description = optional(string)
       action      = string
       priority    = number
-      rule = optional(map(object({
+      rule = map(object({
         protocols             = optional(map(string)) #Http, Https
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
@@ -83,8 +102,8 @@ variable "rule_collection_groups" {
         destination_urls      = optional(list(string))
         destination_fqdns     = optional(list(string))
         destination_fqdn_tags = optional(list(string))
-      })), {})
-    })))
+      }))
+    })), {})
 
     network_rule_collection = optional(map(object({
       description = optional(string)
@@ -113,7 +132,7 @@ variable "rule_collection_groups" {
         destination_ports   = optional(list(number))
         translated_address  = optional(string)
         translated_fqdn     = optional(string)
-        translated_port     = number
+        translated_port     = optional(number)
       }))
     })), {})
   }))
