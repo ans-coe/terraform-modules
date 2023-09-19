@@ -153,7 +153,7 @@ variable "virtual_network_gateway_config" {
   default = null
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "virtual_network_gateway_config.subnet_prefix must be a valid IPv4 CIDR."
     condition     = var.virtual_network_gateway_config == null || can(cidrhost(var.virtual_network_gateway_config.subnet_prefix, 0))
   }
 
@@ -179,7 +179,7 @@ variable "virtual_network_gateway_config" {
 
   validation {
     error_message = "The values for vpn_type are either RouteBased or PolicyBased."
-    condition     = var.virtual_network_gateway_config == null || can(contains(["RouteBased", "ExpressRoPolicyBasedute"], var.virtual_network_gateway_config.vpn_type))
+    condition     = var.virtual_network_gateway_config == null || can(contains(["RouteBased", "PolicyBased"], var.virtual_network_gateway_config.vpn_type))
   }
 }
 
@@ -201,12 +201,12 @@ variable "private_resolver_config" {
   default = null
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "private_resolver_config.inbound_subnet_prefix must be a valid IPv4 CIDR."
     condition     = var.private_resolver_config == null || can(cidrhost(var.private_resolver_config.inbound_subnet_prefix, 0))
   }
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "private_resolver_config.outbound_subnet_prefix must be a valid IPv4 CIDR."
     condition     = var.private_resolver_config == null || can(cidrhost(var.private_resolver_config.outbound_subnet_prefix, 0))
   }
 }
