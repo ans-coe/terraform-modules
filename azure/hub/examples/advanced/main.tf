@@ -77,7 +77,6 @@ module "firewall-policy" {
   rule_collection_groups = {
     ApplicationOne = {
       priority             = "100"
-      firewall_policy_name = "fw-policy"
     }
   }
 }
