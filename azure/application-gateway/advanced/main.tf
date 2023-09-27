@@ -131,14 +131,15 @@ resource "azurerm_application_gateway" "main" {
   dynamic "backend_http_settings" {
     for_each = var.backend_http_settings
     content {
-      name                                = backend_http_settings.key
-      port                                = backend_http_settings.value["port"]
-      protocol                            = backend_http_settings.value["https_enabled"] ? "Https" : "Http"
-      cookie_based_affinity               = backend_http_settings.value["cookie_based_affinity"] ? "Enabled" : "Disabled"
-      affinity_cookie_name                = backend_http_settings.value["cookie_based_affinity"] ? backend_http_settings.value["affinity_cookie_name"] : null
-      probe_name                          = backend_http_settings.value["probe_name"]
-      host_name                           = backend_http_settings.value["host_name"]
-      pick_host_name_from_backend_address = backend_http_settings.value["pick_host_name_from_backend_address"]
+      name                  = backend_http_settings.key
+      port                  = backend_http_settings.value["port"]
+      protocol              = backend_http_settings.value["https_enabled"] ? "Https" : "Http"
+      cookie_based_affinity = backend_http_settings.value["cookie_based_affinity"] ? "Enabled" : "Disabled"
+      affinity_cookie_name  = backend_http_settings.value["cookie_based_affinity"] ? backend_http_settings.value["affinity_cookie_name"] : null
+      probe_name            = backend_http_settings.value["probe_name"]
+      host_name             = backend_http_settings.value["host_name"]
+      // Only one of host_name or pick_host_name_from_backend_address can be set and at least one is required.
+      pick_host_name_from_backend_address = backend_http_settings.value["host_name"] == null ? true : false
       request_timeout                     = backend_http_settings.value["request_timeout"]
       trusted_root_certificate_names      = backend_http_settings.value["trusted_root_certificate_names"]
     }
@@ -303,15 +304,16 @@ resource "azurerm_application_gateway" "main" {
   dynamic "probe" {
     for_each = var.probe
     content {
-      name                                      = probe.key
-      protocol                                  = probe.value["https_enabled"] ? "Https" : "Http"
-      interval                                  = probe.value["interval"]
-      path                                      = probe.value["path"]
-      host                                      = probe.value["host"]
+      name     = probe.key
+      protocol = probe.value["https_enabled"] ? "Https" : "Http"
+      interval = probe.value["interval"]
+      path     = probe.value["path"]
+      host     = probe.value["host"]
+      // Only one of host or pick_host_name_from_backend_http_settings can be set and at least one is required.
+      pick_host_name_from_backend_http_settings = probe.value["host"] == null ? true : false
       timeout                                   = probe.value["timeout"]
       unhealthy_threshold                       = probe.value["unhealthy_threshold"]
       port                                      = probe.value["port"]
-      pick_host_name_from_backend_http_settings = probe.value["pick_host_name_from_backend_http_settings"]
       dynamic "match" {
         for_each = probe.value["match"]
         content {
