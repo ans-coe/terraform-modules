@@ -323,4 +323,10 @@ resource "azurerm_application_gateway" "main" {
       }
     }
   }
+  lifecycle {
+    precondition {
+      error_message = "For every backend_http_setting, both the backend_http_settings https_enabled option and the related probe https_enabled option must be the same value."
+      condition = alltrue([ for k,v in var.backend_http_settings : var.probe[v.probe_name].https_enabled == v.https_enabled ])
+    }
+  }
 }
