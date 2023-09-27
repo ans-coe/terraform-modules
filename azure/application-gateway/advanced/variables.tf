@@ -29,15 +29,11 @@ variable "tags" {
 variable "sku" {
   description = "Properties relating to the SKU of the Applicaton Gateway"
   type = object({
-    name         = string
-    tier         = string
+    waf_enabled  = optional(bool, false)
     capacity     = optional(number, 1)
     max_capacity = optional(number)
   })
-  default = {
-    name = "Standard_v2"
-    tier = "Standard_v2"
-  }
+  default = {}
   validation {
     condition     = var.sku.max_capacity == null ? true : var.sku.max_capacity > var.sku.capacity
     error_message = "Max capacity must be greater than capacity or not set at all"
