@@ -46,14 +46,3 @@ output "public_ip" {
   description = "Public IP Address"
   value       = one(azurerm_public_ip.main[*].ip_address)
 }
-
-// temp for testing
-output "azurerm_sub_tenant" {
-  value = data.azurerm_subscription.current.tenant_id
-}
-output "azuread_sub_tenant" {
-  value = data.azuread_client_config.current.tenant_id
-}
-output "azurerm_cc_sub_tenant" {
-  value = data.azurerm_client_config.current.tenant_id
-}
