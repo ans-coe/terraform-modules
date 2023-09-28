@@ -12,9 +12,11 @@ resource "azurerm_key_vault" "main" {
   purge_protection_enabled   = true
   sku_name                   = "standard"
   tenant_id                  = data.azurerm_client_config.current.tenant_id
-  precondition {
-    condition     = data.azuread_client_config.current.tenant_id == data.azurerm_subscription.current.tenant_id
-    error_message = "Your authenticated tenant does not match the tenant where you want to deploy. Please ensure that you are at least a guest user in the tenant where you want to deploy AppGW"
+  lifecycle {
+    precondition {
+      condition     = data.azuread_client_config.current.tenant_id == data.azurerm_subscription.current.tenant_id
+      error_message = "Your authenticated tenant does not match the tenant where you want to deploy. Please ensure that you are at least a guest user in the tenant where you want to deploy AppGW"
+    }
   }
 }
 
