@@ -1,4 +1,5 @@
 data "azurerm_client_config" "current" {}
+data "azuread_client_config" "current" {}
 data "azurerm_subscription" "current" {}
 resource "azurerm_key_vault" "main" {
   count = local.create_key_vault ? 1 : 0

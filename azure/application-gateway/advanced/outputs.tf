@@ -54,3 +54,6 @@ output "azurerm_sub_tenant" {
 output "azuread_sub_tenant" {
   value = data.azuread_client_config.current.tenant_id
 }
+output "azurerm_cc_sub_tenant" {
+  value = data.azurerm_client_config.current.tenant_id
+}
