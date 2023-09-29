@@ -13,7 +13,7 @@ resource "azurerm_resource_group" "network_watcher" {
 resource "azurerm_network_watcher" "main" {
   count = local.enable_network_watcher ? 1 : 0
 
-  name                = var.network_watcher_config["name"] != null ? var.network_watcher_config["name"] : "NetworkWatcher_${var.location}"
+  name                = var.network_watcher_config["name"] != null ? var.network_watcher_config["name"] : "nw_${var.location}"
   location            = var.location
   resource_group_name = azurerm_resource_group.network_watcher[count.index].name
   tags                = var.tags
