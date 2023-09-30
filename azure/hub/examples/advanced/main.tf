@@ -43,7 +43,8 @@ module "hub" {
   }
 
   bastion_config = {
-    name          = "bas-hub-${local.resource_prefix}"
+    name = "bas-hub-${local.resource_prefix}"
+    resource_group_name = "rg-bas-${local.resource_prefix}"
     subnet_prefix = "10.0.15.0/26"
   }
 
@@ -76,7 +77,7 @@ module "firewall-policy" {
 
   rule_collection_groups = {
     ApplicationOne = {
-      priority             = "100"
+      priority = "100"
     }
   }
 }

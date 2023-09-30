@@ -15,6 +15,8 @@ This module deploys a predefined hub network with the option to include focused 
 
 This module creates a single resource group for all hub related resources.  
 
+If a resource group name for Bastion is specified, a resource group will be created.  If no name is entered, the main hub resource group will be used.
+
 ### Network Watcher
 In order to manage network watcher via Terraform, the automatic creation of Network Watcher in Azure needs to be disabled in the subscription. Otherwise Terraform will error out.
 
@@ -41,7 +43,7 @@ az provider register -n Microsoft.Network
 | <a name="input_location"></a> [location](#input\_location) | Location to deploy to. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of the resource group created for the hub. | `string` | n/a | yes |
 | <a name="input_virtual_network_name"></a> [virtual\_network\_name](#input\_virtual\_network\_name) | Name of the virtual network. | `string` | n/a | yes |
-| <a name="input_bastion_config"></a> [bastion\_config](#input\_bastion\_config) | Configuration for the bastion if enabled. | <pre>object({<br>    name                        = string<br>    subnet_prefix               = string<br>    public_ip_name              = optional(string)<br>    network_security_group_name = optional(string)<br>    whitelist_cidrs             = optional(list(string), ["Internet"])<br>  })</pre> | `null` | no |
+| <a name="input_bastion_config"></a> [bastion\_config](#input\_bastion\_config) | Configuration for the bastion if enabled. | <pre>object({<br>    name                        = string<br>    resource_group_name         = optional(string)<br>    subnet_prefix               = string<br>    public_ip_name              = optional(string)<br>    network_security_group_name = optional(string)<br>    whitelist_cidrs             = optional(list(string), ["Internet"])<br>  })</pre> | `null` | no |
 | <a name="input_extra_subnets"></a> [extra\_subnets](#input\_extra\_subnets) | Miscelaneous additional subnets to add. | <pre>map(object({<br>    prefix                                        = string<br>    service_endpoints                             = optional(list(string))<br>    private_endpoint_network_policies_enabled     = optional(bool)<br>    private_link_service_network_policies_enabled = optional(bool)<br>    delegations = optional(map(<br>      object({<br>        service = string<br>        actions = list(string)<br>      })<br>    ), {})<br>  }))</pre> | `{}` | no |
 | <a name="input_firewall_config"></a> [firewall\_config](#input\_firewall\_config) | Configuration for the firewall if enabled. | <pre>object({<br>    name               = string<br>    subnet_prefix      = string<br>    public_ip_name     = optional(string)<br>    sku_tier           = optional(string, "Standard")<br>    route_table_name   = optional(string)<br>    firewall_policy_id = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#input\_log\_analytics\_workspace\_id) | Log analytics workspace ID to forward diagnostics to. | `string` | `null` | no |
@@ -80,6 +82,7 @@ az provider register -n Microsoft.Network
 | [azurerm_private_dns_resolver_outbound_endpoint.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_resolver_outbound_endpoint) | resource |
 | [azurerm_private_dns_zone.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
 | [azurerm_public_ip.virtual_network_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
+| [azurerm_resource_group.bastion](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_resource_group.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_resource_group.network_watcher](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_route.firewall](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route) | resource |

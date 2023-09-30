@@ -1,3 +1,15 @@
+#################
+# Resource Group
+#################
+
+resource "azurerm_resource_group" "bastion" {
+  count = local.bastion_create_resource_group ? 1 : 0
+
+  name     = var.bastion_config.resource_group_name
+  location = var.location
+  tags     = var.tags
+}
+
 ##########
 # Bastion
 ##########
@@ -8,7 +20,7 @@ module "bastion" {
 
   name                = var.bastion_config["name"]
   location            = var.location
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = local.bastion_resource_group_name
   tags                = var.tags
 
   subnet_id                   = local.bastion_subnet.id
