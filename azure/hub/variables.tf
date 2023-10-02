@@ -104,7 +104,7 @@ variable "firewall_config" {
 
   validation {
     error_message = "Must be valid IPv4 CIDR."
-    condition     = var.firewall_config == null || can(cidrhost(var.firewall_config.subnet_prefix, 0)
+    condition = var.firewall_config == null || can(cidrhost(var.firewall_config.subnet_prefix, 0)
     )
   }
   validation {
@@ -121,6 +121,7 @@ variable "bastion_config" {
   description = "Configuration for the bastion if enabled."
   type = object({
     name                        = string
+    resource_group_name         = optional(string)
     subnet_prefix               = string
     public_ip_name              = optional(string)
     network_security_group_name = optional(string)
@@ -169,7 +170,7 @@ variable "virtual_network_gateway_config" {
 
   validation {
     error_message = "If the sku is set to Basic, VpnGw1 or VpnGw1AZ, then generation must be set to Generation1."
-    condition     = contains(["Basic", "VpnGw1", "VpnGw1AZ"], try(var.virtual_network_gateway_config.sku,[])) ? var.virtual_network_gateway_config.generation == "Generation1" : true
+    condition     = contains(["Basic", "VpnGw1", "VpnGw1AZ"], try(var.virtual_network_gateway_config.sku, [])) ? var.virtual_network_gateway_config.generation == "Generation1" : true
   }
 
   validation {

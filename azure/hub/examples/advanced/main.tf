@@ -1,5 +1,9 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 locals {
@@ -43,8 +47,9 @@ module "hub" {
   }
 
   bastion_config = {
-    name          = "bas-hub-${local.resource_prefix}"
-    subnet_prefix = "10.0.15.0/26"
+    name                = "bas-hub-${local.resource_prefix}"
+    resource_group_name = "rg-bas-${local.resource_prefix}"
+    subnet_prefix       = "10.0.15.0/26"
   }
 
   virtual_network_gateway_config = {
@@ -67,7 +72,7 @@ module "hub" {
 module "firewall-policy" {
   source = "../../../firewall-policy"
 
-  name                     = "fwpol-${local.resource_prefix}"
+  name                     = "fwpol-hub-${local.resource_prefix}"
   resource_group_name      = module.hub.resource_group_name
   location                 = local.location
   tags                     = local.tags
@@ -76,7 +81,7 @@ module "firewall-policy" {
 
   rule_collection_groups = {
     ApplicationOne = {
-      priority             = "100"
+      priority = "100"
     }
   }
 }
