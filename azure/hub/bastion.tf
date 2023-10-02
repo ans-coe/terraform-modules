@@ -3,7 +3,7 @@
 #################
 
 resource "azurerm_resource_group" "bastion" {
-  count = local.bastion_create_resource_group ? 1 : 0
+  count = var.bastion_config.resource_group_name != null ? 1 : 0
 
   name     = var.bastion_config.resource_group_name
   location = var.location

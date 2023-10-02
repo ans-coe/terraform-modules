@@ -9,11 +9,10 @@ locals {
   firewall             = one(module.firewall)
   firewall_route_table = one(azurerm_route_table.firewall)
 
-  enable_bastion                = var.bastion_config != null
-  bastion                       = one(module.bastion)
-  bastion_create_resource_group = var.bastion_config.resource_group_name != null
-  bastion_resource_group_name   = var.bastion_config.resource_group_name != null ? var.bastion_config.resource_group_name : azurerm_resource_group.main.name
-  bastion_subnet                = local.enable_bastion ? module.network.subnets["AzureBastionSubnet"] : null
+  enable_bastion              = var.bastion_config != null
+  bastion                     = one(module.bastion)
+  bastion_resource_group_name = var.bastion_config.resource_group_name != null ? var.bastion_config.resource_group_name : azurerm_resource_group.main.name
+  bastion_subnet              = local.enable_bastion ? module.network.subnets["AzureBastionSubnet"] : null
 
   enable_virtual_network_gateway = var.virtual_network_gateway_config != null
   virtual_network_gateway        = one(azurerm_virtual_network_gateway.main)
