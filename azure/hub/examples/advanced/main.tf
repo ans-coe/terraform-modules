@@ -72,7 +72,7 @@ module "hub" {
 module "firewall-policy" {
   source = "../../../firewall-policy"
 
-  name                     = "fwpol-${local.resource_prefix}"
+  name                     = "fwpol-hub-${local.resource_prefix}"
   resource_group_name      = module.hub.resource_group_name
   location                 = local.location
   tags                     = local.tags
