@@ -82,14 +82,14 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
   firewall_policy_id = azurerm_firewall_policy.main.id
 
   dynamic "application_rule_collection" {
-    for_each = each.value.application_rule_collection
+    for_each = each.value.application_rule_collections
 
     content {
       name     = application_rule_collection.key
       priority = application_rule_collection.value.priority
       action   = application_rule_collection.value.action
       dynamic "rule" {
-        for_each = application_rule_collection.value.rule
+        for_each = application_rule_collection.value.rules
 
         content {
           name                  = rule.key
@@ -113,7 +113,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
   }
 
   dynamic "network_rule_collection" {
-    for_each = each.value.network_rule_collection
+    for_each = each.value.network_rule_collections
 
     content {
       name     = network_rule_collection.key
@@ -121,7 +121,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
       action   = network_rule_collection.value.action
 
       dynamic "rule" {
-        for_each = network_rule_collection.value.rule
+        for_each = network_rule_collection.value.rules
 
         content {
           name                  = rule.key
@@ -138,14 +138,14 @@ resource "azurerm_firewall_policy_rule_collection_group" "main" {
   }
 
   dynamic "nat_rule_collection" {
-    for_each = each.value.nat_rule_collection
+    for_each = each.value.nat_rule_collections
     content {
       name     = nat_rule_collection.key
       priority = nat_rule_collection.value.priority
       action   = "Dnat"
 
       dynamic "rule" {
-        for_each = nat_rule_collection.value.rule
+        for_each = nat_rule_collection.value.rules
         content {
           name                = rule.key
           protocols           = rule.value.protocols
