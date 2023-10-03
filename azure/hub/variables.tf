@@ -54,7 +54,7 @@ variable "extra_subnets" {
   default = {}
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "extra_subnets.prefix values must be valid IPv4 CIDR values."
     condition     = alltrue([for k, v in var.extra_subnets : can(cidrhost(v.prefix, 0))])
   }
 }
@@ -75,7 +75,7 @@ variable "private_endpoint_subnet" {
   default = null
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "private_endpoint_subnet.subnet_prefix must be a valid IPv4 CIDR."
     condition = var.private_endpoint_subnet == null || can(cidrhost(var.private_endpoint_subnet.subnet_prefix, 0)
     )
   }
@@ -103,7 +103,7 @@ variable "firewall_config" {
   default = null
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "firewall_config.subnet_prefix must be a valid IPv4 CIDR."
     condition = var.firewall_config == null || can(cidrhost(var.firewall_config.subnet_prefix, 0)
     )
   }
@@ -130,7 +130,7 @@ variable "bastion_config" {
   default = null
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "bastion_config.subnet_prefix must be valid a IPv4 CIDR."
     condition = var.bastion_config == null || can(cidrhost(var.bastion_config.subnet_prefix, 0)
     )
   }

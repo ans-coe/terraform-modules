@@ -1,11 +1,15 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 locals {
   location = "uksouth"
   tags = {
-    module     = "hub-vnet"
+    module     = "hub-hub-example"
     example    = "basic"
     usage      = "demo"
     department = "technical"

@@ -64,6 +64,30 @@ variable "threat_intelligence_allowlist" {
   default = null
 }
 
+variable "intrusion_detection" {
+  description = "Configuration details for IDPS"
+  type = object({
+    mode                = optional(string, "Alert")
+    signature_overrides = optional(map(string), {})
+    traffic_bypass = optional(map(object({
+      description           = optional(string)
+      protocol              = string
+      destination_addresses = optional(list(string))
+      destination_ip_groups = optional(list(string))
+      destination_ports     = optional(list(string))
+      source_addresses      = optional(list(string))
+      source_ip_groups      = optional(list(string))
+    })))
+    private_ranges = optional(list(string))
+  })
+  default = null
+
+  validation {
+    error_message = "The value for intrusion_detection.mode must be 'Off', 'Alert' or 'Deny'."
+    condition     = var.intrusion_detection == null || can(contains(["Off", "Alert", "Deny"], var.intrusion_detection.mode))
+  }
+}
+
 #############
 # Monitoring
 #############

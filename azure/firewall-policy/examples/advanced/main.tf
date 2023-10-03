@@ -14,12 +14,12 @@ locals {
   location = "uksouth"
   tags = {
     module     = "hub-fwpol-example"
-    example    = "basic"
+    example    = "advanced"
     usage      = "demo"
     department = "technical"
     owner      = "Dee Vops"
   }
-  resource_prefix = "tfmex-basic"
+  resource_prefix = "tfmex-adv"
 }
 
 ###################
@@ -53,13 +53,15 @@ module "firewall" {
   tags                = local.tags
 
   virtual_network_name    = azurerm_virtual_network.example.name
-  pip_name                = "pip-fwpol-${local.resource_prefix}"
+  pip_name                = "pip-fw-fwpol-${local.resource_prefix}"
   subnet_address_prefixes = azurerm_virtual_network.example.address_space
 
   firewall_name      = "fw-fwpol-${local.resource_prefix}"
   firewall_sku_name  = "AZFW_VNet"
-  firewall_sku_tier  = "Standard"
+  firewall_sku_tier  = "Premium"
   firewall_policy_id = module.firewall_policy.id
+
+  depends_on = [module.firewall_policy]
 }
 
 ##################
@@ -73,8 +75,26 @@ module "firewall_policy" {
   resource_group_name      = azurerm_resource_group.example.name
   location                 = local.location
   tags                     = local.tags
-  sku                      = "Standard"
+  sku                      = "Premium"
   threat_intelligence_mode = "Alert"
+
+  intrusion_detection = {
+    mode = "Alert"
+    signature_overrides = {
+      "2004039" = "Off"
+      "2023753" = "Deny"
+    }
+    traffic_bypass = {
+      "Traffic Bypass Rule" = {
+        description           = "Example IDPS Traffic Bypass."
+        protocol              = "TCP"
+        destination_addresses = ["10.0.1.10", "10.0.1.11"]
+        destination_ports     = ["8080"]
+        source_addresses      = ["*"]
+      }
+    }
+    private_ranges = ["10.0.0.0/24"]
+  }
 
   ########################################
   # Firewall Policy Rule Collection Group
@@ -83,7 +103,7 @@ module "firewall_policy" {
   rule_collection_groups = {
     ApplicationOne = {
       priority             = "100"
-      firewall_policy_name = "fw-policy"
+      firewall_policy_name = "fwpol-fwpol-${local.resource_prefix}"
 
       application_rule_collection = {
         AppOne-App-Collection = {
