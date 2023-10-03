@@ -81,7 +81,7 @@ module "firewall_policy" {
   intrusion_detection = {
     mode = "Alert"
     signature_overrides = {
-      "2010935" = "Off"
+      "2004039" = "Off"
       "2023753" = "Deny"
     }
     traffic_bypass = {
