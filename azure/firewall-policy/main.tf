@@ -24,6 +24,35 @@ resource "azurerm_firewall_policy" "main" {
     }
   }
 
+  dynamic "intrusion_detection" {
+    for_each = var.intrusion_detection != null ? [0] : []
+    content {
+      mode = var.intrusion_detection.mode
+
+      dynamic "signature_overrides" {
+        for_each = var.intrusion_detection.signature_overrides
+        content {
+          id    = signature_overrides.key
+          state = signature_overrides.value
+        }
+      }
+      dynamic "traffic_bypass" {
+        for_each = var.intrusion_detection.traffic_bypass
+        content {
+          name                  = traffic_bypass.key
+          description           = traffic_bypass.value.description
+          protocol              = traffic_bypass.value.protocol
+          destination_addresses = traffic_bypass.value.destination_addresses
+          destination_ip_groups = traffic_bypass.value.destination_ip_groups
+          destination_ports     = traffic_bypass.value.destination_ports
+          source_addresses      = traffic_bypass.value.source_addresses
+          source_ip_groups      = traffic_bypass.value.source_ip_groups
+        }
+      }
+      private_ranges = var.intrusion_detection.private_ranges
+    }
+  }
+
   dynamic "insights" {
     for_each = var.insights != null ? [0] : []
     content {
