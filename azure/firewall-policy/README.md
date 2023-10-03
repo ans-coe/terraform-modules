@@ -11,17 +11,11 @@
 
 ## Usage
 
-This document will describe what the module is for and what is contained in it. It will be generated using [terraform-docs](https://terraform-docs.io/) which is configured to append to the existing README.md file.
+This module creates an Azure Firewall Policy along with Rule Collection Groups, Rule Collections and Rules.
 
-Things to update:
-- README.md header
-- README.md header content - description of module and its purpose
-- Update [terraform.tf](terraform.tf) required_versions
-- Add a LICENSE to this module
-- Update .tflint.hcl plugins if necessary
-- If this module is to be created for use with Terraform Registry, ensure the repository itself is called `terraform-PROVIDER-NAME` for the publish step
-- If this module is going to be a part of a monorepo, remove [.pre-commit-config.yaml](./.pre-commit-config.yaml)
-- If using this for Terraform Configurations, optionally remove [examples](./examples/) and remove `.terraform.lock.hcl` from the [.gitignore](./.gitignore)
+Azure Firewall Policies should be created before an Azure Firewall.  The policy id is  associated with the Firewall during the Firewall's creation.
+
+This document will describe what the module is for and what is contained in it. It will be generated using [terraform-docs](https://terraform-docs.io/) which is configured to append to the existing README.md file.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
