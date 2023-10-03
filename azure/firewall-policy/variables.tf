@@ -114,11 +114,11 @@ variable "rule_collection_groups" {
   type = map(object({
     priority = number
 
-    application_rule_collection = optional(map(object({
+    application_rule_collections = optional(map(object({
       description = optional(string)
       action      = string
       priority    = number
-      rule = map(object({
+      rules = map(object({
         protocols             = optional(map(string)) #Http, Https
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
@@ -129,11 +129,11 @@ variable "rule_collection_groups" {
       }))
     })), {})
 
-    network_rule_collection = optional(map(object({
+    network_rule_collections = optional(map(object({
       description = optional(string)
       action      = string
       priority    = number
-      rule = map(object({
+      rules = map(object({
         protocols             = list(string) #Any, TCP, UDP, ICMP
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
@@ -144,11 +144,11 @@ variable "rule_collection_groups" {
       }))
     })), {})
 
-    nat_rule_collection = optional(map(object({
+    nat_rule_collections = optional(map(object({
       description = optional(string)
       priority    = number
       action      = optional(string, "Dnat") #Dnat only
-      rule = map(object({
+      rules = map(object({
         protocols           = list(string) #TCP or UDP
         source_addresses    = optional(list(string))
         source_ip_groups    = optional(list(string))
@@ -160,4 +160,5 @@ variable "rule_collection_groups" {
       }))
     })), {})
   }))
+  default = {}
 }
