@@ -9,7 +9,7 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module     = "hub-spoke-example"
+    module     = "hub-hub-example"
     example    = "advanced"
     usage      = "demo"
     department = "technical"
