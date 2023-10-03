@@ -77,10 +77,10 @@ variable "intrusion_detection" {
       destination_ports     = optional(list(string))
       source_addresses      = optional(list(string))
       source_ip_groups      = optional(list(string))
-    })))
+    })), {})
     private_ranges = optional(list(string))
   })
-  default = null
+  default = {}
 
   validation {
     error_message = "The value for intrusion_detection.mode must be 'Off', 'Alert' or 'Deny'."
