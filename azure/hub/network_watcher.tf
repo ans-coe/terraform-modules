@@ -3,7 +3,7 @@
 ##################
 
 resource "azurerm_resource_group" "network_watcher" {
-  count = local.enable_network_watcher ? 1 : 0
+  for_each = var.network_watcher_config.resource_group_name != null ? [0] : []
 
   name     = var.network_watcher_config["resource_group_name"] != null ? var.network_watcher_config["resource_group_name"] : "NetworkWatcherRG_${var.location}"
   location = var.location
