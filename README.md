@@ -28,7 +28,7 @@ Below is a list of available modules linking directly to the root README.md.
 |-|-|
 |[_template](./_template/README.md)|repo template|
 |[application-gateway](./azure/application-gateway/README.md)|azure|
-|[bastion](./azure/bastion/README.md)|azure|
+|[bastion](https://github.com/ans-coe/terraform-azurerm-bastion/blob/main//README.md)|azure|
 |[container-registry](./azure/container-registry/README.md)|azure|
 |[kubernetes-service](./azure/kubernetes-service/README.md)|azure|
 |[linux-functionapp](./azure/linux-functionapp/README.md)|azure|
