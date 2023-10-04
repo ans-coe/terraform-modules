@@ -69,6 +69,16 @@ resource "azurerm_firewall_policy" "main" {
       }
     }
   }
+  lifecycle {
+    precondition {
+      condition     = var.intrusion_detection != null ? var.sku == "Premium" : true
+      error_message = "Intrusion Detection requires Premium SKU"
+    }
+    precondition {
+      condition     = var.threat_intelligence_mode == "Deny" ? contains(["Standard", "Premium"], var.sku) : true
+      error_message = "Threat Intelligence requires Standard or Premium SKU"
+    }
+  }
 }
 
 #############

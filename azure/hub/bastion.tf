@@ -16,7 +16,8 @@ resource "azurerm_resource_group" "bastion" {
 
 module "bastion" {
   count  = local.enable_bastion ? 1 : 0
-  source = "../bastion"
+  source  = "ans-coe/bastion/azurerm"
+  version = "1.0.0"
 
   name                = var.bastion_config["name"]
   location            = var.location
@@ -39,10 +40,12 @@ resource "azurerm_monitor_diagnostic_setting" "bastion" {
   enabled_log {
     category = "BastionAuditLogs"
 
-    retention_policy {
-      days    = 30
-      enabled = true
-    }
+    ## Removing depreciated retention_policy, retention should be set in the log_analytics_workspace
+    ## Leaving this comment in for explaination reasons
+    # retention_policy {
+    #   days    = 30
+    #   enabled = true
+    # }
   }
   metric {
     category = "AllMetrics"

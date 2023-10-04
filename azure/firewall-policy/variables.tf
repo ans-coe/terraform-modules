@@ -32,6 +32,11 @@ variable "sku" {
   description = "The SKU Tier of the Firewall Policy. Possible values are Standard, Premium and Basic"
   type        = string
   default     = "Standard"
+
+  validation {
+    condition     = contains(["Standard", "Premium", "Basic"], var.sku)
+    error_message = "SKU must be either Standard, Premium or Basic"
+  }
 }
 
 variable "base_policy_id" {
@@ -80,7 +85,7 @@ variable "intrusion_detection" {
     })), {})
     private_ranges = optional(list(string))
   })
-  default = {}
+  default = null
 
   validation {
     error_message = "The value for intrusion_detection.mode must be 'Off', 'Alert' or 'Deny'."
