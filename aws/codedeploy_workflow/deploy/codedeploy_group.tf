@@ -1,7 +1,7 @@
 resource "aws_iam_role" "codedeploy_role" {
   count = var.enable_codedeploy_role == true ? 1 : 0
-  name = "${local.name}-codedeploy-role"
-  path = "/"
+  name  = "${local.name}-codedeploy-role"
+  path  = "/"
 
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
@@ -12,18 +12,18 @@ data "aws_iam_policy" "AWSCodeDeployRole" {
 }
 
 resource "aws_iam_role_policy_attachment" "codebuild-policy-attach" {
-  count = var.enable_codedeploy_role == true ? 1 : 0
+  count      = var.enable_codedeploy_role == true ? 1 : 0
   role       = aws_iam_role.codedeploy_role.name
   policy_arn = data.aws_iam_policy.AWSCodeDeployRole.arn
 }
 
 resource "aws_codedeploy_app" "deploy_app" {
   count = var.enable_deploy_app == true ? 1 : 0
-  name = "${local.name}-codedeploy-app"
+  name  = "${local.name}-codedeploy-app"
 }
 
 resource "aws_codedeploy_deployment_group" "deployment_group" {
-  count = var.enable_deployment_group == true ? 1 : 0
+  count                 = var.enable_deployment_group == true ? 1 : 0
   app_name              = aws_codedeploy_app.deploy_app.name
   deployment_group_name = "${local.name}-codedeploy-group"
   service_role_arn      = aws_iam_role.codedeploy_role.arn

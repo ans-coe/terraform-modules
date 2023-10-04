@@ -42,36 +42,36 @@ variable "asg_loadbalancer_target_name" {
 
 variable "enable_deploy_app" {
   description = "Whether to include the CodeDeploy app"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "enable_deployment_pipeline_role" {
   description = "Whether to include the deployment pipeline role"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "enable_pipeline_bucket" {
   description = "Whether to include the pipeline bucket"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "enable_codedeploy_role" {
   description = "Whether to include the CodeDeploy role"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "enable_codepipeline" {
   description = "Whether to include the CodePipeline"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "enable_deployment_group" {
   description = "Whether to include the CodeDeploy deployment group"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }

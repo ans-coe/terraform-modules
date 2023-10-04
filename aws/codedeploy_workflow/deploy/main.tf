@@ -6,13 +6,13 @@ locals {
 }
 
 resource "aws_iam_role" "deployment_pipeline_role" {
-  count = var.enable_deployment_pipeline_role == true ? 1 : 0
+  count              = var.enable_deployment_pipeline_role == true ? 1 : 0
   name               = "${local.name}-pipeline-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_codepipeline.json
 }
 
 module "pipeline_bucket" {
-  count = var.enable_pipeline_bucket == true ? 1 : 0
+  count  = var.enable_pipeline_bucket == true ? 1 : 0
   source = "terraform-aws-modules/s3-bucket/aws"
 
   bucket = "${local.name}-pipeline-bucket"
@@ -39,7 +39,7 @@ module "pipeline_bucket" {
 
 resource "aws_codepipeline" "codepipeline" {
   count = var.enable_codepipeline == true ? 1 : 0
-  name = "${local.name}-pipeline"
+  name  = "${local.name}-pipeline"
   # role_arn = var.iam_role
   role_arn = aws_iam_role.deployment_pipeline_role.arn
 

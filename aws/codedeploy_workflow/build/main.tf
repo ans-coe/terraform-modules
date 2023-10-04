@@ -3,13 +3,13 @@ locals {
 }
 
 resource "aws_iam_role" "codepipeline_role" {
-  count = var.enable_codepipeline_role == true ? 1 : 0
+  count              = var.enable_codepipeline_role == true ? 1 : 0
   name               = "${local.pipeline_name}-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 module "kms_key" {
-  count = var.enable_kms_key == true ? 1 : 0
+  count            = var.enable_kms_key == true ? 1 : 0
   source           = "../../kms_key"
   key_name         = "${local.pipeline_name}-kms-key"
   dest_account_ids = data.aws_arn.deployment_role.*.account
@@ -19,7 +19,7 @@ module "kms_key" {
 }
 
 module "pipeline_bucket" {
-  count = var.enable_pipeline_bucket == true ? 1 : 0
+  count  = var.enable_pipeline_bucket == true ? 1 : 0
   source = "terraform-aws-modules/s3-bucket/aws"
 
   bucket = "${local.pipeline_name}-pipeline-bucket"
@@ -45,7 +45,7 @@ module "pipeline_bucket" {
 }
 
 module "deploy_bucket" {
-  count = var.enable_deploy_bucket == true ? 1 : 0
+  count  = var.enable_deploy_bucket == true ? 1 : 0
   source = "terraform-aws-modules/s3-bucket/aws"
 
   bucket = "${local.pipeline_name}-deploy-bucket"
@@ -71,8 +71,7 @@ module "deploy_bucket" {
 }
 
 resource "aws_codepipeline" "codepipeline" {
-  count = var.enable_codepipeline == true ? 1 : 0
-  for_each = toset(var.branches)
+  for_each = var.enable_codepipeline == true ? toset(var.branches) : toset([])
 
   name     = "${local.pipeline_name}-${each.value}-pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
