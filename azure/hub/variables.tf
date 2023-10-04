@@ -232,7 +232,7 @@ variable "network_watcher_config" {
   description = "Configuration for the network watcher resource."
   type = object({
     name                = string
-    resource_group_name = optional(string, "")
+    resource_group_name = optional(string)
   })
   default = null
 }
