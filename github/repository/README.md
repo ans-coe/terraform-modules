@@ -79,3 +79,7 @@ This Terraform configuration will create a Github repository and allow for a deg
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

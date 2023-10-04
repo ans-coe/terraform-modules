@@ -80,6 +80,18 @@ variable "public_ip_enabled" {
   default     = false
 }
 
+variable "lb_backend_address_pool_ids" {
+  description = "IDs of load balancer backends to assign this virtual machine's primary NIC to."
+  type        = list(string)
+  default     = []
+}
+
+variable "agw_backend_address_pool_ids" {
+  description = "IDs of application gateways backends to assign this virtual machine's primary NIC to."
+  type        = list(string)
+  default     = []
+}
+
 variable "network_security_group_enabled" {
   description = "Assign a network security group."
   type        = bool
@@ -156,6 +168,12 @@ variable "source_image_plan_required" {
   default     = false
 }
 
+variable "accept_terms" {
+  description = "Enable if terms are needed to be accepted"
+  type        = bool
+  default     = false
+}
+
 variable "source_image_reference" {
   description = "Source image reference to use when creating the virtual machine."
   type = object({
@@ -207,4 +225,14 @@ variable "data_collection_rule_id" {
   description = "Data collection rule ID to associate to this virtual machine."
   type        = string
   default     = null
+}
+
+variable "autoshutdown" {
+  description = "Describes the autoshutdown configuration with time being in 24h format and timezone being a supported timezone."
+  type = object({
+    time     = optional(string, "2200")
+    timezone = optional(string, "UTC")
+    email    = optional(string)
+  })
+  default = null
 }

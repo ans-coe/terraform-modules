@@ -10,7 +10,7 @@ resource "azuredevops_project" "main" {
   work_item_template = var.work_item_template
 
   features = {
-    "repositories" = "enabled"
+    "repositories" = var.enable_repositories ? "enabled" : "disabled"
     "boards"       = var.enable_boards ? "enabled" : "disabled"
     "pipelines"    = var.enable_pipelines ? "enabled" : "disabled"
     "testplans"    = var.enable_testplans ? "enabled" : "disabled"
@@ -18,12 +18,23 @@ resource "azuredevops_project" "main" {
   }
 }
 
+resource "azuredevops_project_pipeline_settings" "main" {
+  project_id = azuredevops_project.main.id
+
+  enforce_job_scope                    = var.pipeline_settings["enforce_job_scope"]
+  enforce_job_scope_for_release        = var.pipeline_settings["enforce_job_scope_for_release"]
+  enforce_referenced_repo_scoped_token = var.pipeline_settings["enforce_referenced_repo_scoped_token"]
+  enforce_settable_var                 = var.pipeline_settings["enforce_settable_var"]
+  publish_pipeline_metadata            = var.pipeline_settings["publish_pipeline_metadata"]
+  status_badges_are_private            = var.pipeline_settings["status_badges_are_private"]
+}
+
 ###############
 # Repositories
 ###############
 
 resource "azuredevops_git_repository" "main" {
-  for_each = var.repository_names
+  for_each = var.repositories
 
   project_id = azuredevops_project.main.id
   name       = each.value
@@ -34,10 +45,10 @@ resource "azuredevops_git_repository" "main" {
 }
 
 resource "azuredevops_team" "main" {
-  for_each = { for s in var.teams : s.name => s }
+  for_each = var.teams
 
   project_id  = azuredevops_project.main.id
-  name        = each.value["name"]
+  name        = each.key
   description = each.value["description"]
 }
 
@@ -66,11 +77,46 @@ resource "azuredevops_team_members" "main" {
 ##############
 
 resource "azuredevops_environment" "main" {
-  for_each = local.environments
+  for_each = var.environments
 
   project_id  = azuredevops_project.main.id
-  name        = each.value["name"]
+  name        = each.key
   description = each.value["description"]
+}
+
+resource "azuredevops_check_approval" "main" {
+  for_each = {
+    for k, v in var.environments
+    : k => v
+    if length(v.approval.approvers) > 0
+  }
+
+  project_id           = azuredevops_project.main.id
+  target_resource_id   = azuredevops_environment.main[each.key].id
+  target_resource_type = "environment"
+
+  approvers                  = each.value["approval"].approvers
+  minimum_required_approvers = each.value["approval"].min_approvers
+  requester_can_approve      = each.value["approval"].requester_can_approve
+  timeout                    = each.value["approval"].timeout
+  instructions               = each.value["approval"].instructions
+}
+
+resource "azuredevops_check_branch_control" "main" {
+  for_each = {
+    for k, v in var.environments
+    : k => v
+    if v.allowed_branches.branches != null
+  }
+
+  project_id           = azuredevops_project.main.id
+  target_resource_id   = azuredevops_environment.main[each.key].id
+  target_resource_type = "environment"
+
+  display_name                     = "Allowed Branches"
+  allowed_branches                 = each.value["allowed_branches"].branches
+  verify_branch_protection         = each.value["allowed_branches"].verify_branch_protection
+  ignore_unknown_protection_status = each.value["allowed_branches"].ignore_unknown_protection_status
 }
 
 #####################
@@ -78,8 +124,10 @@ resource "azuredevops_environment" "main" {
 #####################
 
 resource "azuredevops_repository_policy_author_email_pattern" "main" {
+  count = var.author_email_policy != null ? 1 : 0
+
   project_id = azuredevops_project.main.id
-  enabled    = var.author_email_policy["enabled"]
+  enabled    = true
   blocking   = var.author_email_policy["blocking"]
 
   author_email_patterns = var.author_email_policy["email_patterns"]
@@ -88,8 +136,10 @@ resource "azuredevops_repository_policy_author_email_pattern" "main" {
 }
 
 resource "azuredevops_repository_policy_file_path_pattern" "main" {
+  count = var.file_path_policy != null ? 1 : 0
+
   project_id = azuredevops_project.main.id
-  enabled    = var.file_path_policy["enabled"]
+  enabled    = true
   blocking   = var.file_path_policy["blocking"]
 
   filepath_patterns = var.file_path_policy["denied_paths"]
@@ -98,26 +148,32 @@ resource "azuredevops_repository_policy_file_path_pattern" "main" {
 }
 
 resource "azuredevops_repository_policy_reserved_names" "main" {
+  count = var.reserved_names_policy != null ? 1 : 0
+
   project_id = azuredevops_project.main.id
-  enabled    = var.reserved_names_policy["enabled"]
+  enabled    = true
   blocking   = var.reserved_names_policy["blocking"]
 
   repository_ids = local.reserved_names_policy_repository_ids
 }
 
 resource "azuredevops_repository_policy_case_enforcement" "main" {
+  count = var.case_enforcement_policy != null ? 1 : 0
+
   project_id = azuredevops_project.main.id
-  enabled    = var.case_enforcement_policy["enabled"]
+  enabled    = true
   blocking   = var.case_enforcement_policy["blocking"]
 
-  enforce_consistent_case = var.case_enforcement_policy["enabled"]
+  enforce_consistent_case = true
 
   repository_ids = local.case_enforcement_policy_repository_ids
 }
 
 resource "azuredevops_repository_policy_max_path_length" "main" {
+  count = var.path_length_policy != null ? 1 : 0
+
   project_id = azuredevops_project.main.id
-  enabled    = var.path_length_policy["enabled"]
+  enabled    = true
   blocking   = var.path_length_policy["blocking"]
 
   max_path_length = var.path_length_policy["max_path_length"]
@@ -126,8 +182,10 @@ resource "azuredevops_repository_policy_max_path_length" "main" {
 }
 
 resource "azuredevops_repository_policy_max_file_size" "main" {
+  count = var.file_size_policy != null ? 1 : 0
+
   project_id = azuredevops_project.main.id
-  enabled    = var.file_size_policy["enabled"]
+  enabled    = true
   blocking   = var.file_size_policy["blocking"]
 
   max_file_size = var.file_size_policy["max_file_size"]
@@ -140,9 +198,11 @@ resource "azuredevops_repository_policy_max_file_size" "main" {
 #################
 
 resource "azuredevops_branch_policy_min_reviewers" "main" {
+  count = var.review_policy != null ? 1 : 0
+
   project_id = azuredevops_project.main.id
 
-  enabled  = var.review_policy["enabled"]
+  enabled  = true
   blocking = var.review_policy["blocking"]
 
   settings {
@@ -155,7 +215,6 @@ resource "azuredevops_branch_policy_min_reviewers" "main" {
 
     dynamic "scope" {
       for_each = local.review_policy_scopes
-
       content {
         repository_id  = scope.value
         repository_ref = "refs/heads/${var.default_branch}"
@@ -166,15 +225,16 @@ resource "azuredevops_branch_policy_min_reviewers" "main" {
 }
 
 resource "azuredevops_branch_policy_work_item_linking" "main" {
+  count = var.work_item_policy != null ? 1 : 0
+
   project_id = azuredevops_project.main.id
 
-  enabled  = var.work_item_policy["enabled"]
+  enabled  = true
   blocking = var.work_item_policy["blocking"]
 
   settings {
     dynamic "scope" {
       for_each = local.work_item_policy_scopes
-
       content {
         repository_id  = scope.value
         repository_ref = "refs/heads/${var.default_branch}"
@@ -185,15 +245,16 @@ resource "azuredevops_branch_policy_work_item_linking" "main" {
 }
 
 resource "azuredevops_branch_policy_comment_resolution" "main" {
+  count = var.comment_policy != null ? 1 : 0
+
   project_id = azuredevops_project.main.id
 
-  enabled  = var.comment_policy["enabled"]
+  enabled  = true
   blocking = var.comment_policy["blocking"]
 
   settings {
     dynamic "scope" {
       for_each = local.comment_policy_scopes
-
       content {
         repository_id  = scope.value
         repository_ref = "refs/heads/${var.default_branch}"

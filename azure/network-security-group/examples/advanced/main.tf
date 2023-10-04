@@ -48,7 +48,7 @@ resource "azurerm_storage_account" "nsg" {
 module "nsg" {
   source = "../../"
 
-  name                = "${local.resource_prefix}-rg"
+  name                = "${local.resource_prefix}-nsg"
   location            = local.location
   resource_group_name = azurerm_resource_group.nsg.name
   tags                = local.tags

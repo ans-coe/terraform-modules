@@ -111,31 +111,16 @@ variable "subnet_id" {
   default     = null
 }
 
-variable "log_level" {
-  description = "The log level to use with this app service."
-  type        = string
-  default     = "Error"
-
-  validation {
-    condition     = contains(["Off", "Error", "Warning", "Information", "Verbose"], var.log_level)
-    error_message = "Variable 'log_level' must be one of 'Off', 'Error', 'Warning', 'Information', 'Verbose'."
-  }
-}
-
-variable "log_config" {
+variable "logs" {
   description = "The log configuration to use with this app service."
   type = object({
+    level                   = optional(string, "Warning")
     detailed_error_messages = optional(bool, false)
     failed_request_tracing  = optional(bool, false)
     retention_in_days       = optional(number, 7)
-    storage_account_name    = optional(string)
-    storage_account_rg      = optional(string)
+    retention_in_mb         = optional(number, 100)
   })
-  default = {
-    detailed_error_messages = false
-    failed_request_tracing  = false
-    retention_in_days       = 7
-  }
+  default = {}
 }
 
 variable "create_application_insights" {

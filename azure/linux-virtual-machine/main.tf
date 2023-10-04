@@ -27,11 +27,35 @@ resource "azurerm_network_interface" "main" {
   }
 }
 
+resource "azurerm_network_interface_backend_address_pool_association" "main" {
+  count = length(var.lb_backend_address_pool_ids)
+
+  ip_configuration_name   = one(azurerm_network_interface.main.ip_configuration[*].name)
+  network_interface_id    = azurerm_network_interface.main.id
+  backend_address_pool_id = var.lb_backend_address_pool_ids[count.index]
+}
+
+resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "main" {
+  count = length(var.agw_backend_address_pool_ids)
+
+  ip_configuration_name   = one(azurerm_network_interface.main.ip_configuration[*].name)
+  network_interface_id    = azurerm_network_interface.main.id
+  backend_address_pool_id = var.agw_backend_address_pool_ids[count.index]
+}
+
 resource "azurerm_network_interface_security_group_association" "main" {
   count = var.network_security_group_enabled ? 1 : 0
 
   network_interface_id      = azurerm_network_interface.main.id
   network_security_group_id = var.network_security_group_id
+}
+
+resource "azurerm_marketplace_agreement" "main" {
+  count = var.accept_terms ? 1 : 0
+
+  publisher = var.source_image_reference.publisher
+  offer     = var.source_image_reference.offer
+  plan      = var.source_image_reference.sku
 }
 
 resource "azurerm_linux_virtual_machine" "main" {
@@ -96,6 +120,8 @@ resource "azurerm_linux_virtual_machine" "main" {
       admin_username, admin_ssh_key
     ]
   }
+
+  depends_on = [azurerm_marketplace_agreement.main]
 }
 
 resource "azurerm_virtual_machine_extension" "main_azmonitor" {
@@ -180,4 +206,19 @@ resource "azurerm_monitor_data_collection_rule_association" "main" {
   description = "Allocate to ${azurerm_linux_virtual_machine.main.name}."
 
   depends_on = [azurerm_virtual_machine_extension.main_azmonitor]
+}
+
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "main" {
+  count = var.autoshutdown != null ? 1 : 0
+
+  virtual_machine_id = azurerm_linux_virtual_machine.main.id
+  location           = var.location
+  tags               = var.tags
+
+  daily_recurrence_time = var.autoshutdown["time"]
+  timezone              = var.autoshutdown["timezone"]
+  notification_settings {
+    enabled = var.autoshutdown["email"] != null
+    email   = var.autoshutdown["email"]
+  }
 }

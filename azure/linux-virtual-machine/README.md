@@ -34,6 +34,9 @@ When using a marketplace image, ensure that you accept the terms using the cli t
 | <a name="input_public_key"></a> [public\_key](#input\_public\_key) | Public key of the virtual machine. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | n/a | yes |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID of the virtual machine. | `string` | n/a | yes |
+| <a name="input_accept_terms"></a> [accept\_terms](#input\_accept\_terms) | Enable if terms are needed to be accepted | `bool` | `false` | no |
+| <a name="input_agw_backend_address_pool_ids"></a> [agw\_backend\_address\_pool\_ids](#input\_agw\_backend\_address\_pool\_ids) | IDs of application gateways backends to assign this virtual machine's primary NIC to. | `list(string)` | `[]` | no |
+| <a name="input_autoshutdown"></a> [autoshutdown](#input\_autoshutdown) | Describes the autoshutdown configuration with time being in 24h format and timezone being a supported timezone. | <pre>object({<br>    time     = optional(string, "2200")<br>    timezone = optional(string, "UTC")<br>    email    = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_availability_set_id"></a> [availability\_set\_id](#input\_availability\_set\_id) | Availability set ID to add this virtual machine to. | `string` | `null` | no |
 | <a name="input_computer_name"></a> [computer\_name](#input\_computer\_name) | The OS-level computer name of the virtual machine. | `string` | `null` | no |
 | <a name="input_data_collection_enabled"></a> [data\_collection\_enabled](#input\_data\_collection\_enabled) | Enable data collection association. | `bool` | `false` | no |
@@ -46,6 +49,7 @@ When using a marketplace image, ensure that you accept the terms using the cli t
 | <a name="input_identity_ids"></a> [identity\_ids](#input\_identity\_ids) | User assigned identity IDs to append to this virtual machine. | `list(string)` | `[]` | no |
 | <a name="input_ip_address"></a> [ip\_address](#input\_ip\_address) | Private IP address of the virtual machine NIC. | `string` | `null` | no |
 | <a name="input_ip_forwarding"></a> [ip\_forwarding](#input\_ip\_forwarding) | Enable IP forwarding on the virtual machine NIC. | `bool` | `false` | no |
+| <a name="input_lb_backend_address_pool_ids"></a> [lb\_backend\_address\_pool\_ids](#input\_lb\_backend\_address\_pool\_ids) | IDs of load balancer backends to assign this virtual machine's primary NIC to. | `list(string)` | `[]` | no |
 | <a name="input_license_type"></a> [license\_type](#input\_license\_type) | License type to use when building the virtual machine. | `string` | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_network_security_group_enabled"></a> [network\_security\_group\_enabled](#input\_network\_security\_group\_enabled) | Assign a network security group. | `bool` | `false` | no |
@@ -81,9 +85,13 @@ When using a marketplace image, ensure that you accept the terms using the cli t
 
 | Name | Type |
 |------|------|
+| [azurerm_dev_test_global_vm_shutdown_schedule.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
 | [azurerm_linux_virtual_machine.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) | resource |
+| [azurerm_marketplace_agreement.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/marketplace_agreement) | resource |
 | [azurerm_monitor_data_collection_rule_association.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_data_collection_rule_association) | resource |
 | [azurerm_network_interface.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) | resource |
+| [azurerm_network_interface_application_gateway_backend_address_pool_association.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_application_gateway_backend_address_pool_association) | resource |
+| [azurerm_network_interface_backend_address_pool_association.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_backend_address_pool_association) | resource |
 | [azurerm_network_interface_security_group_association.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_security_group_association) | resource |
 | [azurerm_public_ip.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
 | [azurerm_virtual_machine_extension.main_aadlogin](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
@@ -96,3 +104,7 @@ When using a marketplace image, ensure that you accept the terms using the cli t
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

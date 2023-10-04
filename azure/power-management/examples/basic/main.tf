@@ -1,5 +1,12 @@
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+    key_vault {
+      purge_soft_delete_on_destroy = true
+    }
+  }
 }
 
 locals {
@@ -12,17 +19,27 @@ locals {
   resource_prefix = "tfmex-basic-pm"
 }
 
+resource "azurerm_resource_group" "power_management" {
+  name     = "rg-${local.resource_prefix}"
+  location = local.location
+  tags     = local.tags
+}
+
 data "azurerm_subscription" "current" {}
 
 module "power_management" {
   source = "../../"
 
-  name     = "${local.resource_prefix}-pm-aa"
-  location = local.location
-  tags     = local.tags
+  name                = "aa-pm-${local.resource_prefix}"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.power_management.name
+  tags                = local.tags
 
-  timezone        = "Europe/London"
-  scheduled_hours = ["0900", "1730"]
+  timezone = "Europe/London"
+  scheduled_hours = {
+    "morning" = "0830"
+    "evening" = "1800"
+  }
 }
 
 /*
@@ -32,8 +49,8 @@ See: "https://github.com/Azure/azure-sdk-for-go/issues/4780" for more informatio
 */
 
 resource "azurerm_automation_job_schedule" "vm_start" {
-  schedule_name           = module.power_management.schedules["0900"].name
-  resource_group_name     = module.power_management.resource_group_name
+  schedule_name           = module.power_management.schedules["morning"].name
+  resource_group_name     = azurerm_resource_group.power_management.name
   automation_account_name = module.power_management.name
   runbook_name            = module.power_management.main_runbooks["AzVM"].name
 
@@ -46,8 +63,8 @@ resource "azurerm_automation_job_schedule" "vm_start" {
 }
 
 resource "azurerm_automation_job_schedule" "vm_stop" {
-  schedule_name           = module.power_management.schedules["1730"].name
-  resource_group_name     = module.power_management.resource_group_name
+  schedule_name           = module.power_management.schedules["evening"].name
+  resource_group_name     = azurerm_resource_group.power_management.name
   automation_account_name = module.power_management.name
   runbook_name            = module.power_management.main_runbooks["AzVM"].name
 

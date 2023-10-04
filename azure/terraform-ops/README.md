@@ -83,3 +83,7 @@ Following deployment you must approve API permissions in the Azure Portal to all
 
 No modules.
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

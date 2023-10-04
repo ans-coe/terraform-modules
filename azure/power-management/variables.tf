@@ -11,7 +11,6 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the resource group this module will use."
   type        = string
-  default     = null
 }
 
 variable "tags" {
@@ -27,7 +26,13 @@ variable "tags" {
 variable "name" {
   description = "The name of the Power Management Automation Account."
   type        = string
-  default     = "power-management-aa"
+  default     = "aa-pm"
+}
+
+variable "custom_role_scope" {
+  description = "The scope the custom role created for this automation should be created at. Defaults to the target subscription."
+  type        = string
+  default     = null
 }
 
 variable "managed_subscription_ids" {
@@ -55,18 +60,21 @@ variable "timezone" {
 }
 
 variable "scheduled_hours" {
-  description = "A list of scheduled hours in 24h format to create for weekdays."
-  type        = list(string)
-  default     = ["0830", "1800"]
+  description = "A map of schedule names to hours in 24h format to create for weekdays."
+  type        = map(string)
+  default = {
+    "morning" = "0830"
+    "evening" = "1800"
+  }
 
   validation {
     # Run regex on all scheduled hours.
     # Search for "false" in the created list.
     # If 'false' appears, fail the check.
     condition = !can(index([
-      for t in var.scheduled_hours
-      : can(regex("^\\d{4}$", t))
+      for k, v in var.scheduled_hours
+      : can(regex("^\\d{4}$", v))
     ], false))
-    error_message = "The scheduled_hours must be in 24h format e.g 0830 or 1800."
+    error_message = "The scheduled_hours value must be in 24h format e.g 0830 or 1800."
   }
 }

@@ -7,7 +7,7 @@ This example is used to create a project in Azure DevOps.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_azuredevops"></a> [azuredevops](#requirement\_azuredevops) | >=0.3.0 |
+| <a name="requirement_azuredevops"></a> [azuredevops](#requirement\_azuredevops) | ~> 0.6 |
 
 ## Inputs
 

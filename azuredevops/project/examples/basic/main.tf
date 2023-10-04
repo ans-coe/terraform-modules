@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azuredevops = {
       source  = "microsoft/azuredevops"
-      version = ">=0.3.0"
+      version = "~> 0.6"
     }
   }
 }
@@ -14,7 +14,7 @@ module "project" {
   name        = "terraform-module-example-basic-project"
   description = "Example project created and managed through Terraform."
 
-  repository_names = ["repo1", "repo2"]
+  repositories = ["repo1", "repo2"]
 }
 
 output "repositories" {
