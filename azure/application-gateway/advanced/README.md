@@ -17,6 +17,10 @@ To set auto-scaling, set sku.max_capacity to a value greater than sku.capacity.
 
 Default Port Names are: "http" for 80 and "https" for 443.
 
+### WAF_v2
+
+You can only enable WAF_v2 by setting the waf_configuration variable. If this variable is set, then the WAF is enabled, otherwise the WAF is disabled.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -45,7 +49,7 @@ Default Port Names are: "http" for 80 and "https" for 443.
 | <a name="input_pip_name"></a> [pip\_name](#input\_pip\_name) | Override The Public IP Name | `string` | `null` | no |
 | <a name="input_private_ip"></a> [private\_ip](#input\_private\_ip) | A private IP address for the frontend | `string` | `null` | no |
 | <a name="input_probe"></a> [probe](#input\_probe) | Map of Probes | <pre>map(object({<br>    https_enabled       = optional(bool, false)<br>    interval            = optional(number, 30)<br>    path                = optional(string, "/")<br>    timeout             = optional(number, 30)<br>    unhealthy_threshold = optional(number, 3)<br>    port                = optional(number)<br>    host                = optional(string)<br>    match = optional(list(object({<br>      body        = optional(string)<br>      status_code = optional(list(string))<br>      })), [{<br>      status_code = [<br>        "200-399"<br>      ]<br>    }])<br>  }))</pre> | <pre>{<br>  "default_probe": {}<br>}</pre> | no |
-| <a name="input_sku"></a> [sku](#input\_sku) | Properties relating to the SKU of the Applicaton Gateway | <pre>object({<br>    waf_enabled  = optional(bool, false)<br>    capacity     = optional(number, 1)<br>    max_capacity = optional(number)<br>  })</pre> | `{}` | no |
+| <a name="input_sku"></a> [sku](#input\_sku) | Properties relating to the SKU of the Applicaton Gateway | <pre>object({<br>    capacity     = optional(number, 1)<br>    max_capacity = optional(number)<br>  })</pre> | `{}` | no |
 | <a name="input_ssl_certificates"></a> [ssl\_certificates](#input\_ssl\_certificates) | Map of SSL Certs | <pre>map(object({<br>    data                = optional(string)<br>    password            = optional(string)<br>    key_vault_secret_id = optional(string)<br>  }))</pre> | `{}` | no |
 | <a name="input_ssl_policy"></a> [ssl\_policy](#input\_ssl\_policy) | The predefined SSL policy to use with the application gateway. | `string` | `"AppGwSslPolicy20220101"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Resource Tags | `map(string)` | `null` | no |

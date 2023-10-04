@@ -46,8 +46,6 @@ module "example" {
   subnet_id           = azurerm_subnet.example.id
 
   sku = {
-    name         = "WAF_v2"
-    tier         = "WAF_v2"
     capacity     = 1
     max_capacity = 3
   }
@@ -119,6 +117,7 @@ module "example" {
     }
   }
 
+  // By setting waf_configuration, we change the sku to WAF_v2
   waf_configuration = {
     policy_name      = "agw-waf-policy"
     firewall_mode    = "Prevention"
