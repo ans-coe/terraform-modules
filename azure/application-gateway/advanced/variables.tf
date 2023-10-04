@@ -29,15 +29,11 @@ variable "tags" {
 variable "sku" {
   description = "Properties relating to the SKU of the Applicaton Gateway"
   type = object({
-    name         = string
-    tier         = string
+    waf_enabled  = optional(bool, false)
     capacity     = optional(number, 1)
     max_capacity = optional(number)
   })
-  default = {
-    name = "Standard_v2"
-    tier = "Standard_v2"
-  }
+  default = {}
   validation {
     condition     = var.sku.max_capacity == null ? true : var.sku.max_capacity > var.sku.capacity
     error_message = "Max capacity must be greater than capacity or not set at all"
@@ -240,15 +236,14 @@ variable "backend_address_pools" {
 variable "backend_http_settings" {
   description = "Map of Backend HTTP Settings"
   type = map(object({
-    port                                = optional(number, 80)
-    https_enabled                       = optional(bool, false)
-    cookie_based_affinity               = optional(bool, true)
-    affinity_cookie_name                = optional(string, "ApplicationGatewayAffinity")
-    probe_name                          = optional(string, "default_probe")
-    host_name                           = optional(string)
-    pick_host_name_from_backend_address = optional(bool, true)
-    request_timeout                     = optional(number, 30)
-    trusted_root_certificate_names      = optional(list(string))
+    port                           = optional(number, 80)
+    https_enabled                  = optional(bool, false)
+    cookie_based_affinity          = optional(bool, true)
+    affinity_cookie_name           = optional(string, "ApplicationGatewayAffinity")
+    probe_name                     = optional(string, "default_probe")
+    host_name                      = optional(string)
+    request_timeout                = optional(number, 30)
+    trusted_root_certificate_names = optional(list(string))
   }))
   default = {
     default_settings = {}
@@ -264,14 +259,13 @@ variable "trusted_root_certificate" {
 variable "probe" {
   description = "Map of Probes"
   type = map(object({
-    https_enabled                             = optional(bool, false)
-    interval                                  = optional(number, 30)
-    path                                      = optional(string, "/")
-    timeout                                   = optional(number, 30)
-    unhealthy_threshold                       = optional(number, 3)
-    port                                      = optional(number)
-    pick_host_name_from_backend_http_settings = optional(bool, false)
-    host                                      = optional(string)
+    https_enabled       = optional(bool, false)
+    interval            = optional(number, 30)
+    path                = optional(string, "/")
+    timeout             = optional(number, 30)
+    unhealthy_threshold = optional(number, 3)
+    port                = optional(number)
+    host                = optional(string)
     match = optional(list(object({
       body        = optional(string)
       status_code = optional(list(string))
