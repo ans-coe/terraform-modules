@@ -10,7 +10,7 @@
 ### So we can either use the main one or specify a new one.
 
 resource "azurerm_resource_group" "network_watcher" {
-  for_each = var.network_watcher_config.resource_group_name != null ? [0] : []
+  count = var.network_watcher_config.resource_group_name != null ? 1 : 0
 
   name     = var.network_watcher_config["resource_group_name"]
   location = var.location
