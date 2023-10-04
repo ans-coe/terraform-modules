@@ -39,10 +39,12 @@ resource "azurerm_monitor_diagnostic_setting" "bastion" {
   enabled_log {
     category = "BastionAuditLogs"
 
-    retention_policy {
-      days    = 30
-      enabled = true
-    }
+    ## Removing depreciated retention_policy, retention should be set in the log_analytics_workspace
+    ## Leaving this comment in for explaination reasons
+    # retention_policy {
+    #   days    = 30
+    #   enabled = true
+    # }
   }
   metric {
     category = "AllMetrics"
