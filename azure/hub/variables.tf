@@ -231,7 +231,7 @@ variable "private_dns_domains" {
 variable "network_watcher_config" {
   description = "Configuration for the network watcher resource."
   type = object({
-    name                = optional(string)
+    name                = string
     resource_group_name = optional(string, "")
   })
   default = null
