@@ -7,3 +7,7 @@
 	path = azure/bastion
 	url = https://github.com/ans-coe/terraform-azurerm-bastion.git
 	branch = main
+[submodule "azure/kubernetes-cluster"]
+	path = azure/kubernetes-cluster
+	url = https://github.com/ans-coe/terraform-azurerm-kubernetes-cluster.git
+	branch = main
