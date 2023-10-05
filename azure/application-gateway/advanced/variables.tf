@@ -29,7 +29,6 @@ variable "tags" {
 variable "sku" {
   description = "Properties relating to the SKU of the Applicaton Gateway"
   type = object({
-    waf_enabled  = optional(bool, false)
     capacity     = optional(number, 1)
     max_capacity = optional(number)
   })
