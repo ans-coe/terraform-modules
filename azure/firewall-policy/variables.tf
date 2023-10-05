@@ -32,6 +32,11 @@ variable "sku" {
   description = "The SKU Tier of the Firewall Policy. Possible values are Standard, Premium and Basic"
   type        = string
   default     = "Standard"
+
+  validation {
+    condition     = contains(["Standard", "Premium", "Basic"], var.sku)
+    error_message = "SKU must be either Standard, Premium or Basic"
+  }
 }
 
 variable "base_policy_id" {
@@ -77,7 +82,7 @@ variable "intrusion_detection" {
       destination_ports     = optional(list(string))
       source_addresses      = optional(list(string))
       source_ip_groups      = optional(list(string))
-    })))
+    })), {})
     private_ranges = optional(list(string))
   })
   default = null
@@ -114,11 +119,11 @@ variable "rule_collection_groups" {
   type = map(object({
     priority = number
 
-    application_rule_collection = optional(map(object({
+    application_rule_collections = optional(map(object({
       description = optional(string)
       action      = string
       priority    = number
-      rule = map(object({
+      rules = map(object({
         protocols             = optional(map(string)) #Http, Https
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
@@ -129,11 +134,11 @@ variable "rule_collection_groups" {
       }))
     })), {})
 
-    network_rule_collection = optional(map(object({
+    network_rule_collections = optional(map(object({
       description = optional(string)
       action      = string
       priority    = number
-      rule = map(object({
+      rules = map(object({
         protocols             = list(string) #Any, TCP, UDP, ICMP
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
@@ -144,11 +149,11 @@ variable "rule_collection_groups" {
       }))
     })), {})
 
-    nat_rule_collection = optional(map(object({
+    nat_rule_collections = optional(map(object({
       description = optional(string)
       priority    = number
       action      = optional(string, "Dnat") #Dnat only
-      rule = map(object({
+      rules = map(object({
         protocols           = list(string) #TCP or UDP
         source_addresses    = optional(list(string))
         source_ip_groups    = optional(list(string))
@@ -160,4 +165,5 @@ variable "rule_collection_groups" {
       }))
     })), {})
   }))
+  default = {}
 }
