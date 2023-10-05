@@ -15,7 +15,7 @@ module "kms_key" {
   dest_account_ids = data.aws_arn.deployment_role.*.account
   dest_iam_roles   = var.deployment_roles
   src_account_id   = data.aws_caller_identity.current.account_id
-  src_iam_roles    = [aws_iam_role.codepipeline_role.arn]
+  src_iam_roles    = [aws_iam_role.codepipeline_role[0].arn]
 }
 
 module "pipeline_bucket" {

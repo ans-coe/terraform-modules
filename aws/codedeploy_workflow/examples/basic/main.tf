@@ -25,7 +25,7 @@ module "build" {
   source = "../../build"
   name   = local.name
 
-  code_commit_repo = aws_codecommit_repository.main.name
+  code_commit_repo = aws_codecommit_repository.main.repository_name
 
   // Pass in a list of branches on the code commit repo that is used to trigger the build pipeline
   branches = [

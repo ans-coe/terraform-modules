@@ -24,7 +24,7 @@ resource "aws_codedeploy_app" "deploy_app" {
 
 resource "aws_codedeploy_deployment_group" "deployment_group" {
   count                 = var.enable_deployment_group == true ? 1 : 0
-  app_name              = aws_codedeploy_app.deploy_app.name
+  app_name              = aws_codedeploy_app.deploy_app[0].name
   deployment_group_name = "${local.name}-codedeploy-group"
   service_role_arn      = aws_iam_role.codedeploy_role.arn
 
