@@ -187,6 +187,12 @@ variable "key_vault_identity_id" {
   default     = null
 }
 
+variable "public_network_access_enabled" {
+  description = "Do you want to enable public access"
+  type = bool
+  default = true
+}
+
 variable "slots" {
   description = "Names for slots that are clones of the app."
   type        = set(string)
