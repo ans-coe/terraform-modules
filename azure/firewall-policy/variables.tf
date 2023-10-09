@@ -145,7 +145,7 @@ variable "rule_collection_groups" {
         destination_addresses = optional(list(string))
         destination_ip_groups = optional(list(string))
         destination_fqdns     = optional(list(string))
-        destination_ports     = list(number)
+        destination_ports     = optional(list(number))
       }))
     })), {})
 
