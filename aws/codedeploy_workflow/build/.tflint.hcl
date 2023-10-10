@@ -2,6 +2,7 @@ plugin "terraform" {
   enabled = true
   preset  = "recommended"
 }
+
 plugin "aws" {
   enabled = true
   version = "0.27.0"
