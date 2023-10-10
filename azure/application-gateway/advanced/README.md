@@ -27,7 +27,7 @@ You can only enable WAF_v2 by setting the waf_configuration variable. If this va
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 3.74 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | > 3.36 |
 
 ## Inputs
 
@@ -84,7 +84,6 @@ You can only enable WAF_v2 by setting the waf_configuration variable. If this va
 | [azurerm_user_assigned_identity.main_gateway](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
 | [azurerm_web_application_firewall_policy.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/web_application_firewall_policy) | resource |
 | [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
-| [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
 
 ## Modules
 
