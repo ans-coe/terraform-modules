@@ -9,5 +9,3 @@ data "aws_arn" "deployment_role" {
   count = length(var.deployment_roles)
   arn   = element(var.deployment_roles, count.index)
 }
-
-# data.aws_arn.deployment_role.*.account
