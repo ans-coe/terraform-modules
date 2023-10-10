@@ -42,3 +42,7 @@ No outputs.
 | <a name="module_prod_deploy"></a> [prod\_deploy](#module\_prod\_deploy) | ../../deploy | n/a |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | terraform-aws-modules/vpc/aws | 5.1.2 |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

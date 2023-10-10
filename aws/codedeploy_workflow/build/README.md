@@ -64,3 +64,7 @@ The build portion of the CodeDeploy Workflow module.
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | ../../kms_key | n/a |
 | <a name="module_pipeline_bucket"></a> [pipeline\_bucket](#module\_pipeline\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 3.15 |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |

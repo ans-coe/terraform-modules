@@ -66,3 +66,7 @@ The deploy portion of the CodeDeploy Workflow module.
 |------|--------|---------|
 | <a name="module_pipeline_bucket"></a> [pipeline\_bucket](#module\_pipeline\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 3.15 |
 <!-- END_TF_DOCS -->
+_______________
+| Classified  |
+| :---------: |
+|   PUBLIC    |
