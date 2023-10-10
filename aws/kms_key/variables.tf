@@ -10,13 +10,9 @@ variable "key_name" {
 }
 
 variable "dest_account_ids" {
-  description = "A list of accounts that the key will be shared to"
+  description = "A list of remote accounts that the key will be shared to"
   type        = list(string)
-}
-
-variable "src_account_id" {
-  description = "Account that the key will be created in"
-  type        = string
+  default     = []
 }
 
 variable "dest_iam_roles" {
@@ -25,10 +21,14 @@ variable "dest_iam_roles" {
   default     = []
 }
 
+variable "src_account_id" {
+  description = "Account that the key will be created in"
+  type        = string
+}
+
 variable "src_iam_roles" {
   description = "A list of local IAM roles that have access to the key"
   type        = list(string)
-  default     = []
 }
 
 

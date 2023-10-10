@@ -18,19 +18,21 @@ module "kms_sharing" {
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.5.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.19 |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_dest_account_ids"></a> [dest\_account\_ids](#input\_dest\_account\_ids) | A list of accounts that the key will be shared to | `list(string)` | n/a | yes |
 | <a name="input_key_name"></a> [key\_name](#input\_key\_name) | Name of the KMS Key | `string` | n/a | yes |
 | <a name="input_src_account_id"></a> [src\_account\_id](#input\_src\_account\_id) | Account that the key will be created in | `string` | n/a | yes |
-| <a name="input_tags"></a> [tags](#input\_tags) | Tags for the resource | `map(string)` | n/a | yes |
+| <a name="input_src_iam_roles"></a> [src\_iam\_roles](#input\_src\_iam\_roles) | A list of local IAM roles that have access to the key | `list(string)` | n/a | yes |
+| <a name="input_dest_account_ids"></a> [dest\_account\_ids](#input\_dest\_account\_ids) | A list of remote accounts that the key will be shared to | `list(string)` | `[]` | no |
 | <a name="input_dest_iam_roles"></a> [dest\_iam\_roles](#input\_dest\_iam\_roles) | A list of remote IAM roles that have access to the key | `list(string)` | `[]` | no |
-| <a name="input_src_iam_roles"></a> [src\_iam\_roles](#input\_src\_iam\_roles) | A list of local IAM roles that have access to the key | `list(string)` | `[]` | no |
-| <a name="input_user_policy"></a> [user\_policy](#input\_user\_policy) | Custom User Policy | `string` | `""` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags for the resource | `map(string)` | `null` | no |
 
 ## Outputs
 
@@ -48,7 +50,7 @@ No requirements.
 |------|------|
 | [aws_kms_alias.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_alias) | resource |
 | [aws_kms_key.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
-| [template_file.main](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+| [aws_iam_policy_document.key_share](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
 ## Modules
 
