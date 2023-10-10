@@ -10,5 +10,10 @@ output "branch" {
 
 output "deployment_role" {
   description = "Role used to deploy"
-  value       = aws_iam_role.deployment_pipeline_role.arn
+  value       = aws_iam_role.deployment_pipeline_role[0].arn
+}
+
+output "deployment_bucket_id" {
+  description = "Bucket used for CodeDeploy"
+  value       = module.pipeline_bucket[0].s3_bucket_id
 }

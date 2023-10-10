@@ -5,7 +5,7 @@ data "aws_iam_policy_document" "deploy_bucket" {
       type = "AWS"
       identifiers = formatlist("arn:aws:iam::%s:root",
         concat(
-          data.aws_arn.deployment_role.*.account,
+          data.aws_arn.deployment_role[*].account,
           [data.aws_caller_identity.current.account_id]
         )
       )

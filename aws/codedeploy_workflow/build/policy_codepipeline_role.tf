@@ -1,4 +1,5 @@
 data "aws_iam_policy_document" "codepipeline_role_policy" {
+  count = var.enable_codepipeline ? 1 : 0
   statement {
     effect = "Allow"
 
@@ -12,8 +13,8 @@ data "aws_iam_policy_document" "codepipeline_role_policy" {
     resources = [
       module.deploy_bucket.s3_bucket_arn,
       "${module.deploy_bucket.s3_bucket_arn}/*",
-      module.pipeline_bucket.s3_bucket_arn,
-      "${module.pipeline_bucket.s3_bucket_arn}/*"
+      module.pipeline_bucket[0].s3_bucket_arn,
+      "${module.pipeline_bucket[0].s3_bucket_arn}/*"
     ]
   }
 
@@ -28,7 +29,7 @@ data "aws_iam_policy_document" "codepipeline_role_policy" {
       "kms:DescribeKey"
     ]
 
-    resources = [module.kms_key.key_arn]
+    resources = [var.kms_key_arn != null ? var.kms_key_arn : module.kms_key[0].key_arn]
   }
 
   statement {
@@ -36,12 +37,13 @@ data "aws_iam_policy_document" "codepipeline_role_policy" {
 
     actions = ["codecommit:*"]
 
-    resources = [data.aws_codecommit_repository.main.arn]
+    resources = [var.create_code_commit_repo ? aws_codecommit_repository.main[0].arn : data.aws_codecommit_repository.main[0].arn]
   }
 }
 
 resource "aws_iam_role_policy" "codepipeline_role" {
+  count  = var.enable_codepipeline ? 1 : 0
   name   = "codepipeline_role_policy"
-  role   = aws_iam_role.codepipeline_role.id
-  policy = data.aws_iam_policy_document.codepipeline_role_policy.json
+  role   = aws_iam_role.codepipeline_role[0].id
+  policy = data.aws_iam_policy_document.codepipeline_role_policy[0].json
 }

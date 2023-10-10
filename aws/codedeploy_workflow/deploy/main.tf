@@ -1,27 +1,28 @@
-
-# Lifecycle Hooks Maybe?
-
 locals {
   name = "${var.name}-${var.branch}-deploy"
 }
 
 resource "aws_iam_role" "deployment_pipeline_role" {
-  count              = var.enable_deployment_pipeline_role == true ? 1 : 0
+  count              = var.enable_codepipeline ? 1 : 0
   name               = "${local.name}-pipeline-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_codepipeline.json
 }
 
 module "pipeline_bucket" {
-  count  = var.enable_pipeline_bucket == true ? 1 : 0
-  source = "terraform-aws-modules/s3-bucket/aws"
+  count   = var.enable_codepipeline ? 1 : 0
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "~> 3.15"
 
   bucket = "${local.name}-pipeline-bucket"
   acl    = "private"
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls        = true
+  block_public_policy      = true
+  ignore_public_acls       = true
+  restrict_public_buckets  = true
+  force_destroy            = true
+  control_object_ownership = true
+  object_ownership         = "BucketOwnerPreferred"
 
   versioning = {
     enabled = true
@@ -38,13 +39,13 @@ module "pipeline_bucket" {
 }
 
 resource "aws_codepipeline" "codepipeline" {
-  count = var.enable_codepipeline == true ? 1 : 0
+  count = var.enable_codepipeline ? 1 : 0
   name  = "${local.name}-pipeline"
   # role_arn = var.iam_role
-  role_arn = aws_iam_role.deployment_pipeline_role.arn
+  role_arn = aws_iam_role.deployment_pipeline_role[0].arn
 
   artifact_store {
-    location = module.pipeline_bucket.s3_bucket_id
+    location = module.pipeline_bucket[0].s3_bucket_id
     type     = "S3"
 
     encryption_key {
@@ -75,7 +76,7 @@ resource "aws_codepipeline" "codepipeline" {
     name = "Deploy"
 
     action {
-      name            = "DeployToWebServer"
+      name            = "${local.name}-deployment"
       category        = "Deploy"
       owner           = "AWS"
       provider        = "CodeDeploy"

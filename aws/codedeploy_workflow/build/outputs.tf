@@ -5,6 +5,6 @@ output "bucket_name" {
 
 output "key_arn" {
   description = "The ARN of the KMS Key"
-  value       = module.kms_key.key_arn
+  value       = var.kms_key_arn != null ? var.kms_key_arn : module.kms_key[0].key_arn
 }
 

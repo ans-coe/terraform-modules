@@ -2,33 +2,37 @@ locals {
   pipeline_name = "${var.name}-build"
 }
 
+module "kms_key" {
+  count            = var.kms_key_arn == null ? 1 : 0
+  source           = "../../kms_key"
+  key_name         = "${local.pipeline_name}-kms-key"
+  dest_account_ids = data.aws_arn.deployment_role[*].account
+  dest_iam_roles   = var.deployment_roles
+  src_account_id   = data.aws_caller_identity.current.account_id
+  src_iam_roles    = [try(aws_iam_role.codepipeline_role[0].arn, null)]
+}
+
 resource "aws_iam_role" "codepipeline_role" {
-  count              = var.enable_codepipeline_role == true ? 1 : 0
+  count              = var.enable_codepipeline ? 1 : 0
   name               = "${local.pipeline_name}-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
-module "kms_key" {
-  count            = var.enable_kms_key == true ? 1 : 0
-  source           = "../../kms_key"
-  key_name         = "${local.pipeline_name}-kms-key"
-  dest_account_ids = data.aws_arn.deployment_role.*.account
-  dest_iam_roles   = var.deployment_roles
-  src_account_id   = data.aws_caller_identity.current.account_id
-  src_iam_roles    = [aws_iam_role.codepipeline_role[0].arn]
-}
-
 module "pipeline_bucket" {
-  count  = var.enable_pipeline_bucket == true ? 1 : 0
-  source = "terraform-aws-modules/s3-bucket/aws"
+  count   = var.enable_codepipeline ? 1 : 0
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "~> 3.15"
 
   bucket = "${local.pipeline_name}-pipeline-bucket"
   acl    = "private"
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls        = true
+  block_public_policy      = true
+  ignore_public_acls       = true
+  restrict_public_buckets  = true
+  force_destroy            = true
+  control_object_ownership = true
+  object_ownership         = "BucketOwnerPreferred"
 
   versioning = {
     enabled = true
@@ -37,7 +41,7 @@ module "pipeline_bucket" {
   server_side_encryption_configuration = {
     rule = {
       apply_server_side_encryption_by_default = {
-        kms_master_key_id = module.kms_key.key_arn
+        kms_master_key_id = var.kms_key_arn != null ? var.kms_key_arn : module.kms_key[0].key_arn
         sse_algorithm     = "aws:kms"
       }
     }
@@ -45,16 +49,19 @@ module "pipeline_bucket" {
 }
 
 module "deploy_bucket" {
-  count  = var.enable_deploy_bucket == true ? 1 : 0
-  source = "terraform-aws-modules/s3-bucket/aws"
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "~> 3.15"
 
   bucket = "${local.pipeline_name}-deploy-bucket"
   acl    = "private"
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+  block_public_acls        = true
+  block_public_policy      = true
+  ignore_public_acls       = true
+  restrict_public_buckets  = true
+  force_destroy            = true
+  control_object_ownership = true
+  object_ownership         = "BucketOwnerPreferred"
 
   versioning = {
     enabled = true
@@ -63,25 +70,31 @@ module "deploy_bucket" {
   server_side_encryption_configuration = {
     rule = {
       apply_server_side_encryption_by_default = {
-        kms_master_key_id = module.kms_key.key_arn
+        kms_master_key_id = var.kms_key_arn != null ? var.kms_key_arn : module.kms_key[0].key_arn
         sse_algorithm     = "aws:kms"
       }
     }
   }
 }
 
+resource "aws_codecommit_repository" "main" {
+  count = var.create_code_commit_repo ? 1 : 0
+
+  repository_name = var.code_commit_repo
+}
+
 resource "aws_codepipeline" "codepipeline" {
-  for_each = var.enable_codepipeline == true ? toset(var.branches) : toset([])
+  for_each = var.enable_codepipeline ? toset(var.branches) : toset([])
 
   name     = "${local.pipeline_name}-${each.value}-pipeline"
-  role_arn = aws_iam_role.codepipeline_role.arn
+  role_arn = aws_iam_role.codepipeline_role[0].arn
 
   artifact_store {
-    location = module.pipeline_bucket.s3_bucket_id
+    location = module.pipeline_bucket[0].s3_bucket_id
     type     = "S3"
 
     encryption_key {
-      id   = module.kms_key.key_arn
+      id   = var.kms_key_arn != null ? var.kms_key_arn : module.kms_key[0].key_arn
       type = "KMS"
     }
   }
@@ -99,7 +112,7 @@ resource "aws_codepipeline" "codepipeline" {
 
       configuration = {
         PollForSourceChanges = true
-        RepositoryName       = data.aws_codecommit_repository.main.repository_name
+        RepositoryName       = var.create_code_commit_repo ? aws_codecommit_repository.main[0].repository_name : data.aws_codecommit_repository.main[0].repository_name
         BranchName           = each.value
       }
     }

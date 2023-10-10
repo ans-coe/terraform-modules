@@ -1,4 +1,4 @@
-# Terraform (Module) - PLATFORM - NAME
+# Terraform (Module) - AWS - CodeDeploy Workflow - Build
 
 #### Table of Contents
 
@@ -11,25 +11,15 @@
 
 ## Usage
 
-This document will describe what the module is for and what is contained in it. It will be generated using [terraform-docs](https://terraform-docs.io/) which is configured to append to the existing README.md file.
-
-Things to update:
-- README.md header
-- README.md header content - description of module and its purpose
-- Update [terraform.tf](terraform.tf) required_versions
-- Add a LICENSE to this module
-- Update .tflint.hcl plugins if necessary
-- If this module is to be created for use with Terraform Registry, ensure the repository itself is called `terraform-PROVIDER-NAME` for the publish step
-- If this module is going to be a part of a monorepo, remove [.pre-commit-config.yaml](./.pre-commit-config.yaml)
-- If using this for Terraform Configurations, optionally remove [examples](./examples/) and remove `.terraform.lock.hcl` from the [.gitignore](./.gitignore)
+The build portion of the CodeDeploy Workflow module.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.4.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.59.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.5.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.19 |
 
 ## Inputs
 
@@ -39,6 +29,9 @@ Things to update:
 | <a name="input_code_commit_repo"></a> [code\_commit\_repo](#input\_code\_commit\_repo) | Name of the Code Commit Repo | `string` | n/a | yes |
 | <a name="input_deployment_roles"></a> [deployment\_roles](#input\_deployment\_roles) | List of ARNs of roles that will be used in the deployment steps. | `list(string)` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name of the Application | `string` | n/a | yes |
+| <a name="input_create_code_commit_repo"></a> [create\_code\_commit\_repo](#input\_create\_code\_commit\_repo) | Create a code commit repo | `bool` | `false` | no |
+| <a name="input_enable_codepipeline"></a> [enable\_codepipeline](#input\_enable\_codepipeline) | Whether to include the CodePipeline | `bool` | `true` | no |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | Providing a KMS Key will stop one from being generated | `string` | `null` | no |
 
 ## Outputs
 
@@ -51,6 +44,7 @@ Things to update:
 
 | Name | Type |
 |------|------|
+| [aws_codecommit_repository.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codecommit_repository) | resource |
 | [aws_codepipeline.codepipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline) | resource |
 | [aws_iam_role.codepipeline_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.codepipeline_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
@@ -66,7 +60,7 @@ Things to update:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_deploy_bucket"></a> [deploy\_bucket](#module\_deploy\_bucket) | terraform-aws-modules/s3-bucket/aws | n/a |
-| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | ../kms_key | n/a |
-| <a name="module_pipeline_bucket"></a> [pipeline\_bucket](#module\_pipeline\_bucket) | terraform-aws-modules/s3-bucket/aws | n/a |
+| <a name="module_deploy_bucket"></a> [deploy\_bucket](#module\_deploy\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 3.15 |
+| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | ../../kms_key | n/a |
+| <a name="module_pipeline_bucket"></a> [pipeline\_bucket](#module\_pipeline\_bucket) | terraform-aws-modules/s3-bucket/aws | ~> 3.15 |
 <!-- END_TF_DOCS -->

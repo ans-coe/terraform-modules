@@ -18,28 +18,16 @@ variable "code_commit_repo" {
   type        = string
 }
 
-variable "enable_codepipeline_role" {
-  description = "Whether to include the CodePipeline role"
+variable "create_code_commit_repo" {
+  description = "Create a code commit repo"
   type        = bool
-  default     = true
+  default     = false
 }
 
-variable "enable_kms_key" {
-  description = "Whether to include the KMS key"
-  type        = bool
-  default     = true
-}
-
-variable "enable_pipeline_bucket" {
-  description = "Whether to include the pipeline bucket"
-  type        = bool
-  default     = true
-}
-
-variable "enable_deploy_bucket" {
-  description = "Whether to include the deploy bucket"
-  type        = bool
-  default     = true
+variable "kms_key_arn" {
+  description = "Providing a KMS Key will stop one from being generated"
+  type        = string
+  default     = null
 }
 
 variable "enable_codepipeline" {

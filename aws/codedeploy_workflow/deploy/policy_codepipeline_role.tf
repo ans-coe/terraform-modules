@@ -1,11 +1,12 @@
 data "aws_iam_policy_document" "code_pipeline_role_policy" {
+  count = var.enable_codepipeline ? 1 : 0
   statement {
     actions = [
       "s3:GetBucketVersioning"
     ]
     resources = [
-      "${data.aws_s3_bucket.deployment.arn}",
-      "${module.pipeline_bucket.s3_bucket_arn}/*"
+      data.aws_s3_bucket.deployment.arn,
+      "${module.pipeline_bucket[0].s3_bucket_arn}/*"
     ]
   }
 
@@ -16,7 +17,7 @@ data "aws_iam_policy_document" "code_pipeline_role_policy" {
     ]
     resources = [
       "${data.aws_s3_bucket.deployment.arn}/*",
-      "${module.pipeline_bucket.s3_bucket_arn}/*"
+      "${module.pipeline_bucket[0].s3_bucket_arn}/*"
     ]
   }
 
@@ -25,7 +26,7 @@ data "aws_iam_policy_document" "code_pipeline_role_policy" {
       "s3:PutObject"
     ]
     resources = [
-      "${module.pipeline_bucket.s3_bucket_arn}/*"
+      "${module.pipeline_bucket[0].s3_bucket_arn}/*"
     ]
   }
 
@@ -56,7 +57,8 @@ data "aws_iam_policy_document" "code_pipeline_role_policy" {
 }
 
 resource "aws_iam_role_policy" "codepipeline_role" {
+  count  = var.enable_codepipeline ? 1 : 0
   name   = "codepipeline_role_policy"
-  role   = aws_iam_role.deployment_pipeline_role.id
-  policy = data.aws_iam_policy_document.code_pipeline_role_policy.json
+  role   = aws_iam_role.deployment_pipeline_role[0].id
+  policy = data.aws_iam_policy_document.code_pipeline_role_policy[0].json
 }
