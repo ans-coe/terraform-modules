@@ -119,11 +119,11 @@ module "example" {
 
   // By setting waf_configuration, we change the sku to WAF_v2
   waf_configuration = {
-    policy_name      = "agw-waf-policy"
-    firewall_mode    = "Prevention"
-    rule_set_type    = "OWASP"
-    rule_set_version = "3.2"
-    rule_group_override = {
+    policy_name            = "agw-waf-policy"
+    firewall_mode          = "Prevention"
+    enable_OWASP           = true // default value
+    OWASP_rule_set_version = "3.2"
+    OWASP_rule_group_override = {
       REQUEST-942-APPLICATION-ATTACK-SQLI = {
         942120 = { enabled = false }
         942130 = { enabled = false }
