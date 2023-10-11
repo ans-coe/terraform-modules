@@ -54,19 +54,48 @@ resource "azurerm_web_application_firewall_policy" "main" {
         selector                = exclusion.value["selector"]
       }
     }
-    managed_rule_set {
-      type    = var.waf_configuration.rule_set_type
-      version = var.waf_configuration.rule_set_version
-      dynamic "rule_group_override" {
-        for_each = var.waf_configuration.rule_group_override
-        content {
-          rule_group_name = rule_group_override.key
-          dynamic "rule" {
-            for_each = rule_group_override.value
-            content {
-              id      = rule.key
-              enabled = rule.value["enabled"]
-              action  = rule.value["action"]
+
+## OWASP
+    dynamic "managed_rule_set" {
+      for_each = var.waf_configuration.enable_OWASP ? [0] : []
+      content {
+        type    = "OWASP"
+        version = var.waf_configuration.OWASP_rule_set_version
+        dynamic "rule_group_override" {
+          for_each = var.waf_configuration.OWASP_rule_group_override
+          content {
+            rule_group_name = rule_group_override.key
+            dynamic "rule" {
+              for_each = rule_group_override.value
+              content {
+                id      = rule.key
+                enabled = rule.value["enabled"]
+                action  = rule.value["action"]
+              }
+            }
+          }
+        }
+      }
+    }
+
+## Microsoft_BotManagerRuleSet
+
+    dynamic "managed_rule_set" {
+      for_each = var.waf_configuration.enable_Microsoft_BotManagerRuleSet ? [0] : []
+      content {
+        type    = "Microsoft_BotManagerRuleSet"
+        version = var.waf_configuration.Microsoft_BotManagerRuleSet_rule_set_version
+        dynamic "rule_group_override" {
+          for_each = var.waf_configuration.Microsoft_BotManagerRuleSet_rule_group_override
+          content {
+            rule_group_name = rule_group_override.key
+            dynamic "rule" {
+              for_each = rule_group_override.value
+              content {
+                id      = rule.key
+                enabled = rule.value["enabled"]
+                action  = rule.value["action"]
+              }
             }
           }
         }
