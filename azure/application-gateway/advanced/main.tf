@@ -55,7 +55,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
       }
     }
 
-## OWASP
+    ## OWASP
     dynamic "managed_rule_set" {
       for_each = var.waf_configuration.enable_OWASP ? [0] : []
       content {
@@ -78,7 +78,7 @@ resource "azurerm_web_application_firewall_policy" "main" {
       }
     }
 
-## Microsoft_BotManagerRuleSet
+    ## Microsoft_BotManagerRuleSet
 
     dynamic "managed_rule_set" {
       for_each = var.waf_configuration.enable_Microsoft_BotManagerRuleSet ? [0] : []
