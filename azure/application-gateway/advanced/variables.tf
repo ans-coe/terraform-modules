@@ -292,14 +292,14 @@ variable "waf_configuration" {
     OWASP_rule_group_override = optional(map(map(object({
       enabled = optional(bool, true)
       action  = optional(string)
-    }))))
+    }))), {})
 
     enable_Microsoft_BotManagerRuleSet           = optional(bool, false)
     Microsoft_BotManagerRuleSet_rule_set_version = optional(string, "1.0")
     Microsoft_BotManagerRuleSet_rule_group_override = optional(map(map(object({
       enabled = optional(bool, true)
       action  = optional(string)
-    }))))
+    }))), {})
 
     file_upload_limit_mb     = optional(number, 500)
     max_request_body_size_kb = optional(number, 128)
