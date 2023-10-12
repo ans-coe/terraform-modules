@@ -25,6 +25,10 @@ resource "azurerm_key_vault_access_policy" "main_user" {
   key_permissions = ["Create", "Delete", "Get", "List", "Update", "Recover", "Restore"]
 
   secret_permissions = ["Backup", "Delete", "Get", "List", "Purge", "Recover", "Restore", "Set"]
+
+  lifecycle {
+    ignore_changes = [object_id, tenant_id]
+  }
 }
 
 resource "azurerm_key_vault_certificate" "main" {
