@@ -284,14 +284,23 @@ variable "probe" {
 variable "waf_configuration" {
   description = "Rules Defining The WAF"
   type = object({
-    policy_name      = string
-    firewall_mode    = optional(string, "Prevention")
-    rule_set_type    = optional(string, "OWASP")
-    rule_set_version = optional(string, "3.2")
-    rule_group_override = optional(map(map(object({
+    policy_name   = string
+    firewall_mode = optional(string, "Prevention")
+
+    enable_OWASP           = optional(bool, true)
+    OWASP_rule_set_version = optional(string, "3.2")
+    OWASP_rule_group_override = optional(map(map(object({
       enabled = optional(bool, true)
       action  = optional(string)
-    }))))
+    }))), {})
+
+    enable_Microsoft_BotManagerRuleSet           = optional(bool, false)
+    Microsoft_BotManagerRuleSet_rule_set_version = optional(string, "1.0")
+    Microsoft_BotManagerRuleSet_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
     file_upload_limit_mb     = optional(number, 500)
     max_request_body_size_kb = optional(number, 128)
     managed_rule_exclusion = optional(list(object({

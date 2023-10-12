@@ -1,6 +1,6 @@
-# Example - Basic
+# Example - Advanced
 
-This example is used to illustrate the basic usage of this module.
+This example is used to illustrate the advanced usage of this module.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
