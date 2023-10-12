@@ -189,8 +189,8 @@ variable "key_vault_identity_id" {
 
 variable "public_network_access_enabled" {
   description = "Do you want to enable public access"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "slots" {

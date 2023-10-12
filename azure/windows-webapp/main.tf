@@ -63,7 +63,7 @@ resource "azurerm_windows_web_app" "main" {
 
   https_only                      = true
   key_vault_reference_identity_id = var.key_vault_identity_id
-  
+
   public_network_access_enabled = var.public_network_access_enabled
 
   zip_deploy_file = var.zip_deploy_file
