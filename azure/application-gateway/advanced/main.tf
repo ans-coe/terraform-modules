@@ -160,15 +160,14 @@ resource "azurerm_application_gateway" "main" {
   dynamic "backend_http_settings" {
     for_each = var.backend_http_settings
     content {
-      name                  = backend_http_settings.key
-      port                  = backend_http_settings.value["port"]
-      protocol              = backend_http_settings.value["https_enabled"] ? "Https" : "Http"
-      cookie_based_affinity = backend_http_settings.value["cookie_based_affinity"] ? "Enabled" : "Disabled"
-      affinity_cookie_name  = backend_http_settings.value["cookie_based_affinity"] ? backend_http_settings.value["affinity_cookie_name"] : null
-      probe_name            = backend_http_settings.value["probe_name"]
-      host_name             = backend_http_settings.value["host_name"]
-      // Only one of host_name or pick_host_name_from_backend_address can be set and at least one is required.
-      pick_host_name_from_backend_address = backend_http_settings.value["host_name"] == null ? true : false
+      name                                = backend_http_settings.key
+      port                                = backend_http_settings.value["port"]
+      protocol                            = backend_http_settings.value["https_enabled"] ? "Https" : "Http"
+      cookie_based_affinity               = backend_http_settings.value["cookie_based_affinity"] ? "Enabled" : "Disabled"
+      affinity_cookie_name                = backend_http_settings.value["cookie_based_affinity"] ? backend_http_settings.value["affinity_cookie_name"] : null
+      probe_name                          = backend_http_settings.value["probe_name"]
+      host_name                           = backend_http_settings.value["host_name"]
+      pick_host_name_from_backend_address = backend_http_settings.value["host_name"] == null ? backend_http_settings.value["pick_host_name_from_backend_address"] : false
       request_timeout                     = backend_http_settings.value["request_timeout"]
       trusted_root_certificate_names      = backend_http_settings.value["trusted_root_certificate_names"]
     }
