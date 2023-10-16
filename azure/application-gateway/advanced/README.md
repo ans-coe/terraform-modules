@@ -65,6 +65,7 @@ You can only enable WAF_v2 by setting the waf_configuration variable. If this va
 | <a name="output_frontend_ip_configuration"></a> [frontend\_ip\_configuration](#output\_frontend\_ip\_configuration) | List of objects of Frontend IP Configurations |
 | <a name="output_id"></a> [id](#output\_id) | ID of the application gateway. |
 | <a name="output_identity_id"></a> [identity\_id](#output\_identity\_id) | Identity of the AppGW if KV is used. |
+| <a name="output_identity_principal_id"></a> [identity\_principal\_id](#output\_identity\_principal\_id) | principal\_id of the AppGW if KV is used. |
 | <a name="output_location"></a> [location](#output\_location) | Location of the application gateway. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the application gateway. |
 | <a name="output_private_ip"></a> [private\_ip](#output\_private\_ip) | Private IP Address |
