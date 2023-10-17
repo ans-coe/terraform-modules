@@ -25,10 +25,13 @@ module "network" {
   subnets       = local.subnets
   dns_servers   = var.dns_servers != "" ? var.dns_servers : []
 
-  peer_networks = var.hub_virtual_network_id != null ? {
+  peer_networks = var.hub_peering != null ? {
     "hub" = {
-      id                  = var.hub_virtual_network_id
-      use_remote_gateways = var.use_remote_gateways
+      id                           = var.hub_peering.id
+      allow_virtual_network_access = var.hub_peering.allow_virtual_network_access
+      allow_forwarded_traffic      = var.hub_peering.allow_forwarded_traffic
+      allow_gateway_transit        = var.hub_peering.allow_gateway_transit
+      use_remote_gateways          = var.hub_peering.use_remote_gateways
     }
   } : {}
 }
@@ -50,6 +53,8 @@ resource "azurerm_route_table" "main" {
   location            = var.location
   resource_group_name = azurerm_resource_group.main.name
   tags                = var.tags
+
+  disable_bgp_route_propagation = var.disable_bgp_route_propagation
 }
 
 resource "azurerm_route" "main_default" {
