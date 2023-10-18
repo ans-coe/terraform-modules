@@ -9,7 +9,7 @@
 5. [Resources](#resources)
 6. [Modules](#modules)
 
-## Usage
+### Usage
 
 This module deploys a predefined hub network with the option to include focused features - Firewall, Bastion, Virtual Network Gateway & Private DNS Resolver.
 
