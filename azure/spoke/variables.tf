@@ -34,6 +34,12 @@ variable "route_table_name" {
   default     = null
 }
 
+variable "default_route_name" {
+  description = "The name of the default route."
+  type        = string
+  default     = null
+}
+
 variable "disable_bgp_route_propagation" {
   description = "Boolean flag which controls propagation of routes learned by BGP on that route table. True means disable."
   type        = bool
@@ -96,13 +102,13 @@ variable "subnets" {
 
 variable "hub_peering" {
   description = "Config for peering to the hub network."
-  type = object({
+  type = map(object({
     id                           = string
     allow_virtual_network_access = optional(bool, true)
     allow_forwarded_traffic      = optional(bool, true)
     allow_gateway_transit        = optional(bool, false)
     use_remote_gateways          = optional(bool, true)
-  })
+  }))
   default = null
 }
 
