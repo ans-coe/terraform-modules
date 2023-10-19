@@ -98,6 +98,7 @@ variable "firewall_config" {
     public_ip_name     = optional(string)
     sku_tier           = optional(string, "Standard")
     route_table_name   = optional(string)
+    default_route_name = optional(string)
     firewall_policy_id = optional(string)
   })
   default = null
@@ -216,9 +217,15 @@ variable "private_resolver_config" {
 # Features
 ###########
 
-variable "spoke_networks" {
-  description = "Maps of network name to network ID."
-  type        = map(string)
+variable "spoke_peering" {
+  description = "Map of hub to spoke peering settings."
+  type        = map(object({
+    id                           = optional(string)
+    allow_virtual_network_access = optional(bool, true)
+    allow_forwarded_traffic      = optional(bool, true)
+    allow_gateway_transit        = optional(bool, true)
+    use_remote_gateways          = optional(bool, false)
+  }))
   default     = {}
 }
 

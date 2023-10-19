@@ -81,13 +81,7 @@ module "network" {
     }
   )
 
-  peer_networks = {
-    for spoke, id in var.spoke_networks
-    : spoke => {
-      id                    = id
-      allow_gateway_transit = local.enable_virtual_network_gateway
-    }
-  }
+  peer_networks = var.spoke_peering
 
   private_dns_zones = {
     for zone in azurerm_private_dns_zone.main

@@ -52,15 +52,24 @@ module "hub" {
     subnet_prefix       = "10.0.15.0/26"
   }
 
-  virtual_network_gateway_config = {
-    name          = "vpngw-hub-${local.resource_prefix}"
-    subnet_prefix = "10.0.15.128/26"
-  }
+  # virtual_network_gateway_config = {
+  #   name          = "vpngw-hub-${local.resource_prefix}"
+  #   subnet_prefix = "10.0.15.128/26"
+  # }
 
   private_resolver_config = {
     name                   = "dnspr-hub-${local.resource_prefix}"
     inbound_subnet_prefix  = "10.0.14.224/28"
     outbound_subnet_prefix = "10.0.14.240/28"
+  }
+
+  spoke_peering = {
+    spoke_mgmt = {
+      id = module.spoke_mgmt.id
+    }
+    spoke_prd = {
+      id = module.spoke_prd.id
+    }
   }
 
   network_watcher_config = {
@@ -90,7 +99,7 @@ module "firewall-policy" {
 # Spokes
 #########
 
-module "spoke-mgmt" {
+module "spoke_mgmt" {
   source = "../../../spoke"
 
   location = local.location
@@ -106,12 +115,18 @@ module "spoke-mgmt" {
     }
   }
 
+  hub_peering = {
+    hub = {
+      id = module.hub.id
+    }
+  }
+
   network_security_group_name = "nsg-spoke-mgmt-${local.resource_prefix}"
   route_table_name            = "rt-spoke-mgmt-${local.resource_prefix}"
   default_route_ip            = module.hub.firewall.private_ip
 }
 
-module "spoke-prd" {
+module "spoke_prd" {
   source = "../../../spoke"
 
   location = local.location
@@ -127,49 +142,13 @@ module "spoke-prd" {
     }
   }
 
+  hub_peering = {
+    hub = {
+      id = module.hub.id
+    }
+  }
+
   network_security_group_name = "nsg-spoke-prd-${local.resource_prefix}"
   route_table_name            = "rt-spoke-prd-${local.resource_prefix}"
   default_route_ip            = module.hub.firewall.private_ip
-}
-
-##########
-# Peering
-##########
-
-resource "azurerm_virtual_network_peering" "hub-mgmt" {
-  name                         = "peer-hub-mgmt-${local.resource_prefix}"
-  resource_group_name          = module.hub.network.resource_group_name
-  virtual_network_name         = module.hub.network.name
-  remote_virtual_network_id    = module.spoke-mgmt.id
-  allow_virtual_network_access = true
-  allow_forwarded_traffic      = true
-}
-
-resource "azurerm_virtual_network_peering" "mgmt-hub" {
-  name                         = "peer-mgmt-hub-${local.resource_prefix}"
-  resource_group_name          = module.spoke-mgmt.network.resource_group_name
-  virtual_network_name         = module.spoke-mgmt.network.name
-  remote_virtual_network_id    = module.hub.id
-  allow_virtual_network_access = true
-  allow_forwarded_traffic      = true
-  allow_gateway_transit        = true
-}
-
-resource "azurerm_virtual_network_peering" "hub-prd" {
-  name                         = "peer-hub-prd-${local.resource_prefix}"
-  resource_group_name          = module.hub.network.resource_group_name
-  virtual_network_name         = module.hub.network.name
-  remote_virtual_network_id    = module.spoke-prd.id
-  allow_virtual_network_access = true
-  allow_forwarded_traffic      = true
-}
-
-resource "azurerm_virtual_network_peering" "prd-hub" {
-  name                         = "peer-prd-hub-${local.resource_prefix}"
-  resource_group_name          = module.spoke-prd.network.resource_group_name
-  virtual_network_name         = module.spoke-prd.network.name
-  remote_virtual_network_id    = module.hub.id
-  allow_virtual_network_access = true
-  allow_forwarded_traffic      = true
-  allow_gateway_transit        = true
 }
