@@ -18,19 +18,36 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.1.2"
 
-  name               = "${local.name}-vpc"
-  cidr               = local.vpc_cidr
-  azs                = slice(data.aws_availability_zones.available.names, 0, 3)
-  private_subnets    = [for k, v in slice(data.aws_availability_zones.available.names, 0, 3) : cidrsubnet(local.vpc_cidr, 4, k)]
-  public_subnets     = [for k, v in slice(data.aws_availability_zones.available.names, 0, 3) : cidrsubnet(local.vpc_cidr, 4, k + 4)]
+  name            = "${local.name}-vpc"
+  cidr            = local.vpc_cidr
+  azs             = slice(data.aws_availability_zones.available.names, 0, 3)
+  private_subnets = [for k, v in slice(data.aws_availability_zones.available.names, 0, 3) : cidrsubnet(local.vpc_cidr, 4, k)]
+  public_subnets  = [for k, v in slice(data.aws_availability_zones.available.names, 0, 3) : cidrsubnet(local.vpc_cidr, 4, k + 4)]
+
   enable_nat_gateway = true
 }
 
+resource "aws_security_group" "main" {
+  name_prefix = "${local.name}-sg"
+  description = "Allow All outbound traffic"
+  vpc_id      = module.vpc.vpc_id
+
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = local.tags
+}
+
 resource "aws_launch_template" "main" {
-  name_prefix   = "foobar"
-  image_id      = data.aws_ami.amazon-linux.image_id
-  instance_type = "t2.micro"
-  user_data     = filebase64("${path.module}/userdata.sh")
+  name_prefix            = "foobar"
+  image_id               = data.aws_ami.amazon-linux.image_id
+  instance_type          = "t2.micro"
+  user_data              = filebase64("${path.module}/userdata.sh")
+  vpc_security_group_ids = [aws_security_group.main.id]
 
   iam_instance_profile {
     arn = aws_iam_instance_profile.main.arn

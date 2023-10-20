@@ -35,7 +35,13 @@ data "aws_iam_policy_document" "codepipeline_role_policy" {
   statement {
     effect = "Allow"
 
-    actions = ["codecommit:*"]
+    actions = [
+      "codecommit:GetBranch",
+      "codecommit:GetCommit",
+      "codecommit:UploadArchive",
+      "codecommit:GetUploadArchiveStatus",
+      "codecommit:CancelUploadArchive"
+    ]
 
     resources = [var.create_code_commit_repo ? aws_codecommit_repository.main[0].arn : data.aws_codecommit_repository.main[0].arn]
   }

@@ -136,4 +136,10 @@ resource "aws_codepipeline" "codepipeline" {
       }
     }
   }
+  lifecycle {
+    precondition {
+      condition     = var.enable_codepipeline ? var.code_commit_repo != null : true
+      error_message = "If creating CodePipeline, you must set a CodeCommit repo name"
+    }
+  }
 }

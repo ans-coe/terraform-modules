@@ -26,9 +26,9 @@ The build portion of the CodeDeploy Workflow module.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_branches"></a> [branches](#input\_branches) | List of branch names to create pipelines for | `list(string)` | n/a | yes |
-| <a name="input_code_commit_repo"></a> [code\_commit\_repo](#input\_code\_commit\_repo) | Name of the Code Commit Repo | `string` | n/a | yes |
 | <a name="input_deployment_roles"></a> [deployment\_roles](#input\_deployment\_roles) | List of ARNs of roles that will be used in the deployment steps. | `list(string)` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name of the Application | `string` | n/a | yes |
+| <a name="input_code_commit_repo"></a> [code\_commit\_repo](#input\_code\_commit\_repo) | Name of the Code Commit Repo | `string` | `null` | no |
 | <a name="input_create_code_commit_repo"></a> [create\_code\_commit\_repo](#input\_create\_code\_commit\_repo) | Create a code commit repo | `bool` | `false` | no |
 | <a name="input_enable_codepipeline"></a> [enable\_codepipeline](#input\_enable\_codepipeline) | Whether to include the CodePipeline | `bool` | `true` | no |
 | <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | Providing a KMS Key will stop one from being generated | `string` | `null` | no |

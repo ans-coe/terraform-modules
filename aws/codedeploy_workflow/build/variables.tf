@@ -16,6 +16,7 @@ variable "branches" {
 variable "code_commit_repo" {
   description = "Name of the Code Commit Repo"
   type        = string
+  default     = null
 }
 
 variable "create_code_commit_repo" {

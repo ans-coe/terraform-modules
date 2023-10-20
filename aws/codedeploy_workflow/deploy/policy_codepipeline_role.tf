@@ -52,7 +52,11 @@ data "aws_iam_policy_document" "code_pipeline_role_policy" {
       "codedeploy:GetDeploymentConfig",
       "codedeploy:RegisterApplicationRevision"
     ]
-    resources = ["*"]
+    resources = [
+      aws_codedeploy_app.deploy_app.arn,
+      aws_codedeploy_deployment_group.deployment_group.arn,
+      "arn:aws:codedeploy:eu-west-1:${data.aws_caller_identity.current.account_id}:deploymentconfig:*"
+    ]
   }
 }
 
