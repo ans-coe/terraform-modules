@@ -22,8 +22,3 @@ output "id" {
   description = "The output of the network module."
   value       = module.network.id
 }
-
-output "network_watcher" {
-  description = "Output of the network watcher."
-  value       = one(azurerm_network_watcher.main)
-}
