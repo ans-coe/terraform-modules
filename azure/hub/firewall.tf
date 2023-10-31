@@ -34,7 +34,7 @@ resource "azurerm_route_table" "firewall" {
 resource "azurerm_route" "firewall" {
   count = local.enable_firewall ? 1 : 0
 
-  name                = var.firewall_config.default_route_name != null ? var.firewall_config.default_route_name : "default"
+  name                = var.firewall_config.default_route_name
   resource_group_name = azurerm_resource_group.main.name
   route_table_name    = azurerm_route_table.firewall[count.index].name
 

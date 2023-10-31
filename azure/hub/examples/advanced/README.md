@@ -17,12 +17,7 @@ No outputs.
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [azurerm_virtual_network_peering.hub-mgmt](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
-| [azurerm_virtual_network_peering.hub-prd](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
-| [azurerm_virtual_network_peering.mgmt-hub](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
-| [azurerm_virtual_network_peering.prd-hub](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
+No resources.
 
 ## Modules
 
@@ -30,8 +25,8 @@ No outputs.
 |------|--------|---------|
 | <a name="module_firewall-policy"></a> [firewall-policy](#module\_firewall-policy) | ../../../firewall-policy | n/a |
 | <a name="module_hub"></a> [hub](#module\_hub) | ../../ | n/a |
-| <a name="module_spoke-mgmt"></a> [spoke-mgmt](#module\_spoke-mgmt) | ../../../spoke | n/a |
-| <a name="module_spoke-prd"></a> [spoke-prd](#module\_spoke-prd) | ../../../spoke | n/a |
+| <a name="module_spoke_mgmt"></a> [spoke\_mgmt](#module\_spoke\_mgmt) | ../../../spoke | n/a |
+| <a name="module_spoke_prd"></a> [spoke\_prd](#module\_spoke\_prd) | ../../../spoke | n/a |
 <!-- END_TF_DOCS -->
 _______________
 | Classified  |

@@ -52,10 +52,11 @@ module "hub" {
     subnet_prefix       = "10.0.15.0/26"
   }
 
-  # virtual_network_gateway_config = {
-  #   name          = "vpngw-hub-${local.resource_prefix}"
-  #   subnet_prefix = "10.0.15.128/26"
-  # }
+  # This takes a while to deploy ~30mins.  Suggest commenting out unless specifically testing vngs.
+  virtual_network_gateway_config = {
+    name          = "vpngw-hub-${local.resource_prefix}"
+    subnet_prefix = "10.0.15.128/26"
+  }
 
   private_resolver_config = {
     name                   = "dnspr-hub-${local.resource_prefix}"
@@ -116,9 +117,9 @@ module "spoke_mgmt" {
   }
 
   hub_peering = {
-    hub = {
+    #hub = {
       id = module.hub.id
-    }
+    #}
   }
 
   network_security_group_name = "nsg-spoke-mgmt-${local.resource_prefix}"
@@ -143,9 +144,9 @@ module "spoke_prd" {
   }
 
   hub_peering = {
-    hub = {
+    #hub = {
       id = module.hub.id
-    }
+    #}
   }
 
   network_security_group_name = "nsg-spoke-prd-${local.resource_prefix}"
