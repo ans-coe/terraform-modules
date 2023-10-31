@@ -37,7 +37,7 @@ variable "route_table_name" {
 variable "default_route_name" {
   description = "The name of the default route."
   type        = string
-  default     = null
+  default     = "default"
 }
 
 variable "disable_bgp_route_propagation" {

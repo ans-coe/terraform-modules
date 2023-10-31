@@ -52,7 +52,7 @@ resource "azurerm_route_table" "main" {
 resource "azurerm_route" "main_default" {
   count = var.route_table_name != null ? 1 : 0
 
-  name                = var.default_route_name != null ? var.default_route_name : "default"
+  name                = var.default_route_name
   resource_group_name = azurerm_resource_group.main.name
   route_table_name    = azurerm_route_table.main[0].name
 
