@@ -8,6 +8,7 @@ resource "azurerm_log_analytics_workspace" "main" {
   location            = var.location
   tags                = var.tags
   resource_group_name = var.resource_group_name
+  retention_in_days   = var.log_analytics_workspace_retention
   sku                 = var.log_analytics_workspace_sku
 }
 

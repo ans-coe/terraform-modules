@@ -41,6 +41,12 @@ variable "log_analytics_workspace_name" {
   default     = null
 }
 
+variable "log_analytics_workspace_retention" {
+  description = "Retention in days."
+  type        = number
+  default     = 90
+}
+
 variable "log_analytics_workspace_sku" {
   description = "The SKU of the Log Analytics Workspace"
   type        = string
