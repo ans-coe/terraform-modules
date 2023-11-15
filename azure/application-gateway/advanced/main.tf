@@ -243,7 +243,7 @@ resource "azurerm_application_gateway" "main" {
         ssl_certificate.value["key_vault_secret_id"] == null,
         ssl_certificate.value["data"] == null,
         ssl_certificate.value["password"] == null
-      ]) ? azurerm_key_vault_certificate.main[ssl_certificate.key].secret_id : ssl_certificate.value["key_vault_secret_id"]
+      ]) ? azurerm_key_vault_certificate.main[ssl_certificate.key].versionless_secret_id : ssl_certificate.value["key_vault_secret_id"]
     }
   }
 
