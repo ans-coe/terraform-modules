@@ -64,7 +64,7 @@ variable "request_payer" {
   default     = null
 }
 
-variable "website" {
+variable "website_configuration" {
   description = "Object containing static web-site hosting or redirect configuration."
   type        = object({
       index_document           = optional(string)
@@ -78,7 +78,7 @@ variable "website" {
   default     = {}
 }
 
-variable "cors_rule" {
+variable "cors_configuration" {
   description = "Object containing rules for Cross-Origin Resource Sharing."
   type        = object({
     allowed_methods = string
@@ -129,7 +129,7 @@ variable "grant" {
 }
 
 
-variable "lifecycle_rule" {
+variable "lifecycle_configuration" {
   description = "Object containing configuration of object lifecycle management."
   type = object({
     expected_bucket_owner = optional(string)
@@ -180,6 +180,69 @@ variable "lifecycle_rule" {
   })
   default     = {}
 }
+
+
+
+variable "replication_configuration" {
+  description = "Object containing replication configuration settings"
+  type = object({
+    rule = object({
+      id          = string
+      status      = string
+      priority    = number
+      delete_marker_replication = optional(object({
+        status = string
+      }))
+      destination = object({
+        access_control_translation = optional(object({
+          owner = string
+        }))
+        encryption_configuration = optional(object({
+          replica_kms_key_id = string
+        }))
+        metrics = optional(object({
+          event_threshold = optional(object({
+            minutes = number
+          }))
+          status = string
+        }))
+        replication_time = optional(object({
+          time = optional(object({
+            minutes = number
+          }))
+          status = string
+        }))
+        account       = string
+        bucket        = string
+        storage_class = string
+      })
+      filter = optional(object({
+        and = optional(object({
+          prefix = string
+          tags   = map(string)
+        }))
+        tag = optional(object({
+          key   = string
+          value = string
+        }))
+        prefix = string
+      }))
+      source_selection_criteria = optional(object({
+        replica_modifications     = optional(object({
+          status = string
+        }))
+        sse_kms_encrypted_objects = optional(object({
+          status = string
+        }))
+      }))
+      existing_object_replication = optional(object({
+        status = string
+      }))
+    })
+  })
+  default     = {}
+}
+
 
 variable "replication_configuration" {
   description = "Map containing cross-region replication configuration."
