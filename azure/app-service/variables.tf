@@ -269,18 +269,33 @@ variable "allowed_scm_service_tags" {
   default     = []
 }
 
+variable "custom_domain" {
+  description = "The custom domain name for the app service"
+  type        = string
+  default     = null
+}
+
 variable "cert_options" {
   description = "Options related to the certificate"
   type = object({
-    pfx_blob = optional(string)
-    password = optional(string)
+    use_managed_certificate = optional(bool, true)
+    pfx_blob                = optional(string)
+    password                = optional(string)
     // Setting Keyvault to empty map will cause the creation of Keyvault with default name and example cert
     key_vault = optional(object({
-      key_vault_custom_name = optional(string)
-      key_vault_secret_id   = optional(string)
-    }))
-    // To-Do Validation = key_vault or pfx_blob must be set but not both. 
+      certificate_name      = string           // Use this value to set the name of the certificate
+      key_vault_custom_name = optional(string) // If you wanted to name the keyvault something different to the default.
+      key_vault_secret_id   = optional(string) // If the cert already exists, it can be provided here
+    })) 
+    // To-Do Validation = certificate_name = 1-127 character string, starting with a letter and containing only 0-9, a-z, A-Z, and - (if not null)
+    // To-Do Validation = if key_vault_secret_id is set key_vault_custom_name is ignored and should be null because a keyvault is not created.
   })
+  default = null
+
+  validation {
+    error_message = "key_vault or pfx_blob must be set but not both"
+    condition = var.cert_options != null ? (var.cert_options.pfx_blob != null) != (var.cert_options.key_vault != null) : true
+  }
 }
 
 variable "identity_options" {
@@ -289,8 +304,23 @@ variable "identity_options" {
     // If use_umid is true but a custom name nor an ID is specified, a UMID will be created with default naming.
     use_umid         = optional(bool, true)
     umid_custom_name = optional(string)
-    umid_id          = optional(string)
+    umid_id          = optional(string) // If a UMID already exists, you can specify it here
   })
+  default = null
   // To-Do Validation = umid_custom_name and umid_id cannot be set at the same time.
   // To-Do Validation = if cert_options key_vault is not null, use_umid must be true.
+}
+
+variable "autoscaling" {
+  description = "Basic implementation of a CPU autoscaler"
+  type = object({
+    capacity = optional(object({
+      minimum = optional(number, 1)
+      maximum = optional(number, 3)
+      default = optional(number, 1)
+    }), {})
+    cpu_greater_than = optional(number, 50) // CPU percentage to scale up on
+    cpu_less_than    = optional(number, 15) // CPU percentage to scale down on
+  })
+  default = null
 }

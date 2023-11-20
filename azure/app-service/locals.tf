@@ -1,4 +1,8 @@
 locals {
+  is_linux          = var.os_type == "Linux"
+  app_service       = local.is_linux ? azurerm_linux_web_app.main[0] : azurerm_windows_web_app.main[0]
+  app_service_slots = local.is_linux ? azurerm_linux_web_app_slot.main : azurerm_windows_web_app_slot.main
+
   default_app_settings = merge(
     var.zip_deploy_file != null ? {
       WEBSITE_RUN_FROM_PACKAGE = "1"
@@ -139,16 +143,26 @@ locals {
     local.allowed_scm_ips
   )
 
-  #### Keyvault
+  #### TLS & umid
 
-  // we replace _ with - for keyvault cert names but only in the value of the map. This is due to Keyvault limitations.
-  kv_cert_map = { for c, v in var.ssl_certificates
-    : c => replace(c, "_", "-") if alltrue([
-      v.key_vault_secret_id == null,
-      v.data == null,
-      v.password == null
-    ])
-  }
+  use_tls                             = var.cert_options != null
+  use_app_service_certificate         = local.use_tls ? !var.cert_options.use_managed_certificate : false // if we want to use non managed certificate, we set use_managed_certificate to false
+  use_managed_app_service_certificate = local.use_tls ? var.cert_options.use_managed_certificate : false
+  pfx_blob                            = local.use_tls ? var.cert_options.pfx_blob : null
+  password                            = local.use_tls ? var.cert_options.password : null
+  use_key_vault                       = local.use_tls ? var.cert_options.key_vault != null : false
+  create_key_vault                    = local.use_key_vault ? var.cert_options.key_vault.key_vault_secret_id == null : false
+  certificate_name                    = local.use_key_vault ? var.cert_options.key_vault.certificate_name : ""
+  key_vault_name                      = local.use_key_vault ? var.cert_options.key_vault_custom_name : "kv-${var.name}"
+  key_vault_secret_id                 = local.use_key_vault ? coalesce(one(azurerm_key_vault_certificate.main[*].id), var.cert_options.key_vault_secret_id) : null
 
-  create_key_vault = alltrue([var.key_vault_id == null, var.use_key_vault])
+  use_umid    = try(var.identity_options.use_umid, false)
+  umid_name   = local.use_umid ? coalesce(var.identity_options.umid_custom_name, "umid-${var.name}") : ""
+  create_umid = local.use_umid ? var.identity_options.umid_id == null : false
+  umid_id     = local.use_umid ? coalesce(one(azurerm_user_assigned_identity.main[*].id), var.identity_options.umid_id) : null
+
+  ### Autoscaling
+
+  use_autoscaling = var.autoscaling != null
+
 }

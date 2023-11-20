@@ -69,6 +69,8 @@ module "webapp" {
   resource_group_name = azurerm_resource_group.webapp.name
   tags                = local.tags
 
+  os_type = "Windows"
+
   plan = {
     create = false
     id     = azurerm_service_plan.webapp.id
@@ -85,9 +87,8 @@ module "webapp" {
   }
 
   application_stack = {
-    docker_container_name     = "azure-app-service/samples/aspnethelloworld"
-    docker_container_tag      = "latest"
-    docker_container_registry = "mcr.microsoft.com"
+    docker_image_name   = "azure-app-service/samples/aspnethelloworld:latest"
+    docker_registry_url = "https://mcr.microsoft.com"
   }
 
   app_settings = {

@@ -1,31 +1,21 @@
-locals {
-  output_map = {
-    id = {
-      Windows = azurerm_windows_web_app.main.id
-      Linux   = azurerm_linux_web_app.main.id
-    }
-
-  }
-}
-
 output "id" {
   description = "ID of the app service."
-  value       = output_map.id[var.os_type]
+  value       = local.app_service.id
 }
 
 output "location" {
   description = "Location of the app service."
-  value       = azurerm_windows_web_app.main.location
+  value       = local.app_service.location
 }
 
 output "name" {
   description = "Name of the app service."
-  value       = azurerm_windows_web_app.main.name
+  value       = local.app_service.name
 }
 
 output "identity" {
   description = "Identity of the app service."
-  value       = one(azurerm_windows_web_app.main.identity)
+  value       = one(local.app_service.identity)
 }
 
 output "app_service_plan_id" {
@@ -35,15 +25,15 @@ output "app_service_plan_id" {
 
 output "fqdn" {
   description = "Default FQDN of the app service."
-  value       = azurerm_windows_web_app.main.default_hostname
+  value       = local.app_service.default_hostname
 }
 
 output "app_service" {
   description = "Output containing the main app service."
-  value       = azurerm_windows_web_app_slot.main
+  value       = local.app_service
 }
 
 output "slots" {
-  description = "Object containing details for the created slots."
-  value       = azurerm_windows_web_app_slot.main
+  description = "Object containing details for the created deployment slots."
+  value       = local.app_service_slots
 }
