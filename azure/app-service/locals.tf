@@ -153,8 +153,8 @@ locals {
   use_key_vault                       = local.use_tls ? var.cert_options.key_vault != null : false
   create_key_vault                    = local.use_key_vault ? var.cert_options.key_vault.key_vault_secret_id == null : false
   certificate_name                    = local.use_key_vault ? var.cert_options.key_vault.certificate_name : ""
-  key_vault_name                      = local.use_key_vault ? var.cert_options.key_vault_custom_name : "kv-${var.name}"
-  key_vault_secret_id                 = local.use_key_vault ? coalesce(one(azurerm_key_vault_certificate.main[*].id), var.cert_options.key_vault_secret_id) : null
+  key_vault_name                      = local.use_key_vault ? coalesce(var.cert_options.key_vault.key_vault_custom_name, "kv-${var.name}") : ""
+  key_vault_secret_id                 = local.use_key_vault ? coalesce(one(azurerm_key_vault_certificate.main[*].id), var.cert_options.key_vault.key_vault_secret_id) : null
 
   use_umid    = try(var.identity_options.use_umid, false)
   umid_name   = local.use_umid ? coalesce(var.identity_options.umid_custom_name, "umid-${var.name}") : ""
