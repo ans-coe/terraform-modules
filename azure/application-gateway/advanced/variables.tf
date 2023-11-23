@@ -250,26 +250,6 @@ variable "rewrite_rule_set" {
   // To-Do: Validation - "Either path or query_string must be set or both"
 }
 
-#           name          = rewrite_rule.key
-#           rule_sequence = rewrite_rule.value["rule_sequence"]
-#             for_each = rewrite_rule.value["condition"]
-#               variable    = condition.value["variable"]
-#               pattern     = condition.value["pattern"]
-#               ignore_case = condition.value["ignore_case"]
-#               negate      = condition.value["negate"]
-#             for_each = rewrite_rule.value["request_header_configuration"]
-#               header_name  = request_header_configuration.value["header_name"]
-#               header_value = request_header_configuration.value["header_value"]
-#             for_each = rewrite_rule.value["response_header_configuration"]
-#               header_name  = response_header_configuration.value["header_name"]
-#               header_value = response_header_configuration.value["header_value"]
-#             for_each = rewrite_rule.value["url"]
-#               path         = url.value["path"]
-#               query_string = url.value["query_string"]
-#               components   = url.value["components"]
-#               reroute      = url.value["reroute"]
-
-
 ## Backend Variables
 
 variable "backend_address_pools" {
