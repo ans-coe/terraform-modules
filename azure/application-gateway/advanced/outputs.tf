@@ -47,6 +47,16 @@ output "private_ip" {
   ])
 }
 
+output "key_vault_id" {
+  description = "The idea of the keyvault is one is set"
+  value = try(coalesce(
+    try(azurerm_key_vault.main[0].id, null), // try use the created keyvault ID first
+    var.key_vault_id,                        // next, try to use the variable inputted
+    ),
+    null // if use_key_vault is false, no keyvault will be set so this should be null
+  )
+}
+
 output "public_ip" {
   description = "Public IP Address"
   value       = one(azurerm_public_ip.main[*].ip_address)
