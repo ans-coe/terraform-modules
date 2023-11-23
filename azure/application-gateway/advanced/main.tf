@@ -263,9 +263,10 @@ resource "azurerm_application_gateway" "main" {
       : { for k, v in routing_map
     : k => merge(v, { listener_name = listener_name }) if v.path_rules != null }]...)
     content {
-      name                               = "${url_path_map.value.listener_name}_${url_path_map.key}_urlpathmap"
+      name                               = "${url_path_map.value.listener_name}_${url_path_map.key}_upm"
       default_backend_address_pool_name  = url_path_map.value["backend_address_pool_name"]
       default_backend_http_settings_name = url_path_map.value["backend_http_settings_name"]
+      default_rewrite_rule_set_name      = url_path_map.value["rewrite_rule_set_name"]
       dynamic "path_rule" {
         for_each = url_path_map.value["path_rules"]
         content {
@@ -273,6 +274,7 @@ resource "azurerm_application_gateway" "main" {
           paths                      = path_rule.value["paths"]
           backend_address_pool_name  = path_rule.value["backend_address_pool_name"]
           backend_http_settings_name = path_rule.value["backend_http_settings_name"]
+          rewrite_rule_set_name      = path_rule.value["rewrite_rule_set_name"]
         }
       }
     }
@@ -297,9 +299,13 @@ resource "azurerm_application_gateway" "main" {
         request_routing_rule.value["path_rules"] == null,
         request_routing_rule.value["redirect_configuration"] == null
       ]) ? request_routing_rule.value["backend_http_settings_name"] : null
-      url_path_map_name           = request_routing_rule.value["path_rules"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_urlpathmap" : null
+      rewrite_rule_set_name = alltrue([
+        request_routing_rule.value["path_rules"] == null,
+        request_routing_rule.value["redirect_configuration"] == null
+      ]) ? request_routing_rule.value["rewrite_rule_set_name"] : null
+      url_path_map_name           = request_routing_rule.value["path_rules"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_upm" : null
       priority                    = request_routing_rule.value["priority"]
-      redirect_configuration_name = request_routing_rule.value["redirect_configuration"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_redirectconfiguration" : null
+      redirect_configuration_name = request_routing_rule.value["redirect_configuration"] != null ? "${request_routing_rule.value.listener_name}_${request_routing_rule.key}_rc" : null
     }
   }
 
@@ -312,7 +318,7 @@ resource "azurerm_application_gateway" "main" {
     : k => merge(v, { listener_name = listener_name }) if v.redirect_configuration != null }]...)
 
     content {
-      name                 = "${redirect_configuration.value.listener_name}_${redirect_configuration.key}_redirectconfiguration"
+      name                 = "${redirect_configuration.value.listener_name}_${redirect_configuration.key}_rc"
       redirect_type        = redirect_configuration.value.redirect_configuration["redirect_type"]
       target_listener_name = redirect_configuration.value.redirect_configuration["target_listener_name"]
       target_url           = redirect_configuration.value.redirect_configuration["target_url"]
@@ -320,6 +326,70 @@ resource "azurerm_application_gateway" "main" {
       include_query_string = redirect_configuration.value.redirect_configuration["include_query_string"]
     }
   }
+
+  # rewrite_rule_set = {
+  #   rule_set_1 = {
+  #     rule_1 = {
+  #     }
+  #     rule_2 = {
+  #     }
+  #   }
+  # }
+
+  dynamic "rewrite_rule_set" {
+    for_each = var.rewrite_rule_set
+    content {
+      name = rewrite_rule_set.key
+      dynamic "rewrite_rule" {
+        for_each = rewrite_rule_set.value
+        content {
+          name          = rewrite_rule.key
+          rule_sequence = rewrite_rule.value["rule_sequence"]
+
+          dynamic "condition" {
+            for_each = rewrite_rule.value["condition"]
+            content {
+              variable    = condition.value["variable"]
+              pattern     = condition.value["pattern"]
+              ignore_case = condition.value["ignore_case"]
+              negate      = condition.value["negate"]
+            }
+          }
+          dynamic "request_header_configuration" {
+            for_each = rewrite_rule.value["request_header_configuration"]
+            content {
+              header_name  = request_header_configuration.key
+              header_value = request_header_configuration.value
+            }
+          }
+          dynamic "response_header_configuration" {
+            for_each = rewrite_rule.value["response_header_configuration"]
+            content {
+              header_name  = response_header_configuration.key
+              header_value = response_header_configuration.value
+            }
+          }
+          dynamic "url" {
+            for_each = rewrite_rule.value["url"]
+            content {
+              path         = url.value["path"]
+              query_string = url.value["query_string"]
+              // The below works out like this: (c1 ? (c2 ? (c3 ? v1 : v2 ) : v3) : v4)
+              components = (
+                ((url.value["path"] != null) != (url.value["query_string"] != null)) ? // if one value is set but the other is not
+                (url.value["path"] != null) ? "path_only" :                            // if the value that is set is path
+                (url.value["query_string"] != null) ? "query_string_only" : null       // if the value that is set is query_string
+                : null                                                                 // if both values are set or if neither value is set
+              )
+              reroute = url.value["reroute"]
+            }
+          }
+        }
+      }
+    }
+  }
+
+
 
   dynamic "identity" {
     for_each = var.use_key_vault ? [0] : []

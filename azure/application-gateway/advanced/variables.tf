@@ -137,6 +137,7 @@ variable "http_listeners" {
         paths                      = list(string)
         backend_address_pool_name  = string
         backend_http_settings_name = optional(string, "default_settings")
+        rewrite_rule_set_name      = optional(string)
       })))
       redirect_configuration = optional(object({
         redirect_type        = optional(string, "Permanent")
@@ -147,6 +148,7 @@ variable "http_listeners" {
       }))
       backend_address_pool_name  = optional(string)
       backend_http_settings_name = optional(string, "default_settings")
+      rewrite_rule_set_name      = optional(string)
       priority                   = optional(number, 100)
       })),
       {
@@ -221,6 +223,52 @@ variable "http_listeners" {
     error_message = "If backend_address_pool_name is set, redirect_configuration must not be set."
   }
 }
+
+variable "rewrite_rule_set" {
+  description = "Map of rewrite rule sets"
+  type = map( // key = rewrite_rule_set name
+    map(      // key rewrite_rule name
+      object({
+        rule_sequence = number
+        condition = optional(list(object({
+          variable    = string
+          pattern     = string
+          ignore_case = optional(bool)
+          negate      = optional(bool)
+        })), [])
+        request_header_configuration  = optional(map(string), {}) // key = header_name, value = header_value
+        response_header_configuration = optional(map(string), {}) // key = header_name, value = header_value
+        url = optional(list(object({
+          path         = optional(string)
+          query_string = optional(string)
+          reroute      = optional(bool)
+        })), [])
+      })
+    )
+  )
+  default = {}
+  // To-Do: Validation - "Either path or query_string must be set or both"
+}
+
+#           name          = rewrite_rule.key
+#           rule_sequence = rewrite_rule.value["rule_sequence"]
+#             for_each = rewrite_rule.value["condition"]
+#               variable    = condition.value["variable"]
+#               pattern     = condition.value["pattern"]
+#               ignore_case = condition.value["ignore_case"]
+#               negate      = condition.value["negate"]
+#             for_each = rewrite_rule.value["request_header_configuration"]
+#               header_name  = request_header_configuration.value["header_name"]
+#               header_value = request_header_configuration.value["header_value"]
+#             for_each = rewrite_rule.value["response_header_configuration"]
+#               header_name  = response_header_configuration.value["header_name"]
+#               header_value = response_header_configuration.value["header_value"]
+#             for_each = rewrite_rule.value["url"]
+#               path         = url.value["path"]
+#               query_string = url.value["query_string"]
+#               components   = url.value["components"]
+#               reroute      = url.value["reroute"]
+
 
 ## Backend Variables
 

@@ -30,12 +30,12 @@ output "frontend_ip_configuration" {
 
 output "identity_id" {
   description = "Identity of the AppGW if KV is used."
-  value       = azurerm_user_assigned_identity.main_gateway[0].id
+  value       = try(azurerm_user_assigned_identity.main_gateway[0].id, null)
 }
 
 output "identity_principal_id" {
   description = "principal_id of the AppGW if KV is used."
-  value       = azurerm_user_assigned_identity.main_gateway[0].principal_id
+  value       = try(azurerm_user_assigned_identity.main_gateway[0].principal_id, null)
 }
 
 output "private_ip" {
