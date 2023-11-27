@@ -14,13 +14,19 @@ locals {
   resource_prefix = "tfmex-basic-spoke"
 }
 
+resource "azurerm_resource_group" "main" {
+  name     = "rg-${local.resource_prefix}"
+  location = local.location
+  tags     = local.tags
+}
+
 module "spoke" {
   source = "../../"
 
   location = local.location
   tags     = local.tags
 
-  resource_group_name  = "rg-${local.resource_prefix}"
+  resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = "vnet-${local.resource_prefix}"
 
   address_space = ["10.0.0.0/16"]
