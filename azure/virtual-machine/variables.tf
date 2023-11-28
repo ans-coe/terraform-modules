@@ -111,6 +111,12 @@ variable "enable_public_ip" {
   default     = false
 }
 
+variable "public_ip_name" {
+  description = "Name of the public IP."
+  type        = string
+  default     = null
+}
+
 variable "public_ip_allocation_method" {
   description = "Public IP allocation method."
   type        = string
