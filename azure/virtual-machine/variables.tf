@@ -162,6 +162,7 @@ variable "patch_mode" {
 variable "os_disk" {
   description = "OS Disk configuration."
   type = object({
+    name                 = optional(string)
     size_gb              = optional(number, 128)
     storage_account_type = optional(string, "StandardSSD_LRS")
     caching              = optional(string, "None")

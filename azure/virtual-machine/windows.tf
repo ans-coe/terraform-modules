@@ -20,7 +20,7 @@ resource "azurerm_windows_virtual_machine" "main" {
   patch_mode            = var.patch_mode
 
   os_disk {
-    name                 = "osdisk-${var.name}"
+    name                 = var.os_disk["name"] == null ? "osdisk-${var.name}" : var.os_disk["name"]
     disk_size_gb         = var.os_disk["size_gb"]
     storage_account_type = var.os_disk["storage_account_type"]
     caching              = var.os_disk["caching"]
