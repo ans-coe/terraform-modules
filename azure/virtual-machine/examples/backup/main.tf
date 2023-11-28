@@ -13,10 +13,10 @@ locals {
   location = "uksouth"
   tags = {
     module  = "virtual-machine"
-    example = "basic"
+    example = "backup"
     usage   = "demo"
   }
-  resource_prefix = "vm-bas-demo-uks-03"
+  resource_prefix = "vm-bak-demo-uks-03"
 }
 
 resource "azurerm_resource_group" "vm" {
@@ -42,6 +42,22 @@ resource "azurerm_subnet" "vm" {
   address_prefixes = azurerm_virtual_network.vm.address_space
 }
 
+resource "azurerm_recovery_services_vault" "vm" {
+  name                = "vm-${local.resource_prefix}"
+  resource_group_name = azurerm_resource_group.vm.name
+  location            = local.location
+  tags                = local.tags
+
+  sku               = "Standard"
+  storage_mode_type = "LocallyRedundant"
+}
+
+data "azurerm_backup_policy_vm" "vm" {
+  name                = "DefaultPolicy"
+  resource_group_name = azurerm_resource_group.vm.name
+  recovery_vault_name = azurerm_recovery_services_vault.vm.name
+}
+
 module "vm" {
   source = "../../"
 
@@ -54,4 +70,8 @@ module "vm" {
   password      = "P4s5w0rd!"
   subnet_id     = azurerm_subnet.vm.id
   size          = "Standard_B2s"
+
+  backup_config = {
+    backup_policy_id = azurerm_backup_policy_vm.vm.id
+  }
 }

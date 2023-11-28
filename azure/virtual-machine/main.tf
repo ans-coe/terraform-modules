@@ -24,7 +24,7 @@ resource "azurerm_network_interface" "main" {
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = var.ip_address != null ? "Static" : "Dynamic"
     private_ip_address            = var.ip_address != null ? var.ip_address : null
-    public_ip_address_id          = var.enable_public_ip ? azurerm_public_ip.main[0].id : null
+    public_ip_address_id          = one(azurerm_public_ip.main[*].id)
   }
 }
 
@@ -41,4 +41,26 @@ resource "azurerm_network_interface_security_group_association" "main" {
 
   network_interface_id      = azurerm_network_interface.main.id
   network_security_group_id = var.network_security_group_id
+}
+
+resource "azurerm_virtual_machine_data_disk_attachment" "main" {
+  for_each = var.disk_attachments
+
+  virtual_machine_id = local.virtual_machine.id
+  managed_disk_id    = each.value["id"]
+
+  lun     = each.value["lun"]
+  caching = each.value["caching"]
+}
+
+resource "azurerm_backup_protected_vm" "main" {
+  count = var.backup_config != null ? 1 : 0
+
+  source_vm_id        = local.virtual_machine.id
+  resource_group_name = split("/", var.backup_config["backup_policy_id"])[4]
+  recovery_vault_name = split("/", var.backup_config["backup_policy_id"])[8]
+  backup_policy_id    = var.backup_config["backup_policy_id"]
+
+  include_disk_luns = var.backup_config["include_disk_luns"]
+  exclude_disk_luns = var.backup_config["exclude_disk_luns"]
 }

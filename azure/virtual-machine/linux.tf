@@ -8,10 +8,17 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   computer_name  = var.computer_name == null ? var.name : var.computer_name
   admin_username = var.username
-  admin_ssh_key {
-    username   = var.username
-    public_key = var.public_key
+  admin_password = var.password
+
+  disable_password_authentication = var.password == null
+  dynamic "admin_ssh_key" {
+    for_each = var.password == null ? [1] : []
+    content {
+      username   = var.username
+      public_key = var.public_key
+    }
   }
+
   user_data = var.user_data_b64
 
   availability_set_id   = var.availability_set_id

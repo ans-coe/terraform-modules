@@ -31,8 +31,10 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_autoshutdown"></a> [autoshutdown](#input\_autoshutdown) | Describes the autoshutdown configuration of this virtual machine with time being 24h format and timezone being a supported timezone. Set to an empty map to enable. | <pre>object({<br>    time     = optional(string, "2200")<br>    timezone = optional(string, "UTC")<br>    email    = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_availability_set_id"></a> [availability\_set\_id](#input\_availability\_set\_id) | Availability set ID to add this virtual machine to. | `string` | `null` | no |
 | <a name="input_backend_address_pool_ids"></a> [backend\_address\_pool\_ids](#input\_backend\_address\_pool\_ids) | IDs of load balancer backends to assign this virtual machine's primary NIC to. | `set(string)` | `[]` | no |
+| <a name="input_backup_config"></a> [backup\_config](#input\_backup\_config) | Configuration of the backup. | <pre>object({<br>    backup_policy_id  = string<br>    include_disk_luns = optional(set(number))<br>    exclude_disk_luns = optional(set(number))<br>  })</pre> | `null` | no |
 | <a name="input_computer_name"></a> [computer\_name](#input\_computer\_name) | The OS-level computer name of the virtual machine. | `string` | `null` | no |
 | <a name="input_data_collection_rule_id"></a> [data\_collection\_rule\_id](#input\_data\_collection\_rule\_id) | Data collection rule ID to associate to this virtual machine. | `string` | `null` | no |
+| <a name="input_disk_attachments"></a> [disk\_attachments](#input\_disk\_attachments) | Disks to attach to this VM. | <pre>map(object({<br>    id      = string<br>    lun     = number<br>    caching = optional(string, "None")<br>  }))</pre> | `{}` | no |
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | The DNS servers to use with this virtual network. | `list(string)` | `null` | no |
 | <a name="input_enable_azure_monitor"></a> [enable\_azure\_monitor](#input\_enable\_azure\_monitor) | Enable Azure Monitor extension. | `bool` | `false` | no |
 | <a name="input_enable_azure_policy"></a> [enable\_azure\_policy](#input\_enable\_azure\_policy) | Enable Azure Policy extension. | `bool` | `false` | no |
@@ -82,6 +84,7 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 
 | Name | Type |
 |------|------|
+| [azurerm_backup_protected_vm.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/backup_protected_vm) | resource |
 | [azurerm_dev_test_global_vm_shutdown_schedule.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/dev_test_global_vm_shutdown_schedule) | resource |
 | [azurerm_linux_virtual_machine.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) | resource |
 | [azurerm_monitor_data_collection_rule_association.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_data_collection_rule_association) | resource |
@@ -89,6 +92,7 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | [azurerm_network_interface_backend_address_pool_association.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_backend_address_pool_association) | resource |
 | [azurerm_network_interface_security_group_association.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_security_group_association) | resource |
 | [azurerm_public_ip.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
+| [azurerm_virtual_machine_data_disk_attachment.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_data_disk_attachment) | resource |
 | [azurerm_virtual_machine_extension.main_azdependencyagent](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_machine_extension.main_azmonitor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_machine_extension.main_aznetworkwatcheragent](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
