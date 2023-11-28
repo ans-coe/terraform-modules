@@ -82,6 +82,12 @@ variable "size" {
   default     = "Standard_B2s"
 }
 
+variable "boot_diagnostics_storage_account_uri" {
+  description = "Storage account blob endpoint to use for boot diagnostics."
+  type        = string
+  default     = null
+}
+
 variable "network_interface_name" {
   description = "Name of the network interface."
   type        = string

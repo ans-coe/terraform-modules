@@ -24,7 +24,9 @@ resource "azurerm_linux_virtual_machine" "main" {
   availability_set_id   = var.availability_set_id
   size                  = var.size
   network_interface_ids = [azurerm_network_interface.main.id]
-  boot_diagnostics {}
+  boot_diagnostics {
+    storage_account_uri = var.boot_diagnostics_storage_account_uri
+  }
 
   license_type          = var.license_type
   patch_assessment_mode = var.patch_assessment_mode
