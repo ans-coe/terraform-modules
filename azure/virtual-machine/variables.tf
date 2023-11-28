@@ -82,6 +82,12 @@ variable "size" {
   default     = "Standard_B2s"
 }
 
+variable "network_interface_name" {
+  description = "Name of the network interface."
+  type        = string
+  default     = null
+}
+
 variable "subnet_id" {
   description = "Subnet ID of the virtual machine."
   type        = string
