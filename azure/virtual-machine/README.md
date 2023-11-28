@@ -62,7 +62,7 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_source_image_plan_required"></a> [source\_image\_plan\_required](#input\_source\_image\_plan\_required) | Enable if plan block is required as part of the virtual machine. | `bool` | `false` | no |
 | <a name="input_source_image_reference"></a> [source\_image\_reference](#input\_source\_image\_reference) | Source image reference to use when creating the virtual machine. | <pre>object({<br>    publisher = string<br>    offer     = string<br>    sku       = string<br>    version   = optional(string, "latest")<br>  })</pre> | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |
-| <a name="input_user_data_b64"></a> [user\_data\_b64](#input\_user\_data\_b64) | User data of the virtual machine with in base64. | `string` | `null` | no |
+| <a name="input_user_data"></a> [user\_data](#input\_user\_data) | User data of the virtual machine. | `string` | `null` | no |
 | <a name="input_username"></a> [username](#input\_username) | Username of the virtual machine. | `string` | `"vmadmin"` | no |
 
 ## Outputs

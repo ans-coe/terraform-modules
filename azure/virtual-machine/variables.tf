@@ -64,8 +64,8 @@ variable "public_key" {
   default     = null
 }
 
-variable "user_data_b64" {
-  description = "User data of the virtual machine with in base64."
+variable "user_data" {
+  description = "User data of the virtual machine."
   type        = string
   default     = null
 }
