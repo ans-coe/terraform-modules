@@ -12,6 +12,9 @@
 ## Usage
 
 This module deploys a spoke network in Azure.
+- A default NSG is created
+- A default Route Table with default Route is created
+- Option for peering to and from the hub vNet
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
