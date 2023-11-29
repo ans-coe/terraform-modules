@@ -1,8 +1,3 @@
-output "resource_group" {
-  description = "The output of the resource group."
-  value       = azurerm_resource_group.main
-}
-
 output "network_security_group" {
   description = "The output of the network security group resource."
   value       = one(module.network_security_group)

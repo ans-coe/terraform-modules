@@ -28,6 +28,50 @@ variable "network_security_group_name" {
   default     = null
 }
 
+variable "nsg_rules_inbound" {
+  description = "A list of objects describing a rule inbound."
+  type = list(object({
+    rule        = optional(string)
+    name        = string
+    description = optional(string, "Created by Terraform.")
+
+    access   = optional(string, "Allow")
+    priority = optional(number)
+
+    protocol = optional(string, "*")
+    ports    = optional(set(string), ["*"])
+
+    source_prefixes      = optional(set(string), ["*"])
+    destination_prefixes = optional(set(string), ["VirtualNetwork"])
+
+    source_application_security_group_ids      = optional(set(string), null)
+    destination_application_security_group_ids = optional(set(string), null)
+  }))
+  default = []
+}
+
+variable "nsg_rules_outbound" {
+  description = "A list of objects describing a rule outbound."
+  type = list(object({
+    rule        = optional(string)
+    name        = string
+    description = optional(string, "Created by Terraform.")
+
+    access   = optional(string, "Allow")
+    priority = optional(number)
+
+    protocol = optional(string, "*")
+    ports    = optional(set(string), ["*"])
+
+    source_prefixes      = optional(set(string), ["*"])
+    destination_prefixes = optional(set(string), ["VirtualNetwork"])
+
+    source_application_security_group_ids      = optional(set(string), null)
+    destination_application_security_group_ids = optional(set(string), null)
+  }))
+  default = []
+}
+
 variable "route_table_name" {
   description = "The name of the route table."
   type        = string
