@@ -76,6 +76,6 @@ resource "azurerm_virtual_network_peering" "main" {
 
   allow_virtual_network_access = each.value["allow_virtual_network_access"]
   allow_forwarded_traffic      = each.value["allow_forwarded_traffic"]
-  allow_gateway_transit        = each.value["allow_gateway_transit"]
-  use_remote_gateways          = each.value["use_remote_gateways"]
+  allow_gateway_transit        = true
+  use_remote_gateways          = false
 }
