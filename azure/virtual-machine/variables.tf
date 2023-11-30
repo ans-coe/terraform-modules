@@ -105,6 +105,12 @@ variable "enable_ip_forwarding" {
   default     = false
 }
 
+variable "enable_accelerated_networking" {
+  description = "Should Accelerated Networking be enabled?"
+  type = bool
+  default = false
+}
+
 variable "ip_address" {
   description = "Private IP address of the virtual machine NIC."
   type        = string
@@ -287,4 +293,13 @@ variable "enable_encryption_at_host" {
   description = "Adds the option of adding enabling encryption at host"
   type = bool
   default = null 
+}
+
+variable "keyvault_extension_config" {
+  description = "Config for the Key Vault Extension."
+  type        = object({
+    vault_name = string
+    cert_name = string
+  })
+  default     = null
 }

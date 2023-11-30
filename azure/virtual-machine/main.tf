@@ -16,8 +16,9 @@ resource "azurerm_network_interface" "main" {
   resource_group_name = var.resource_group_name
   tags                = var.tags
 
-  enable_ip_forwarding = var.enable_ip_forwarding
-  dns_servers          = var.dns_servers
+  enable_ip_forwarding          = var.enable_ip_forwarding
+  enable_accelerated_networking = var.enable_accelerated_networking
+  dns_servers                   = var.dns_servers
 
   ip_configuration {
     name                          = "primary"

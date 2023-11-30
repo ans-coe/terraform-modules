@@ -82,3 +82,29 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "main" {
     email   = var.autoshutdown["email"]
   }
 }
+
+resource "azurerm_virtual_machine_extension" "keyvault" {
+  count = var.keyvault_extension_config != null ? 1 : 0
+
+  name                 = "KeyVaultForWindows"
+  virtual_machine_id   = local.virtual_machine.id
+  publisher            = "Microsoft.Azure.KeyVault"
+  type                 = var.os_type == "Windows" ? "KeyVaultForWindows" : "KeyVaultForLinux"
+  type_handler_version = "3.0"
+  auto_upgrade_minor_version = "true"
+
+  settings = jsonencode({
+    secretsManagementSettings = {
+      pollingIntervalInS = "3600"
+      linkOnRenewal = true
+      observedCertificates = [
+        {
+          "url": "https://${var.keyvault_extension_config.vault_name}.vault.azure.net/secrets/${var.keyvault_extension_config.cert_name}"
+          "certificateStoreName": "MY"
+          "certificateStoreLocation": "LocalMachine"
+        }
+      ]
+    }
+  })
+}
+
