@@ -24,6 +24,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   availability_set_id   = var.availability_set_id
   size                  = var.size
   network_interface_ids = [azurerm_network_interface.main.id]
+  encryption_at_host_enabled = var.enable_encryption_at_host
   boot_diagnostics {
     storage_account_uri = var.boot_diagnostics_storage_account_uri
   }
