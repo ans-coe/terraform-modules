@@ -120,6 +120,20 @@ resource "azurerm_virtual_machine_extension" "win-diag" {
   PROTECTED_SETTINGS
 }
 
+resource "azurerm_virtual_machine_extension" "main_aadlogin" {
+  count = var.enable_aad_login ? 1 : 0
+
+  name               = "AADLoginForWindows"
+  virtual_machine_id = azurerm_windows_virtual_machine.main.id
+  tags               = var.tags
+
+  publisher                  = "Microsoft.Azure.ActiveDirectory"
+  type                       = "AADLoginForWindows"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = true
+  automatic_upgrade_enabled  = false
+}
+
 #########################
 # This requires Python 2
 #########################
