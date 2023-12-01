@@ -108,7 +108,7 @@ resource "azurerm_virtual_machine_extension" "win-diag" {
 
   virtual_machine_id = local.virtual_machine.id
 
-  settings = templatefile(format("%s/.diag-settings/win-diag-settings.json", path.module), {
+  settings = templatefile(format("%s/diag-settings/win-diag-settings.json", path.module), {
     vm_id  = local.virtual_machine.id
     storage_name = var.diagnostics_storage_account_name
   })
