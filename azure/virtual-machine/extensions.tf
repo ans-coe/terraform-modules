@@ -124,7 +124,7 @@ resource "azurerm_virtual_machine_extension" "main_aadlogin" {
   count = var.enable_aad_login ? 1 : 0
 
   name               = "AADLoginForWindows"
-  virtual_machine_id = azurerm_windows_virtual_machine.main.id
+  virtual_machine_id = local.virtual_machine.id
   tags               = var.tags
 
   publisher                  = "Microsoft.Azure.ActiveDirectory"
