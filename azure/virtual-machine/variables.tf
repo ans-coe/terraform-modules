@@ -295,11 +295,26 @@ variable "enable_encryption_at_host" {
   default = null 
 }
 
-variable "keyvault_extension_config" {
-  description = "Config for the Key Vault Extension."
-  type        = object({
-    vault_name = string
-    cert_name = string
-  })
+variable "enable_keyvault_extension" {
+  description = "Enable the Microsoft.Insights.VMDiagnosticsSettings Extention"
+  type = bool
+  default = false
+}
+
+variable "keyvault_extension_settings" {
+  description = "Key Vault Extension settings. (json)"
+  type = any
+  default = null
+}
+
+variable "enable_vm_diagnostics" {
+  description = "Enable the Microsoft.Insights.VMDiagnosticsSettings (Windows) or LinuxDiagnostic Extention"
+  type = bool
+  default = false
+}
+
+variable "diagnostics_storage_account_name" {
+  description = "Name of the Storage Account in which store boot diagnostics and for legacy monitoring agent."
+  type        = string
   default     = null
 }

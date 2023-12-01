@@ -84,7 +84,7 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "main" {
 }
 
 resource "azurerm_virtual_machine_extension" "keyvault" {
-  count = var.keyvault_extension_config != null ? 1 : 0
+  count = var.enable_keyvault_extension ? 1 : 0
 
   name                 = "KeyVaultForWindows"
   virtual_machine_id   = local.virtual_machine.id
@@ -93,18 +93,57 @@ resource "azurerm_virtual_machine_extension" "keyvault" {
   type_handler_version = "3.0"
   auto_upgrade_minor_version = "true"
 
-  settings = jsonencode({
-    secretsManagementSettings = {
-      pollingIntervalInS = "3600"
-      linkOnRenewal = true
-      observedCertificates = [
-        {
-          "url": "https://${var.keyvault_extension_config.vault_name}.vault.azure.net/secrets/${var.keyvault_extension_config.cert_name}"
-          "certificateStoreName": "MY"
-          "certificateStoreLocation": "LocalMachine"
-        }
-      ]
-    }
-  })
+  settings = jsonencode(var.keyvault_extension_settings)
 }
 
+resource "azurerm_virtual_machine_extension" "win-diag" {
+  count = var.enable_vm_diagnostics && local.is_windows ? 1 : 0
+
+  name                       = "Microsoft.Insights.VMDiagnosticsSettings"
+  tags                       = var.tags
+  publisher                  = "Microsoft.Azure.Diagnostics"
+  type                       = "IaaSDiagnostics"
+  type_handler_version       = "1.22"
+  auto_upgrade_minor_version = "true"
+
+  virtual_machine_id = local.virtual_machine.id
+
+  settings = templatefile(format("%s/.diag-settings/win-diag-settings.json", path.module), {
+    vm_id  = local.virtual_machine.id
+    storage_name = var.diagnostics_storage_account_name
+  })
+  
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "storageAccountName": "${var.diagnostics_storage_account_name}"
+    }
+  PROTECTED_SETTINGS
+}
+
+#########################
+# This requires Python 2
+#########################
+
+# resource "azurerm_virtual_machine_extension" "lin-diag" {
+#   count = var.enable_vm_diagnostics && (local.is_windows == false) ? 1 : 0
+
+#   name                       = "LinuxDiagnostic"
+#   tags                       = var.tags
+#   publisher                  = "Microsoft.Azure.Diagnostics"
+#   type                       = "LinuxDiagnostic"
+#   type_handler_version       = "4.0"
+#   auto_upgrade_minor_version = "true"
+
+#   virtual_machine_id = local.virtual_machine.id
+
+#   settings = templatefile(format("%s/.diag-settings/lin-diag-settings.json", path.module), {
+#     vm_id  = local.virtual_machine.id
+#     storage_name = var.diagnostics_storage_account_name
+#   })
+  
+#   protected_settings = <<PROTECTED_SETTINGS
+#     {
+#       "storageAccountName": "${var.diagnostics_storage_account_name}"
+#     }
+#   PROTECTED_SETTINGS
+# }
