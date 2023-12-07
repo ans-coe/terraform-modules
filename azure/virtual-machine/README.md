@@ -41,6 +41,7 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_enable_azure_policy"></a> [enable\_azure\_policy](#input\_enable\_azure\_policy) | Enable Azure Policy extension. | `bool` | `false` | no |
 | <a name="input_enable_data_collection"></a> [enable\_data\_collection](#input\_enable\_data\_collection) | Enable data collection association. | `bool` | `false` | no |
 | <a name="input_enable_dependency_agent"></a> [enable\_dependency\_agent](#input\_enable\_dependency\_agent) | Enable Azure Monitor Dependency Agent extension. | `bool` | `false` | no |
+| <a name="input_enable_encryption_at_host"></a> [enable\_encryption\_at\_host](#input\_enable\_encryption\_at\_host) | Adds the option of adding enabling encryption at host | `bool` | `null` | no |
 | <a name="input_enable_ip_forwarding"></a> [enable\_ip\_forwarding](#input\_enable\_ip\_forwarding) | Enable IP forwarding on the virtual machine NIC. | `bool` | `false` | no |
 | <a name="input_enable_network_security_group"></a> [enable\_network\_security\_group](#input\_enable\_network\_security\_group) | Assign a network security group. | `bool` | `false` | no |
 | <a name="input_enable_network_watcher"></a> [enable\_network\_watcher](#input\_enable\_network\_watcher) | Enable Network Watcher extension. | `bool` | `false` | no |
@@ -72,6 +73,7 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 
 | Name | Description |
 |------|-------------|
+| <a name="output_attached_luns"></a> [attached\_luns](#output\_attached\_luns) | A map of the lun for each data disk attachment |
 | <a name="output_computer_name"></a> [computer\_name](#output\_computer\_name) | The OS-level computer name of the virtual machine. |
 | <a name="output_fqdn"></a> [fqdn](#output\_fqdn) | FQDN of the virtual machine, |
 | <a name="output_id"></a> [id](#output\_id) | ID of the virtual machine. |

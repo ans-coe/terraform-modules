@@ -285,6 +285,6 @@ variable "autoshutdown" {
 
 variable "enable_encryption_at_host" {
   description = "Adds the option of adding enabling encryption at host"
-  type = bool
-  default = null 
+  type        = bool
+  default     = null
 }

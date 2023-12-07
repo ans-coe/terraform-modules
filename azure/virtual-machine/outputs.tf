@@ -50,7 +50,7 @@ output "identity" {
 output "attached_luns" {
   description = "A map of the lun for each data disk attachment"
   value = {
-    for d in azurerm_virtual_machine_data_disk_attachment.main 
-    : d.name => d.lun
+    for k, d in azurerm_virtual_machine_data_disk_attachment.main
+    : k => d.lun
   }
 }
