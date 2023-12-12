@@ -37,3 +37,16 @@ output "slots" {
   description = "Object containing details for the created deployment slots."
   value       = local.app_service_slots
 }
+
+output "use_umid" {
+  value = local.use_umid
+}
+output "umid_name" {
+  value = local.umid_name
+}
+output "create_umid" {
+  value = local.create_umid
+}
+output "umid_id" {
+  value = local.umid_id
+}

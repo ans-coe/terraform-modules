@@ -12,7 +12,7 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "windows-webapp"
+    module  = "app-service-webapp"
     example = "privatelink"
     usage   = "demo"
   }
@@ -57,6 +57,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "webapp" {
 
 module "webapp" {
   source = "../../"
+
+  os_type = "Windows"
 
   name                = "${local.resource_prefix}-wa"
   location            = local.location

@@ -12,7 +12,7 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "windows-webapp"
+    module  = "app-service-webapp"
     example = "advanced"
     usage   = "demo"
   }
@@ -102,4 +102,15 @@ module "webapp" {
     retention_in_days       = 7
     retention_in_mb         = 50
   }
+
+  virtual_application = [
+    {
+      virtual_path  = "/"
+      physical_path = "site\\wwwroot"
+    },
+    {
+      virtual_path  = "/some_other_app"
+      physical_path = "site\\wwwroot2"
+    }
+  ]
 }

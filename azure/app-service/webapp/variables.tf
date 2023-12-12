@@ -85,22 +85,28 @@ variable "application_stack" {
   })
   default = {
     docker_image_name   = "azure-app-service/samples/aspnethelloworld:latest"
-    docker_registry_url = "mcr.microsoft.com"
+    docker_registry_url = "https://mcr.microsoft.com"
   }
 }
 
 variable "virtual_application" {
   description = "Virtual application configuration for the app service."
-  type = object({
-    physical_path = optional(string, "site\\wwwroot")
+  type = set(object({
+    virtual_path  = string
+    physical_path = string
     preload       = optional(bool, false)
-    virtual_path  = optional(string, "/")
     virtual_directories = optional(list(object({
       physical_path = string
       virtual_path  = string
     })), [])
-  })
-  default = {}
+  }))
+  default = [
+    {
+      virtual_path  = "/"
+      physical_path = "site\\wwwroot"
+    }
+  ]
+  // To-Do Validation = Virtual Application only if Windows WebApp
 }
 
 ### TO-DO: Add auto_heal_enabled if auto_heal_setting is defined 
@@ -306,7 +312,7 @@ variable "identity_options" {
     umid_custom_name = optional(string)
     umid_id          = optional(string) // If a UMID already exists, you can specify it here
   })
-  default = null
+  default = {}
   // To-Do Validation = umid_custom_name and umid_id cannot be set at the same time.
   // To-Do Validation = if cert_options key_vault is not null, use_umid must be true.
 }

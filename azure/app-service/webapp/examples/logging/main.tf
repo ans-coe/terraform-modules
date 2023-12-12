@@ -12,7 +12,7 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "windows-webapp"
+    module  = "app-service-webapp"
     example = "logging"
     usage   = "demo"
   }
@@ -27,6 +27,8 @@ resource "azurerm_resource_group" "webapp" {
 
 module "webapp" {
   source = "../../"
+
+  os_type = "Windows"
 
   name                = "${local.resource_prefix}-wa"
   location            = local.location

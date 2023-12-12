@@ -70,23 +70,21 @@ resource "azurerm_windows_web_app" "main" {
     }
 
     dynamic "virtual_application" {
-      for_each = var.virtual_application != null ? [0] : []
-
-      content {
-        physical_path = var.virtual_application["physical_path"]
-        preload       = var.virtual_application["preload"]
-        virtual_path  = var.virtual_application["virtual_path"]
-
-        dynamic "virtual_directory" {
-          for_each = var.virtual_application["virtual_directories"]
-          content {
-            physical_path = virtual_directory.physical_path
-            virtual_path  = virtual_directory.virtual_path
+        for_each = var.virtual_application
+        content {
+          virtual_path  = virtual_application.value.virtual_path
+          preload       = virtual_application.value.preload
+          physical_path = virtual_application.value.physical_path
+          dynamic "virtual_directory" {
+            for_each = virtual_application.value.virtual_directories
+            content {
+              physical_path = virtual_directory.physical_path
+              virtual_path  = virtual_directory.virtual_path
+            }
           }
         }
 
       }
-    }
 
     dynamic "ip_restriction" {
       for_each = local.access_rules
@@ -153,7 +151,7 @@ resource "azurerm_windows_web_app" "main" {
   }
 
   identity {
-    type         = local.use_umid ? "SystemAssigned" : "SystemAssigned, UserAssigned"
+    type         = local.use_umid ? "SystemAssigned, UserAssigned" : "SystemAssigned"
     identity_ids = local.umid_id != null ? [local.umid_id] : null
   }
 
@@ -267,17 +265,21 @@ resource "azurerm_windows_web_app_slot" "main" {
         python                       = var.application_stack.python
       }
 
-      virtual_application {
-        physical_path = var.virtual_application["physical_path"]
-        preload       = var.virtual_application["preload"]
-        virtual_path  = var.virtual_application["virtual_path"]
-        dynamic "virtual_directory" {
-          for_each = var.virtual_application["virtual_directories"]
-          content {
-            physical_path = virtual_directory.physical_path
-            virtual_path  = virtual_directory.virtual_path
+      dynamic "virtual_application" {
+        for_each = var.virtual_application
+        content {
+          virtual_path  = virtual_application.value.virtual_path
+          preload       = virtual_application.value.preload
+          physical_path = virtual_application.value.physical_path
+          dynamic "virtual_directory" {
+            for_each = virtual_application.value.virtual_directories
+            content {
+              physical_path = virtual_directory.physical_path
+              virtual_path  = virtual_directory.virtual_path
+            }
           }
         }
+
       }
     }
   }
@@ -309,7 +311,7 @@ resource "azurerm_windows_web_app_slot" "main" {
   }
 
   identity {
-    type         = local.use_umid ? "SystemAssigned" : "SystemAssigned, UserAssigned"
+    type         = local.use_umid ? "SystemAssigned, UserAssigned" : "SystemAssigned"
     identity_ids = local.umid_id != null ? [local.umid_id] : null
   }
 

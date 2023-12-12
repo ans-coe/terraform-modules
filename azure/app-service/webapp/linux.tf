@@ -134,7 +134,7 @@ resource "azurerm_linux_web_app" "main" {
   }
 
   identity {
-    type         = local.use_umid ? "SystemAssigned" : "SystemAssigned, UserAssigned"
+    type         = local.use_umid ? "SystemAssigned, UserAssigned" : "SystemAssigned"
     identity_ids = local.umid_id != null ? [local.umid_id] : null
   }
 
@@ -277,7 +277,7 @@ resource "azurerm_linux_web_app_slot" "main" {
   }
 
   identity {
-    type         = local.use_umid ? "SystemAssigned" : "SystemAssigned, UserAssigned"
+    type         = local.use_umid ? "SystemAssigned, UserAssigned" : "SystemAssigned"
     identity_ids = local.umid_id != null ? [local.umid_id] : null
   }
 
