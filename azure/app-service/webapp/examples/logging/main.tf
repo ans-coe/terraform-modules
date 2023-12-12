@@ -68,10 +68,6 @@ resource "azurerm_monitor_diagnostic_setting" "webapp" {
     for_each = local.webapp_log_types
     content {
       category = enabled_log.value
-      retention_policy {
-        enabled = true
-        days    = 7
-      }
     }
   }
 
