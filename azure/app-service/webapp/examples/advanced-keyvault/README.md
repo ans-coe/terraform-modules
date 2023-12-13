@@ -1,4 +1,4 @@
-# Example - Advanced - Windows
+# Example - Advanced - Keyvault
 
 This example is used to illustrate advanced usage of this module. It will create a subnet and attach the created web app to it.
 

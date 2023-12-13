@@ -146,8 +146,8 @@ locals {
   #### TLS & umid
 
   use_tls                             = var.cert_options != null
-  use_app_service_certificate         = local.use_tls ? !var.cert_options.use_managed_certificate : false // if we want to use non managed certificate, we set use_managed_certificate to false
-  use_managed_app_service_certificate = local.use_tls ? var.cert_options.use_managed_certificate : false
+  use_managed_app_service_certificate = local.use_tls ? (var.cert_options.pfx_blob == null && var.cert_options.key_vault == null) : false
+  use_app_service_certificate         = local.use_tls ? !local.use_managed_app_service_certificate : false // if we want to use non managed certificate, we set use_managed_certificate to false
   pfx_blob                            = local.use_tls ? var.cert_options.pfx_blob : null
   password                            = local.use_tls ? var.cert_options.password : null
   use_key_vault                       = local.use_tls ? var.cert_options.key_vault != null : false
@@ -166,3 +166,4 @@ locals {
   use_autoscaling = var.autoscaling != null
 
 }
+

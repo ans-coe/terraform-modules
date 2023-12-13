@@ -35,13 +35,18 @@ resource "null_resource" "validation" {
       ) : true
     }
     precondition {
-      error_message = "If os_type is Linux, virtual_application must be unset (or an empty map)"
-      condition     = local.is_linux ? var.virtual_application == {} : true
+      error_message = "If os_type is Linux, virtual_application must be unset (or an empty set)"
+      condition     = local.is_linux ? var.virtual_application == null : true
     }
 
     precondition {
       error_message = "If you specify cert_options, you must set custom_domain"
       condition     = local.use_tls ? var.custom_domain != null : true
+    }
+
+    precondition {
+      error_message = "if cert_options key_vault is not null, use_umid must be true."
+      condition     = local.use_key_vault ? local.use_umid : true
     }
   }
 }

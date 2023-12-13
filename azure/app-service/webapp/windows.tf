@@ -70,21 +70,21 @@ resource "azurerm_windows_web_app" "main" {
     }
 
     dynamic "virtual_application" {
-        for_each = var.virtual_application
-        content {
-          virtual_path  = virtual_application.value.virtual_path
-          preload       = virtual_application.value.preload
-          physical_path = virtual_application.value.physical_path
-          dynamic "virtual_directory" {
-            for_each = virtual_application.value.virtual_directories
-            content {
-              physical_path = virtual_directory.physical_path
-              virtual_path  = virtual_directory.virtual_path
-            }
+      for_each = var.virtual_application
+      content {
+        virtual_path  = virtual_application.value.virtual_path
+        preload       = virtual_application.value.preload
+        physical_path = virtual_application.value.physical_path
+        dynamic "virtual_directory" {
+          for_each = virtual_application.value.virtual_directories
+          content {
+            physical_path = virtual_directory.physical_path
+            virtual_path  = virtual_directory.virtual_path
           }
         }
-
       }
+
+    }
 
     dynamic "ip_restriction" {
       for_each = local.access_rules

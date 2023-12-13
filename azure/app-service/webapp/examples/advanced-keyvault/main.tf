@@ -16,7 +16,7 @@ locals {
     example = "advanced"
     usage   = "demo"
   }
-  resource_prefix = "tfmex-adv-lwa"
+  resource_prefix = "tfmex-adv-wwa"
 }
 
 resource "azurerm_resource_group" "webapp" {
@@ -26,14 +26,14 @@ resource "azurerm_resource_group" "webapp" {
 }
 
 resource "azurerm_service_plan" "webapp" {
-  name                = "${local.resource_prefix}-sp"
+  name                = "${local.resource_prefix}-asp"
   location            = local.location
   resource_group_name = azurerm_resource_group.webapp.name
   tags                = local.tags
 
   sku_name = "S1"
 
-  os_type = "Linux"
+  os_type = "Windows"
 }
 
 resource "azurerm_virtual_network" "webapp" {
@@ -46,7 +46,7 @@ resource "azurerm_virtual_network" "webapp" {
 }
 
 resource "azurerm_subnet" "webapp" {
-  name                 = "app"
+  name                 = "web"
   resource_group_name  = azurerm_resource_group.webapp.name
   virtual_network_name = azurerm_virtual_network.webapp.name
 
@@ -64,12 +64,12 @@ resource "azurerm_subnet" "webapp" {
 module "webapp" {
   source = "../../"
 
-  os_type = "Linux"
-
   name                = "${local.resource_prefix}-wa"
   location            = local.location
   resource_group_name = azurerm_resource_group.webapp.name
   tags                = local.tags
+
+  os_type = "Windows"
 
   plan = {
     create = false
@@ -79,7 +79,7 @@ module "webapp" {
   subnet_id = azurerm_subnet.webapp.id
 
   site_config = {
-    health_check_path = "/health"
+    health_check_path = "/"
   }
 
   cors = {
@@ -87,12 +87,30 @@ module "webapp" {
   }
 
   application_stack = {
-    docker_image_name = "containous/whoami:v1.5.0"
+    docker_image_name   = "azure-app-service/samples/aspnethelloworld:latest"
+    docker_registry_url = "https://mcr.microsoft.com"
   }
 
   app_settings = {
-    DOCKER_ENABLE_CI           = true
-    DOCKER_REGISTRY_SERVER_URL = "https://index.docker.io/v1"
+    MESSAGE = "Hello"
+  }
+
+  cert_options = { // by specifying cert options, we are saying we want to use TLS on the Web App
+    key_vault = {  // by specifying key_vault, we are telling the Web App that we don't want to use a managed cert, we could also specify a PFX blob.
+      certificate_name      = "example-cert"
+      key_vault_custom_name = "ans-example-keyvault" // this needs to be globally unique
+    }
+  }
+
+  // Note: To run this example sucessfully, set this domain to a domain where you can set the asuid (validation token) TXT DNS record relevant to your Azure subscription
+  // see here: https://learn.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain?tabs=root%2Cazurecli#2-create-the-dns-records
+  // a quick way to get the validation token is to run the Terraform Apply. The apply will fail and will say:
+  // "A TXT record pointing from asuid.test.example.com to XXXXXXXXXXXXXXX was not found".
+  // This is the validation token.
+  custom_domain = "test.example.com"
+
+  identity_options = {
+    umid_custom_name = "umid-example-test" // this is optional
   }
 
   logs = {
@@ -102,4 +120,15 @@ module "webapp" {
     retention_in_days       = 7
     retention_in_mb         = 50
   }
+
+  virtual_application = [
+    {
+      virtual_path  = "/"
+      physical_path = "site\\wwwroot"
+    },
+    {
+      virtual_path  = "/some_other_app"
+      physical_path = "site\\wwwroot2"
+    }
+  ]
 }
