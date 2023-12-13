@@ -6,5 +6,9 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 3.79"
     }
+    null = {
+      source  = "hashicorp/null"
+      version = "> 3"
+    }
   }
 }

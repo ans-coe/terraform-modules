@@ -22,6 +22,7 @@ Once deployed, management is expected to be through another medium, so changes t
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.6 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.79 |
+| <a name="requirement_null"></a> [null](#requirement\_null) | > 3 |
 
 ## Inputs
 
