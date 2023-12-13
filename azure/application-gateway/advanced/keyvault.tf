@@ -14,7 +14,7 @@ resource "azurerm_key_vault" "main" {
 }
 
 resource "azurerm_key_vault_access_policy" "main_user" {
-  count = var.use_key_vault ? 1 : 0
+  for_each = var.use_key_vault ? local.kv_cert_map : {}
 
   key_vault_id = var.key_vault_id == null ? azurerm_key_vault.main[0].id : var.key_vault_id
   tenant_id    = data.azurerm_client_config.current.tenant_id
