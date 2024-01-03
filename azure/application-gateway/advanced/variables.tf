@@ -251,10 +251,24 @@ variable "backend_http_settings" {
   }
 }
 
-variable "trusted_root_certificate" {
-  description = "Map of SSL Certs"
-  type        = map(string)
-  default     = {}
+variable "trusted_root_certificates" {
+  description = "Map of trusted root certificates to use with the backend."
+  type = map(object({
+    data                = optional(string)
+    key_vault_secret_id = optional(string)
+  }))
+  default = {}
+
+  validation {
+    error_message = "One of data or key_vault_secret_id must be specified for each certificate."
+    condition = alltrue([
+      for certificate in var.trusted_root_certificates
+      : anytrue([
+        certificate["data"] != null,
+        certificate["key_vault_secret_id"] != null,
+      ])
+    ])
+  }
 }
 
 variable "probe" {
