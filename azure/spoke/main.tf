@@ -79,7 +79,9 @@ resource "azurerm_subnet_route_table_association" "main" {
   subnet_id = module.network.subnets[each.key].id
   route_table_id = var.subnets[each.key].create_default_route_table ? "${azurerm_route_table.default[var.subnets[each.key].default_route_table_name].id}" : (
     var.subnets[each.key].create_custom_route_table ? "${azurerm_route_table.custom[each.value["custom_route_table_name"]].id}" : (
-  var.subnets[each.key].associate_existing_route_table ? var.subnets[each.key].existing_route_table_id : null))
+      var.subnets[each.key].associate_existing_route_table ? var.subnets[each.key].existing_route_table_id : null
+    )
+  )
 }
 
 #########
@@ -116,16 +118,16 @@ resource "azurerm_route" "custom" {
   depends_on = [azurerm_route_table.custom]
 }
 
-##########
-# Peering
-##########
+######################
+# Peering back to Hub
+######################
 
-resource "azurerm_virtual_network_peering" "main" {
-  for_each = var.hub_peering
+resource "azurerm_virtual_network_peering" "reverse" {
+  for_each = { for k, v in var.hub_peering : k => v if v.create_reverse_peering }
 
   name                      = format("%s_to_%s", each.key, module.network.name)
   virtual_network_name      = each.key
-  resource_group_name       = var.resource_group_name
+  resource_group_name       = each.value["hub_resource_group_name"]
   remote_virtual_network_id = module.network.id
 
   allow_virtual_network_access = each.value["allow_virtual_network_access"]

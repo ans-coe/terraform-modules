@@ -22,52 +22,6 @@ variable "resource_group_name" {
 # Network
 ##########
 
-variable "nsg_rules_inbound" {
-  description = "A list of objects describing a rule inbound."
-  type = list(object({
-    rule        = optional(string)
-    name        = string
-    nsg_name    = string
-    description = optional(string, "Created by Terraform.")
-
-    access   = optional(string, "Allow")
-    priority = optional(number)
-
-    protocol = optional(string, "*")
-    ports    = optional(set(string), ["*"])
-
-    source_prefixes      = optional(set(string), ["*"])
-    destination_prefixes = optional(set(string), ["VirtualNetwork"])
-
-    source_application_security_group_ids      = optional(set(string), null)
-    destination_application_security_group_ids = optional(set(string), null)
-  }))
-  default = []
-}
-
-variable "nsg_rules_outbound" {
-  description = "A list of objects describing a rule outbound."
-  type = list(object({
-    rule        = optional(string)
-    name        = string
-    nsg_name    = string
-    description = optional(string, "Created by Terraform.")
-
-    access   = optional(string, "Allow")
-    priority = optional(number)
-
-    protocol = optional(string, "*")
-    ports    = optional(set(string), ["*"])
-
-    source_prefixes      = optional(set(string), ["*"])
-    destination_prefixes = optional(set(string), ["VirtualNetwork"])
-
-    source_application_security_group_ids      = optional(set(string), null)
-    destination_application_security_group_ids = optional(set(string), null)
-  }))
-  default = []
-}
-
 variable "virtual_network_name" {
   description = "The name of the spoke virtual network."
   type        = string
@@ -125,7 +79,7 @@ variable "subnets" {
       })
     ), {})
     create_default_route_table    = optional(bool, true)
-    default_route_table_name      = optional(string, "default")
+    default_route_table_name      = optional(string, "default_rt")
     default_route_name            = optional(string, "default_route")
     default_route_ip              = optional(string)
     disable_bgp_route_propagation = optional(bool, true)
@@ -158,6 +112,60 @@ variable "subnets" {
   # }
 }
 
+############
+# NSG Rules
+############
+
+variable "nsg_rules_inbound" {
+  description = "A list of objects describing a rule inbound."
+  type = list(object({
+    rule        = optional(string)
+    name        = string
+    nsg_name    = string
+    description = optional(string, "Created by Terraform.")
+
+    access   = optional(string, "Allow")
+    priority = optional(number)
+
+    protocol = optional(string, "*")
+    ports    = optional(set(string), ["*"])
+
+    source_prefixes      = optional(set(string), ["*"])
+    destination_prefixes = optional(set(string), ["VirtualNetwork"])
+
+    source_application_security_group_ids      = optional(set(string), null)
+    destination_application_security_group_ids = optional(set(string), null)
+  }))
+  default = []
+}
+
+variable "nsg_rules_outbound" {
+  description = "A list of objects describing a rule outbound."
+  type = list(object({
+    rule        = optional(string)
+    name        = string
+    nsg_name    = string
+    description = optional(string, "Created by Terraform.")
+
+    access   = optional(string, "Allow")
+    priority = optional(number)
+
+    protocol = optional(string, "*")
+    ports    = optional(set(string), ["*"])
+
+    source_prefixes      = optional(set(string), ["*"])
+    destination_prefixes = optional(set(string), ["VirtualNetwork"])
+
+    source_application_security_group_ids      = optional(set(string), null)
+    destination_application_security_group_ids = optional(set(string), null)
+  }))
+  default = []
+}
+
+#########
+# Routes
+#########
+
 variable "custom_routes" {
   description = "Routes to add to a custom route table."
   type = map(object({
@@ -169,10 +177,16 @@ variable "custom_routes" {
   default = {}
 }
 
+##########
+# Peering
+##########
+
 variable "hub_peering" {
   description = "Config for peering to the hub network."
   type = map(object({
     id                           = string
+    create_reverse_peering       = optional(bool, true)
+    hub_resource_group_name      = string
     allow_virtual_network_access = optional(bool, true)
     allow_forwarded_traffic      = optional(bool, true)
     allow_gateway_transit        = optional(bool, false)

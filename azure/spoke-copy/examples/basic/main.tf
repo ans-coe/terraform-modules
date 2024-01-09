@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.84"
+      version = "~> 3.85"
     }
   }
 }
@@ -38,12 +38,12 @@ module "spoke" {
   tags     = local.tags
 
   resource_group_name  = azurerm_resource_group.main.name
-  virtual_network_name = "vnet-${local.resource_infix}"
+  name = "vnet-${local.resource_infix}"
 
   address_space = ["10.0.0.0/16"]
   subnets = {
     snet-default = {
-      prefix           = "10.0.1.0/24"
+      prefixes         = ["10.0.1.0/24"]
       default_route_ip = "192.168.0.1"
     }
   }
