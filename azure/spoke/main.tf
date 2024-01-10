@@ -157,19 +157,19 @@ resource "azurerm_network_watcher" "main" {
   tags                = var.tags
 }
 
-######################
-# Peering back to Hub
-######################
+##########
+# Peering 
+##########
 
 # Conditions for reverse peering
-# If hub_peering.create_reverse_peering = true (default) > create peering from hub to spoke vnet.
+# If vnet_peering.create_reverse_peering = true (default) > create peering from remote vnet back to the new spoke vnet.
 
 resource "azurerm_virtual_network_peering" "main" {
-  for_each = var.hub_peering
+  for_each = var.vnet_peering
 
   name                      = format("%s_to_%s", module.network.name, each.key)
   virtual_network_name      = module.network.id
-  resource_group_name       = each.value["hub_resource_group_name"]
+  resource_group_name       = var.resource_group_name
   remote_virtual_network_id = each.key
 
   allow_virtual_network_access = each.value["allow_virtual_network_access"]
@@ -179,11 +179,11 @@ resource "azurerm_virtual_network_peering" "main" {
 }
 
 resource "azurerm_virtual_network_peering" "reverse" {
-  for_each = { for k, v in var.hub_peering : k => v if v.create_reverse_peering }
+  for_each = { for k, v in var.vnet_peering : k => v if v.create_reverse_peering }
 
   name                      = format("%s_to_%s", each.key, module.network.name)
   virtual_network_name      = each.key
-  resource_group_name       = each.value["hub_resource_group_name"]
+  resource_group_name       = each.value["vnet_resource_group_name"]
   remote_virtual_network_id = module.network.id
 
   allow_virtual_network_access = each.value["allow_virtual_network_access"]
