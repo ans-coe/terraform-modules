@@ -27,6 +27,17 @@ variable "virtual_network_name" {
   type        = string
 }
 
+
+variable "address_space" {
+  description = "The address spaces of the virtual network."
+  type        = list(string)
+
+  validation {
+    error_message = "Must be valid IPv4 CIDR."
+    condition     = can(cidrhost(one(var.address_space[*]), 0))
+  }
+}
+
 variable "dns_servers" {
   description = "The DNS servers to use with this virtual network."
   type        = list(string)
@@ -48,26 +59,28 @@ variable "private_dns_zones" {
   default = {}
 }
 
+variable "disable_bgp_route_propagation" {
+  description = "Disable Route Propagation. True = Disabled"
+  type        = bool
+  default     = true
+}
+
 variable "ddos_protection_plan_id" {
   description = "A DDoS Protection plan ID to assign to the virtual network."
   type        = string
   default     = null
 }
 
-variable "address_space" {
-  description = "The address spaces of the virtual network."
-  type        = list(string)
-
-  validation {
-    error_message = "Must be valid IPv4 CIDR."
-    condition     = can(cidrhost(one(var.address_space[*]), 0))
-  }
+variable "bgp_community" {
+  description = "The BGP Community for this virtual network."
+  type        = string
+  default     = null
 }
 
 variable "subnets" {
   description = "Subnets to create in this virtual network with the map name indicating the subnet name."
   type = map(object({
-    prefix                                        = string
+    address_prefixes                              = list(string)
     resource_group_name                           = optional(string)
     service_endpoints                             = optional(list(string))
     private_endpoint_network_policies_enabled     = optional(bool)
@@ -78,50 +91,34 @@ variable "subnets" {
         actions = list(string)
       })
     ), {})
-    create_default_route_table    = optional(bool, true)
-    default_route_table_name      = optional(string, "default_rt")
-    default_route_name            = optional(string, "default_route")
-    default_route_ip              = optional(string)
-    disable_bgp_route_propagation = optional(bool, true)
-
-    create_custom_route_table = optional(bool, false)
-    custom_route_table_name   = optional(string)
-
-    associate_existing_route_table = optional(bool, false)
-    existing_route_table_id        = optional(string)
-
-    create_subnet_nsg = optional(bool, true)
-    subnet_nsg_name   = optional(string, "default_nsg")
-
-    # associate_existing_nsg = optional(bool, false)
-    # existing_nsg_id        = optional(string)
+    associate_default_route_table            = optional(bool, true)
+    associate_default_network_security_group = optional(bool, true)
   }))
   default = {}
-
-  validation {
-    error_message = "Must be valid IPv4 CIDR."
-    condition     = alltrue([for k, v in var.subnets : can(cidrhost(v.prefix, 0))])
-  }
-  validation {
-    error_message = "Invalid IP address provided."
-    condition     = alltrue([for k, v in var.subnets : can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", v.default_route_ip))])
-  }
-  # validation {
-  #   error_message = "Can only have one of the following enabled: 'create_default_route_table', 'create_custom_route_table', 'associate_existing_route_table'."
-  #   condition     = alltrue([for k, v in var.subnets : try((v.subnets.create_default_route_table ? 1 : 0) + (v.subnets.create_custom_route_table ? 1 : 0) + (v.subnets.associate_existing_route_table ? 1 : 0) <= 1)])
-  # }
 }
 
-############
-# NSG Rules
-############
+#########################
+# Network Security Group
+#########################
+
+variable "create_default_network_security_group" {
+  description = "Create a Network Security Group to associate with all subnets."
+  type        = bool
+  default     = true
+}
+
+variable "network_security_group_name" {
+  description = "Name of the default Network Security Group"
+  type        = string
+  default     = "default-nsg"
+}
 
 variable "nsg_rules_inbound" {
   description = "A list of objects describing a rule inbound."
   type = list(object({
-    rule        = optional(string)
-    name        = string
-    nsg_name    = string
+    rule = optional(string)
+    name = string
+    # nsg_name    = string
     description = optional(string, "Created by Terraform.")
 
     access   = optional(string, "Allow")
@@ -142,9 +139,9 @@ variable "nsg_rules_inbound" {
 variable "nsg_rules_outbound" {
   description = "A list of objects describing a rule outbound."
   type = list(object({
-    rule        = optional(string)
-    name        = string
-    nsg_name    = string
+    rule = optional(string)
+    name = string
+    # nsg_name    = string
     description = optional(string, "Created by Terraform.")
 
     access   = optional(string, "Allow")
@@ -162,19 +159,65 @@ variable "nsg_rules_outbound" {
   default = []
 }
 
-#########
-# Routes
-#########
+##############
+# Route Table
+##############
 
-variable "custom_routes" {
+variable "create_default_route_table" {
+  description = "Create a route table to associate with all subnets."
+  type        = bool
+  default     = true
+}
+
+variable "route_table_name" {
+  description = "Name of the default Route Table"
+  type        = string
+  default     = "default-rt"
+}
+
+
+variable "default_route_name" {
+  description = "Name of the default route."
+  type        = string
+  default     = "default-route"
+}
+
+variable "default_route_ip" {
+  description = "Default route IP Address."
+  type        = string
+
+  default = null
+
+  validation {
+    condition     = can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.default_route_ip))
+    error_message = "Invalid IP address provided."
+  }
+}
+
+variable "routes" {
   description = "Routes to add to a custom route table."
   type = map(object({
-    route_table_name       = string
     address_prefix         = string
     next_hop_type          = optional(string, "VirtualAppliance")
     next_hop_in_ip_address = optional(string)
   }))
   default = {}
+}
+
+##################
+# Network Watcher
+##################
+
+variable "network_watcher_config" {
+  description = "Configuration for the network watcher resource."
+  type = object({
+    name                = string
+    resource_group_name = optional(string)
+  })
+  default = {
+    name = null
+    resource_group_name = null
+  }
 }
 
 ##########

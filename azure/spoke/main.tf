@@ -12,32 +12,63 @@ module "network" {
   tags                = var.tags
 
   address_space     = var.address_space
-  subnets           = local.subnets
   dns_servers       = var.dns_servers != "" ? var.dns_servers : []
   include_azure_dns = var.include_azure_dns
-
   private_dns_zones = var.private_dns_zones
 
   ddos_protection_plan_id = var.ddos_protection_plan_id
-
-  peer_networks = var.hub_peering
+  bgp_community           = var.bgp_community
 }
 
-##############################
-# VNet Network Security Group
-##############################
+##########
+# Subnets
+##########
+
+resource "azurerm_subnet" "main" {
+  for_each = var.subnets
+
+  name                 = each.key
+  virtual_network_name = module.network.name
+  resource_group_name  = var.resource_group_name
+
+  address_prefixes = each.value["address_prefixes"]
+
+  service_endpoints                             = each.value["service_endpoints"]
+  private_endpoint_network_policies_enabled     = each.value["private_endpoint_network_policies_enabled"]
+  private_link_service_network_policies_enabled = each.value["private_link_service_network_policies_enabled"]
+
+  dynamic "delegation" {
+    for_each = each.value["delegations"]
+    content {
+      name = delegation.key
+      service_delegation {
+        name    = delegation.value["service"]
+        actions = delegation.value["actions"]
+      }
+    }
+  }
+
+  depends_on = [module.network]
+}
+
+#########################
+# Network Security Group
+#########################
 
 module "network_security_group" {
-  for_each = { for nsg in var.subnets : nsg.subnet_nsg_name
-  => nsg if nsg.create_subnet_nsg }
+  count  = var.create_default_network_security_group ? 1 : 0
   source = "../network-security-group"
 
-  name                = each.key
+  name                = var.network_security_group_name
   location            = var.location
-  resource_group_name = each.value["resource_group_name"] != null ? each.value["resource_group_name"] : var.resource_group_name
-  tags                = var.tags
-  rules_inbound       = tolist([for nsg_ri in var.nsg_rules_inbound : nsg_ri if nsg_ri.nsg_name == each.key])
-  rules_outbound      = tolist([for nsg_ro in var.nsg_rules_outbound : nsg_ro if nsg_ro.nsg_name == each.key])
+  resource_group_name = var.resource_group_name
+
+  # Awaiting future change to network_security_group module
+  # subnets = [for v in var.subnets : azurerm_subnet.main[v.key].id if v.associate_default_route_table == "true" ]
+
+  tags           = var.tags
+  rules_inbound  = var.nsg_rules_inbound
+  rules_outbound = var.nsg_rules_outbound
 }
 
 ##############
@@ -45,43 +76,14 @@ module "network_security_group" {
 ##############
 
 resource "azurerm_route_table" "default" {
-  for_each = { for rt in var.subnets : rt.default_route_table_name
-  => rt if rt.create_default_route_table }
+  count = var.create_default_route_table ? 1 : 0
 
-  name                = each.key
+  name                = var.route_table_name
   location            = var.location
-  resource_group_name = each.value["resource_group_name"] != null ? each.value["resource_group_name"] : var.resource_group_name
+  resource_group_name = var.resource_group_name
   tags                = var.tags
 
-  disable_bgp_route_propagation = each.value["disable_bgp_route_propagation"]
-}
-
-resource "azurerm_route_table" "custom" {
-  for_each = { for rt in var.subnets : rt.custom_route_table_name
-  => rt if rt.create_custom_route_table }
-
-  name                = each.key
-  location            = var.location
-  resource_group_name = each.value["resource_group_name"] != null ? each.value["resource_group_name"] : var.resource_group_name
-  tags                = var.tags
-
-  disable_bgp_route_propagation = each.value["disable_bgp_route_propagation"]
-}
-
-##########################
-# Route Table Association
-##########################
-
-resource "azurerm_subnet_route_table_association" "main" {
-  for_each = { for k, v in var.subnets : k
-  => v if anytrue([v.create_default_route_table, v.create_custom_route_table, v.associate_existing_route_table]) }
-
-  subnet_id = module.network.subnets[each.key].id
-  route_table_id = var.subnets[each.key].create_default_route_table ? "${azurerm_route_table.default[var.subnets[each.key].default_route_table_name].id}" : (
-    var.subnets[each.key].create_custom_route_table ? "${azurerm_route_table.custom[each.value["custom_route_table_name"]].id}" : (
-      var.subnets[each.key].associate_existing_route_table ? var.subnets[each.key].existing_route_table_id : null
-    )
-  )
+  disable_bgp_route_propagation = var.disable_bgp_route_propagation
 }
 
 #########
@@ -89,38 +91,86 @@ resource "azurerm_subnet_route_table_association" "main" {
 #########
 
 resource "azurerm_route" "default" {
-  for_each = { for k, v in var.subnets : k
-  => v if v.create_default_route_table }
+  count = var.create_default_route_table ? 1 : 0
 
-  name                = each.value["default_route_name"]
-  resource_group_name = each.value["resource_group_name"] != null ? each.value["resource_group_name"] : var.resource_group_name
-  route_table_name    = each.value["default_route_table_name"]
+  name                = var.default_route_name
+  resource_group_name = var.resource_group_name
+  route_table_name    = var.route_table_name
 
   address_prefix         = "0.0.0.0/0"
   next_hop_type          = "VirtualAppliance"
-  next_hop_in_ip_address = each.value["default_route_ip"]
+  next_hop_in_ip_address = var.default_route_ip
 
   depends_on = [azurerm_route_table.default]
 }
 
 resource "azurerm_route" "custom" {
-  for_each = { for k, vars in var.custom_routes : k
-  => merge(vars, { for v in var.subnets : "resource_group_name" => v.resource_group_name if v.custom_route_table_name == vars.route_table_name }) }
+  for_each = var.routes
 
   name                = each.key
-  resource_group_name = each.value["resource_group_name"] != null ? each.value["resource_group_name"] : var.resource_group_name
-  route_table_name    = each.value["route_table_name"]
+  resource_group_name = var.resource_group_name
+  route_table_name    = var.route_table_name
 
   address_prefix         = each.value["address_prefix"]
   next_hop_type          = each.value["next_hop_type"]
   next_hop_in_ip_address = each.value["next_hop_in_ip_address"]
 
-  depends_on = [azurerm_route_table.custom]
+  depends_on = [azurerm_route_table.default]
+}
+
+##########################
+# Route Table Association
+##########################
+
+resource "azurerm_subnet_route_table_association" "main" {
+  for_each = { for k, v in var.subnets : k => v if v.associate_default_route_table }
+
+  subnet_id      = azurerm_subnet.main[each.key].id
+  route_table_id = azurerm_route_table.default[0].id
+}
+
+##################
+# Network Watcher
+##################
+
+### Conditions for resource group:
+### If network_watcher_config.resource_group_name is specified = create network watcher RG
+### If network_watcher_config.resource_group_name is unspecified = spoke resource group
+
+resource "azurerm_resource_group" "network_watcher" {
+  count = var.network_watcher_config.resource_group_name != null ? 1 : 0
+
+  name     = var.network_watcher_config["resource_group_name"]
+  location = var.location
+  tags     = var.tags
+}
+
+resource "azurerm_network_watcher" "main" {
+  count = local.enable_network_watcher ? 1 : 0
+
+  name                = var.network_watcher_config["name"] != null ? var.network_watcher_config["name"] : "nw-${var.virtual_network_name}"
+  location            = var.location
+  resource_group_name = var.network_watcher_config.resource_group_name != null ? azurerm_resource_group.network_watcher[count.index].name : var.resource_group_name
+  tags                = var.tags
 }
 
 ######################
 # Peering back to Hub
 ######################
+
+resource "azurerm_virtual_network_peering" "main" {
+  for_each = var.hub_peering
+
+  name                      = format("%s_to_%s", module.network.name, each.key)
+  virtual_network_name      = module.network.id
+  resource_group_name       = each.value["hub_resource_group_name"]
+  remote_virtual_network_id = each.key
+
+  allow_virtual_network_access = each.value["allow_virtual_network_access"]
+  allow_forwarded_traffic      = each.value["allow_forwarded_traffic"]
+  allow_gateway_transit        = each.value["allow_gateway_transit"]
+  use_remote_gateways          = each.value["use_remote_gateways"]
+}
 
 resource "azurerm_virtual_network_peering" "reverse" {
   for_each = { for k, v in var.hub_peering : k => v if v.create_reverse_peering }

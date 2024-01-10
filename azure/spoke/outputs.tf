@@ -3,10 +3,10 @@ output "network_security_group" {
   value       = module.network_security_group
 }
 
-output "route_tables" {
-  description = "The output of the route table rsource."
-  value       = local.route_tables
-}
+# output "route_tables" {
+#   description = "The output of the route table rsource."
+#   value       = local.route_tables
+# }
 
 output "network" {
   description = "The output of the network module."
@@ -18,10 +18,10 @@ output "id" {
   value       = module.network.id
 }
 
-output "network_security_group_config" {
-  value = local.network_security_group_config
-}
+# output "network_security_group_config" {
+#   value = local.network_security_group_config
+# }
 
-output "subnets" {
-  value = local.subnets
-}
+# output "subnets" {
+#   value = local.subnets
+# }
