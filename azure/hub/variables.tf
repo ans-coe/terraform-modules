@@ -213,21 +213,32 @@ variable "private_resolver_config" {
   }
 }
 
-###########
-# Features
-###########
+##################
+# Network Watcher
+##################
 
-variable "spoke_peering" {
-  description = "Map of hub to spoke peering settings."
-  type = map(object({
-    id                           = optional(string)
-    allow_virtual_network_access = optional(bool, true)
-    allow_forwarded_traffic      = optional(bool, true)
-    allow_gateway_transit        = optional(bool, true)
-    use_remote_gateways          = optional(bool, false)
-  }))
-  default = {}
+variable "create_network_watcher" {
+  description = "Enables Network Watcher for the region & subscription."
+  type        = bool
+  default     = true
 }
+
+variable "network_watcher_name" {
+  description = "Name of the Network Watcher"
+  type        = string
+  default     = null
+}
+
+variable "network_watcher_resource_group" {
+  description = "Name of the Network Watcher Resourece Group"
+  type        = string
+  default     = null
+}
+
+
+##############
+# Private DNS
+##############
 
 variable "private_dns_domains" {
   description = "A set of private domains to configure."
@@ -235,14 +246,9 @@ variable "private_dns_domains" {
   default     = []
 }
 
-variable "network_watcher_config" {
-  description = "Configuration for the network watcher resource."
-  type = object({
-    name                = string
-    resource_group_name = optional(string)
-  })
-  default = null
-}
+##########################
+# Log Analytics Workspace
+##########################
 
 variable "log_analytics_workspace_id" {
   description = "Log analytics workspace ID to forward diagnostics to."

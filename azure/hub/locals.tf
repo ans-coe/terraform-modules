@@ -24,6 +24,4 @@ locals {
   private_resolver_outbound_endpoint = one(azurerm_private_dns_resolver_outbound_endpoint.main)
   private_resolver_inbound_subnet    = local.enable_private_resolver ? module.network.subnets[var.private_resolver_config["inbound_subnet_name"]] : null
   private_resolver_outbound_subnet   = local.enable_private_resolver ? module.network.subnets[var.private_resolver_config["outbound_subnet_name"]] : null
-
-  enable_network_watcher = var.network_watcher_config != null
 }

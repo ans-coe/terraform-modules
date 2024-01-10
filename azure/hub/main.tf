@@ -81,8 +81,6 @@ module "network" {
     }
   )
 
-  peer_networks = var.spoke_peering
-
   private_dns_zones = {
     for zone in azurerm_private_dns_zone.main
     : zone.name => { resource_group_name = zone.resource_group_name }
