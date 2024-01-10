@@ -32,10 +32,10 @@ variable "name" {
 # Subnet NSG Association 
 #########################
 
-variable "subnets" {
+variable "subnet_ids" {
   description = "A list of subnet ids to associate with this NSG."
-  type = list(string)
-  default = null
+  type        = map(string)
+  default     = null
 }
 
 ############
