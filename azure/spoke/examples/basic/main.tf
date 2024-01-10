@@ -40,11 +40,12 @@ module "spoke" {
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = "vnet-${local.resource_infix}"
 
+  default_route_ip = "192.168.0.1"
+
   address_space = ["10.0.0.0/16"]
   subnets = {
     snet-default = {
-      prefix           = "10.0.1.0/24"
-      default_route_ip = "192.168.0.1"
+      address_prefixes = ["10.0.1.0/24"]
     }
   }
 }

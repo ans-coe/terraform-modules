@@ -57,6 +57,8 @@ module "spoke" {
   network_security_group_name = "nsg-${local.resource_infix}"
   route_table_name            = "rt-${local.resource_infix}"
 
+  default_route_ip = "192.168.4.10"
+
   address_space = ["10.0.0.0/16"]
   subnets = {
     snet-prod = {
@@ -71,8 +73,6 @@ module "spoke" {
       resource_group_name = azurerm_resource_group.app2.name
     }
   }
-
-  default_route_ip = "192.168.4.10"
 
   routes = {
     route_01 = {
@@ -90,4 +90,6 @@ module "spoke" {
   nsg_rules_outbound = [{
     name = "ruleout_1"
   }]
+
+  network_watcher_config = {name = "nw-${local.resource_infix}-${local.location}"}
 }
