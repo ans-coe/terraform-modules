@@ -1,9 +1,28 @@
+#########################
+# Network Security Group
+#########################
+
 resource "azurerm_network_security_group" "main" {
   name                = var.name
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
 }
+
+#########################
+# Subnet NSG Association 
+#########################
+
+resource "azurerm_subnet_network_security_group_association" "main" {
+  for_each = var.subnets
+  
+  subnet_id                 = each.key
+  network_security_group_id = azurerm_network_security_group.main.id
+}
+
+############
+# NSG Rules
+############
 
 resource "azurerm_network_security_rule" "inbound" {
   for_each = local.rules_inbound
