@@ -27,7 +27,6 @@ variable "virtual_network_name" {
   type        = string
 }
 
-
 variable "address_space" {
   description = "The address spaces of the virtual network."
   type        = list(string)
@@ -81,7 +80,6 @@ variable "subnets" {
   description = "Subnets to create in this virtual network with the map name indicating the subnet name."
   type = map(object({
     address_prefixes                              = list(string)
-    resource_group_name                           = optional(string)
     service_endpoints                             = optional(list(string))
     private_endpoint_network_policies_enabled     = optional(bool)
     private_link_service_network_policies_enabled = optional(bool)
@@ -208,16 +206,22 @@ variable "routes" {
 # Network Watcher
 ##################
 
-variable "network_watcher_config" {
-  description = "Configuration for the network watcher resource."
-  type = object({
-    name                = string
-    resource_group_name = optional(string)
-  })
-  default = {
-    name = null
-    resource_group_name = null
-  }
+variable "create_network_watcher" {
+  description = "Enables Network Watcher for the region & subscription."
+  type        = bool
+  default     = true
+}
+
+variable "network_watcher_name" {
+  description = "Name of the Network Watcher"
+  type        = string
+  default     = null
+}
+
+variable "network_watcher_resource_group" {
+  description = "Name of the Network Watcher Resourece Group"
+  type        = string
+  default     = null
 }
 
 ##########

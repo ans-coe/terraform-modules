@@ -75,7 +75,7 @@ module "network_security_group" {
 # Route Table
 ##############
 
-resource "azurerm_route_table" "default" {
+resource "azurerm_route_table" "main" {
   count = var.create_default_route_table ? 1 : 0
 
   name                = var.route_table_name
@@ -95,13 +95,13 @@ resource "azurerm_route" "default" {
 
   name                = var.default_route_name
   resource_group_name = var.resource_group_name
-  route_table_name    = var.route_table_name
+  route_table_name    = azurerm_route_table.main[0].name
 
   address_prefix         = "0.0.0.0/0"
   next_hop_type          = "VirtualAppliance"
   next_hop_in_ip_address = var.default_route_ip
 
-  depends_on = [azurerm_route_table.default]
+  depends_on = [azurerm_route_table.main]
 }
 
 resource "azurerm_route" "custom" {
@@ -115,48 +115,54 @@ resource "azurerm_route" "custom" {
   next_hop_type          = each.value["next_hop_type"]
   next_hop_in_ip_address = each.value["next_hop_in_ip_address"]
 
-  depends_on = [azurerm_route_table.default]
+  depends_on = [azurerm_route_table.main]
 }
 
 ##########################
 # Route Table Association
 ##########################
 
+# Conditions for Route Table Association:
+# If var.subnet[].associate_default_route_table = true then the default route table is associated with the subnet.
+
 resource "azurerm_subnet_route_table_association" "main" {
   for_each = { for k, v in var.subnets : k => v if v.associate_default_route_table }
 
   subnet_id      = azurerm_subnet.main[each.key].id
-  route_table_id = azurerm_route_table.default[0].id
+  route_table_id = azurerm_route_table.main[0].id
 }
 
 ##################
 # Network Watcher
 ##################
 
-### Conditions for resource group:
-### If network_watcher_config.resource_group_name is specified = create network watcher RG
-### If network_watcher_config.resource_group_name is unspecified = spoke resource group
+# Conditions for resource group:
+# If network_watcher_resource_group is specified = create network watcher RG
+# If network_watcher_resource_group is unspecified = spoke resource group
 
 resource "azurerm_resource_group" "network_watcher" {
-  count = var.network_watcher_config.resource_group_name != null ? 1 : 0
+  count = var.network_watcher_resource_group != null ? 1 : 0
 
-  name     = var.network_watcher_config["resource_group_name"]
+  name     = var.network_watcher_resource_group
   location = var.location
   tags     = var.tags
 }
 
 resource "azurerm_network_watcher" "main" {
-  count = local.enable_network_watcher ? 1 : 0
+  count = var.create_network_watcher ? 1 : 0
 
-  name                = var.network_watcher_config["name"] != null ? var.network_watcher_config["name"] : "nw-${var.virtual_network_name}"
+  name                = var.network_watcher_name != null ? var.network_watcher_name : "nw-${var.location}"
   location            = var.location
-  resource_group_name = var.network_watcher_config.resource_group_name != null ? azurerm_resource_group.network_watcher[count.index].name : var.resource_group_name
+  resource_group_name = var.network_watcher_resource_group != null ? var.network_watcher_resource_group : var.resource_group_name
   tags                = var.tags
 }
 
 ######################
 # Peering back to Hub
 ######################
+
+# Conditions for reverse peering
+# If hub_peering.create_reverse_peering = true (default) > create peering from hub to spoke vnet.
 
 resource "azurerm_virtual_network_peering" "main" {
   for_each = var.hub_peering

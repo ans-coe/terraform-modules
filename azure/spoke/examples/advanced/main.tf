@@ -52,44 +52,46 @@ module "spoke" {
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = "vnet-${local.resource_infix}"
 
+  address_space = ["10.0.0.0/16"]
+
   include_azure_dns = true
 
   network_security_group_name = "nsg-${local.resource_infix}"
   route_table_name            = "rt-${local.resource_infix}"
 
-  default_route_ip = "192.168.4.10"
+  default_route_ip = "10.10.4.10"
 
-  address_space = ["10.0.0.0/16"]
   subnets = {
     snet-prod = {
       address_prefixes = ["10.0.0.0/24"]
     }
     snet-app1 = {
-      address_prefixes    = ["10.0.1.0/24"]
-      resource_group_name = azurerm_resource_group.app1.name
+      address_prefixes                         = ["10.0.1.0/24"]
+      associate_default_network_security_group = false
     }
     snet-app2 = {
-      address_prefixes    = ["10.0.2.0/24"]
-      resource_group_name = azurerm_resource_group.app2.name
+      address_prefixes              = ["10.0.2.0/24"]
+      associate_default_route_table = false
     }
   }
 
   routes = {
     route_01 = {
-      address_prefix         = "192.168.0.0/24"
-      next_hop_in_ip_address = "192.168.4.10"
+      address_prefix         = "10.0.2.0/24"
+      next_hop_in_ip_address = "10.10.4.20"
     }
   }
 
   nsg_rules_inbound = [{
-    name     = "rulein_1"
+    name     = "rule-in-01"
     protocol = "Tcp"
     ports    = ["443"]
   }]
 
   nsg_rules_outbound = [{
-    name = "ruleout_1"
+    name = "rule-out-01"
   }]
 
-  network_watcher_config = {name = "nw-${local.resource_infix}-${local.location}"}
+  network_watcher_name           = "nw-${local.resource_infix}-${local.location}"
+  network_watcher_resource_group = "rg-nw-${local.resource_infix}-${local.location}"
 }
