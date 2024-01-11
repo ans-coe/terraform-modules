@@ -20,20 +20,20 @@ output "resource_group_name" {
 
 output "subnet_associations" {
   description = "The output of the subnets associated with this NSG."
-  value = azurerm_subnet_network_security_group_association.main
+  value       = azurerm_subnet_network_security_group_association.main
 }
 
 output "subnet_ids" {
   description = "The output of subnet IDs associated with this NSG"
-  value = var.subnet_ids
+  value       = var.subnet_ids
 }
 
 output "rules_inbound" {
   description = "The output of the Inbound NSG rules."
-  value = azurerm_network_security_rule.inbound  
+  value       = azurerm_network_security_rule.inbound
 }
 
 output "rules_outbound" {
   description = "The output of the Outbound NSG rules."
-  value = azurerm_network_security_rule.outbound  
+  value       = azurerm_network_security_rule.outbound
 }
