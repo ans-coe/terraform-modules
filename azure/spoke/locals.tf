@@ -13,4 +13,6 @@ locals {
     for key, props in var.subnets
     : key => merge(props, local.network_security_group_config, local.route_table_config)
   }
+
+  enable_network_watcher = var.network_watcher_config != null
 }

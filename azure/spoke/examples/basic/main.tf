@@ -32,6 +32,10 @@ module "spoke" {
 
   network_security_group_name = "nsg-${local.resource_prefix}"
   route_table_name            = "rt-${local.resource_prefix}"
-  default_route_name          = "route-${local.resource_prefix}"
   default_route_ip            = "192.168.0.1"
+
+  network_watcher_config = {
+    name                = "NetworkWatcher_${local.location}_${local.resource_prefix}"
+    resource_group_name = "rg-nw-${local.resource_prefix}"
+  }
 }
