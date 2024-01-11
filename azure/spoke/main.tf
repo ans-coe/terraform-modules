@@ -25,7 +25,15 @@ module "network" {
   subnets       = local.subnets
   dns_servers   = var.dns_servers != "" ? var.dns_servers : []
 
-  peer_networks = var.hub_peering
+  peer_networks = var.hub_peering != null ? {
+    "hub" = {
+      id                           = var.hub_peering.id
+      allow_virtual_network_access = var.hub_peering.allow_virtual_network_access
+      allow_forwarded_traffic      = var.hub_peering.allow_forwarded_traffic
+      allow_gateway_transit        = var.hub_peering.allow_gateway_transit
+      use_remote_gateways          = var.hub_peering.use_remote_gateways
+    }
+  } : {}
 }
 
 module "network_security_group" {
@@ -52,7 +60,11 @@ resource "azurerm_route_table" "main" {
 resource "azurerm_route" "main_default" {
   count = var.route_table_name != null ? 1 : 0
 
+<<<<<<< HEAD
   name                = var.default_route_name
+=======
+  name                = "default"
+>>>>>>> parent of 1a6ac52 (peering and default route name changes)
   resource_group_name = azurerm_resource_group.main.name
   route_table_name    = azurerm_route_table.main[0].name
 

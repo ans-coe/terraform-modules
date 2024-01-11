@@ -34,12 +34,15 @@ variable "route_table_name" {
   default     = null
 }
 
+<<<<<<< HEAD
 variable "default_route_name" {
   description = "The name of the default route."
   type        = string
   default     = "default"
 }
 
+=======
+>>>>>>> parent of 1a6ac52 (peering and default route name changes)
 variable "disable_bgp_route_propagation" {
   description = "Boolean flag which controls propagation of routes learned by BGP on that route table. True means disable."
   type        = bool
@@ -102,12 +105,27 @@ variable "subnets" {
 
 variable "hub_peering" {
   description = "Config for peering to the hub network."
-  type = map(object({
+  type = object({
     id                           = string
     allow_virtual_network_access = optional(bool, true)
     allow_forwarded_traffic      = optional(bool, true)
     allow_gateway_transit        = optional(bool, false)
     use_remote_gateways          = optional(bool, true)
+<<<<<<< HEAD
   }))
   default = {}
 }
+=======
+  })
+  default = null
+}
+
+variable "network_watcher_config" {
+  description = "Configuration for the network watcher resource."
+  type = object({
+    name                = optional(string)
+    resource_group_name = optional(string)
+  })
+  default = null
+}
+>>>>>>> parent of 1a6ac52 (peering and default route name changes)
