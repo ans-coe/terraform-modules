@@ -34,8 +34,8 @@ variable "name" {
 
 variable "subnet_ids" {
   description = "A list of subnet ids to associate with this NSG."
-  type        = map(string)
-  default     = null
+  type        = list(string)
+  default     = []
 }
 
 ############

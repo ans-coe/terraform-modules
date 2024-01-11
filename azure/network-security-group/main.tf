@@ -14,9 +14,9 @@ resource "azurerm_network_security_group" "main" {
 #########################
 
 resource "azurerm_subnet_network_security_group_association" "main" {
-  for_each = var.subnet_ids
+  count = length(var.subnet_ids)
 
-  subnet_id                 = each.value
+  subnet_id                 = var.subnet_ids[count.index]
   network_security_group_id = azurerm_network_security_group.main.id
 }
 

@@ -49,10 +49,10 @@ module "nsg" {
   resource_group_name = azurerm_resource_group.main.name
   tags                = local.tags
 
-  subnet_ids = {
-    snet-prod = module.network.subnets["snet-prod"].id
-    snet-dev  = module.network.subnets["snet-dev"].id
-  }
+  subnet_ids = [
+    module.network.subnets["snet-prod"].id,
+    module.network.subnets["snet-dev"].id
+  ]
 
   rules_inbound = [
     {
@@ -82,6 +82,4 @@ module "nsg" {
       name = "AllowDnsOutBound"
     }
   ]
-
-  depends_on = [module.network]
 }
