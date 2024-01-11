@@ -10,6 +10,13 @@ resource "azurerm_log_analytics_workspace" "main" {
   resource_group_name = var.resource_group_name
   retention_in_days   = var.log_analytics_workspace_retention
   sku                 = var.log_analytics_workspace_sku
+
+  lifecycle {  
+    precondition {  
+      condition = (var.log_analytics_workspace_id == null) != (var.log_analytics_workspace_name == null)
+      error_message = "Either log_analytics_workspace_id OR log_analytics_workspace_name must be specificed."  
+    }  
+  }  
 }
 
 ###########
@@ -77,7 +84,6 @@ resource "azurerm_sentinel_data_connector_microsoft_defender_advanced_threat_pro
   name                       = "Microsoft Defender Advanced Threat Protection"
   log_analytics_workspace_id = local.log_analytics_workspace_id
   tenant_id                  = local.tenant_id
-
 }
 
 resource "azurerm_sentinel_data_connector_microsoft_threat_protection" "main" {

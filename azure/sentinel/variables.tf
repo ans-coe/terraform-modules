@@ -5,7 +5,7 @@
 variable "location" {
   description = "The region in which resources will be created"
   type        = string
-  default     = null
+  default     = "uksouth"
 }
 
 variable "resource_group_name" {
@@ -121,11 +121,9 @@ variable "cloud_app_security_config" {
     alerts_enabled         = optional(bool, true)
     discovery_logs_enabled = optional(bool, true)
   })
-  default = {
-    alerts_enabled         = true
-    discovery_logs_enabled = true
-  }
+  default = {}
 }
+
 
 variable "office_365_config" {
   description = "Configuration for the Office 365 Data Connector"
@@ -134,11 +132,7 @@ variable "office_365_config" {
     sharepoint_enabled = optional(bool, true)
     teams_enabled      = optional(bool, true)
   })
-  default = {
-    exchange_enabled   = true
-    sharepoint_enabled = true
-    teams_enabled      = true
-  }
+  default = {}
 }
 
 variable "microsoft_threat_intelligence_feed_lookback_date" {

@@ -2,18 +2,20 @@
 
 #### Table of Contents
 
-1. [Usage](#usage)
-2. [Requirements](#requirements)
-3. [Inputs](#inputs)
-4. [Outputs](#outputs)
-5. [Resources](#resources)
-6. [Modules](#modules)
+- [Terraform (Module) - Azure - Sentinel](#terraform-module---azure---sentinel)
+      - [Table of Contents](#table-of-contents)
+  - [Usage](#usage)
+  - [Requirements](#requirements)
+  - [Inputs](#inputs)
+  - [Outputs](#outputs)
+  - [Resources](#resources)
+  - [Modules](#modules)
 
 ## Usage
 
 This module deploys Azure Sentinel to an exsisting or new Log Analytics Workspace.
 
-If an existing Log Analytics Workspace ID is not provided then a log_analytics_workspace_name will be required to create a new Log Analytics Workspace:
+If an existing Log Analytics Workspace ID is not provided then a log_analytics_workspace_name will be required to create a new Log Analytics Workspace.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
