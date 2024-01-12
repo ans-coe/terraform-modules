@@ -65,9 +65,9 @@ variable "default_route_ip" {
 
   validation {
     error_message = "Must be valid IPv4 CIDR."
-    condition     = can(cidrhost(one(var.address_space[*]), 0))  
+    condition     = can(cidrhost(one(var.address_space[*]), 0))
   }
-  
+
 }
 
 variable "default_route_name" {
