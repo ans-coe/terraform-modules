@@ -101,7 +101,7 @@ variable "subnets" {
 
   validation {
     error_message = "Must be valid IPv4 CIDR."
-    condition     = alltrue(flatten([for v in var.subnets : [for a in v.address_prefixes : can(cidrhost("${a}", 0))]]))
+    condition     = alltrue(flatten([for v in var.subnets : [for a in v.address_prefixes : can(cidrhost(a, 0))]]))
   }
 }
 
