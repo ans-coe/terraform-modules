@@ -20,9 +20,9 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "network-security-group"
-    example = "adv"
-    usage   = "demo"
+    module     = "network-security-group"
+    example    = "adv"
+    usage      = "demo"
     department = "technical"
     owner      = "Dee Vops"
   }
