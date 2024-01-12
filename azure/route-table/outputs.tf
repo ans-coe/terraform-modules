@@ -10,7 +10,7 @@ output "route_table" {
 
 output "routes" {
   description = "The output of routes."
-  value       = azurerm_route.main
+  value       = local.routes
 }
 
 output "subnets" {

@@ -17,7 +17,7 @@ resource "azurerm_route_table" "main" {
 #########
 
 resource "azurerm_route" "main" {
-  for_each = var.route
+  for_each = var.routes
 
   name                = each.key
   resource_group_name = var.resource_group_name
