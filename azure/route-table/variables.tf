@@ -62,6 +62,12 @@ variable "default_route_ip" {
   description = "The next hop IP address for the default route (0.0.0.0/0). If none is specified, no route is created."
   type        = string
   default     = null
+
+  validation {
+    error_message = "Must be valid IPv4 CIDR."
+    condition     = can(cidrhost(one(var.address_space[*]), 0))  
+  }
+  
 }
 
 variable "default_route_name" {
