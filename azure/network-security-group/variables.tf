@@ -28,6 +28,20 @@ variable "name" {
   type        = string
 }
 
+#########################
+# Subnet NSG Association 
+#########################
+
+variable "subnet_ids" {
+  description = "A list of subnet ids to associate with this NSG."
+  type        = list(string)
+  default     = []
+}
+
+############
+# NSG Rules
+############
+
 variable "start_priority" {
   description = "The priority number to start from when creating rules."
   type        = number
