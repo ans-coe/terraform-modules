@@ -33,6 +33,11 @@ output "identity_id" {
   value       = azurerm_user_assigned_identity.main_gateway[0].id
 }
 
+output "identity_principal_id" {
+  description = "principal_id of the AppGW if KV is used."
+  value       = azurerm_user_assigned_identity.main_gateway[0].principal_id
+}
+
 output "private_ip" {
   description = "Private IP Address"
   value = one([

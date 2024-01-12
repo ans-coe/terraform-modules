@@ -72,16 +72,21 @@ variable "application_stack" {
 
 variable "virtual_application" {
   description = "Virtual application configuration for the app service."
-  type = object({
-    physical_path = optional(string, "site\\wwwroot")
+  type = set(object({
+    virtual_path  = string
+    physical_path = string
     preload       = optional(bool, false)
-    virtual_path  = optional(string, "/")
     virtual_directories = optional(list(object({
       physical_path = string
       virtual_path  = string
     })), [])
-  })
-  default = {}
+  }))
+  default = [
+    {
+      virtual_path  = "/"
+      physical_path = "site\\wwwroot"
+    }
+  ]
 }
 
 variable "site_config" {

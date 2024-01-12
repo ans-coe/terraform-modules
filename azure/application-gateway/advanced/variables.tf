@@ -243,6 +243,8 @@ variable "backend_http_settings" {
     host_name                      = optional(string)
     request_timeout                = optional(number, 30)
     trusted_root_certificate_names = optional(list(string))
+    // pick_host_name_from_backend_address only applies when host_name is null
+    pick_host_name_from_backend_address = optional(bool, true)
   }))
   default = {
     default_settings = {}
