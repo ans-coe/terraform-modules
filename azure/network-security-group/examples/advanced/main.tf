@@ -23,6 +23,8 @@ locals {
     module  = "network-security-group"
     example = "adv"
     usage   = "demo"
+    department = "technical"
+    owner      = "Dee Vops"
   }
   resource_prefix = "tfmex-adv-nsg"
 }
@@ -51,7 +53,7 @@ resource "azurerm_log_analytics_workspace" "nsg" {
 }
 
 resource "azurerm_storage_account" "nsg" {
-  name                = lower(replace("${local.resource_prefix}sa", "/[-_]/", ""))
+  name                = lower(replace("${local.resource_prefix}sa1", "/[-_]/", ""))
   location            = local.location
   resource_group_name = azurerm_resource_group.nsg.name
   tags                = local.tags

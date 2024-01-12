@@ -20,9 +20,11 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "network-security-group"
-    example = "basic"
-    usage   = "demo"
+    module     = "network-security-group"
+    example    = "basic"
+    usage      = "demo"
+    department = "technical"
+    owner      = "Dee Vops"
   }
   resource_prefix = "tfmex-basic-nsg"
 }
