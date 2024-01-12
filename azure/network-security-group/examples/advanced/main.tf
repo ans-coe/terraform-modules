@@ -101,6 +101,7 @@ module "nsg" {
 
   enable_flow_log = true
   flow_log_config = {
+    name                                = "${local.resource_prefix}-fl"
     network_watcher_name                = azurerm_network_watcher.nsg.name
     network_watcher_resource_group_name = azurerm_resource_group.nsg.name
     storage_account_id                  = azurerm_storage_account.nsg.id

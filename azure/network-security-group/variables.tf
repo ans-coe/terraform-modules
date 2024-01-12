@@ -111,6 +111,7 @@ variable "enable_flow_log" {
 variable "flow_log_config" {
   description = "Configuration for flow logs."
   type = object({
+    name                                = string
     version                             = optional(number, 2)
     network_watcher_name                = string
     network_watcher_resource_group_name = string
