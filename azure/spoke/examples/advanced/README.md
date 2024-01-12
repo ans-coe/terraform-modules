@@ -20,6 +20,9 @@ It deploys a single spoke network with the following resources:
    - 3 Inbound Rules
    - 2 Outbound Rules
  - Network Watcher
+   - Flow Logs Enabled
+ - Storage Account for Flow Logs
+ - Log Analytics Workspace for Flow Logs
 
 
 

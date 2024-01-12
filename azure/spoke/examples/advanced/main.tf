@@ -96,6 +96,18 @@ module "spoke" {
 
   network_watcher_name           = "nw-${local.resource_infix}-${local.location}"
   network_watcher_resource_group = "rg-nw-${local.resource_infix}-${local.location}"
+
+  enable_flow_log = true
+
+  flow_log_config = {
+    name                   = "fl-${local.resource_infix}"
+    create_storage_account = true
+    storage_account_name   = lower(replace("fl-sa-${local.resource_infix}", "/[-_]/", ""))
+
+    enable_analytics               = true
+    create_log_analytics_workspace = true
+    log_analytics_workspace_name   = "fl-law-${local.resource_infix}"
+  }
 }
 
 module "app1-nsg" {

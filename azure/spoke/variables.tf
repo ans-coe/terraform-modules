@@ -167,6 +167,45 @@ variable "nsg_rules_outbound" {
   default = []
 }
 
+############
+# Flow Logs
+############
+
+variable "enable_flow_log" {
+  description = "Enable flog log for the network security group."
+  type        = bool
+  default     = false
+}
+
+variable "create_flow_log_storage_account" {
+  description = "Create a Storage Account for Flow Logs."
+  type = bool
+  default = false
+}
+
+variable "create_flow_log_log_analytics_workspace" {
+  description = "Create a Log Analytics Workspace for Flow Logs Analytics."
+  type = bool
+  default = false
+}
+
+variable "flow_log_config" {
+  description = "Configuration for flow logs."
+  type = object({
+    name                   = string
+    storage_account_name   = optional(string)
+    storage_account_id     = optional(string)
+    retention_days         = optional(number, 7)
+
+    enable_analytics               = optional(bool, false)
+    log_analytics_workspace_name   = optional(string)
+    analytics_interval_minutes     = optional(number, 10)
+    workspace_resource_id          = optional(string)
+    workspace_id                   = optional(string)
+  })
+  default = null
+}
+
 ##############
 # Route Table
 ##############

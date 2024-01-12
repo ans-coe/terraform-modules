@@ -12,13 +12,32 @@
   - [Modules](#modules)
 
 ## Usage
-
 This module deploys a spoke network in Azure.
 - There is an option to create a single NSG that can be applied to subnets if the associate_default_network_security_group is true (default).
 - There is an option to create a single Route Table that can be applied to subnets if the associate_default_route_table is true (default).
 - A default route is created can be created which routes "0.0.0.0/0" > default_route_ip.
 - There is an option for peering to a hub vNet.  Peering from the hub vNet back to the Spoke is created when hub_peering.create_reverse_peering = true (default).
-- Best practise is to create a Network Watcher per region & per subscription.  A Network Watcher is created if network_watcher_config.name is specified.
+
+### Network Watcher
+Best practise is to create a Network Watcher per region & per subscription.  A Network Watcher is created if network_watcher_config.name is specified.
+
+#### Flog Log Storage Account
+If creating a storage account for flow logs, storage_account_name is required.
+If no storage account is created, a storage_account_id is required for flow logs.
+
+#### Flog Log Analytics
+If create_log_analytics_workspace is true, log_analytics_workspace_name is required.
+If using an existing log analytics workspace, workspace_resource_id (the Azure resource id) and workspace_id is required.
+
+#### Disable Automatic Network Watcher Creation.
+To disable Azure automatically enabling Network Watcher with it's default values, run the following commands:
+
+##### Powershell
+    Register-AzProviderFeature -FeatureName DisableNetworkWatcherAutocreation -ProviderNamespace Microsoft.Network
+    Register-AzResourceProvider -ProviderNamespace Microsoft.Network
+##### Azure CLI
+    az feature register --name DisableNetworkWatcherAutocreation --namespace Microsoft.Network
+    az provider register -n Microsoft.Network
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -45,7 +64,9 @@ This module deploys a spoke network in Azure.
 | <a name="input_default_route_name"></a> [default\_route\_name](#input\_default\_route\_name) | Name of the default route. | `string` | `"default-route"` | no |
 | <a name="input_disable_bgp_route_propagation"></a> [disable\_bgp\_route\_propagation](#input\_disable\_bgp\_route\_propagation) | Disable Route Propagation. True = Disabled | `bool` | `true` | no |
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | The DNS servers to use with this virtual network. | `list(string)` | `[]` | no |
+| <a name="input_enable_flow_log"></a> [enable\_flow\_log](#input\_enable\_flow\_log) | Enable flog log for the network security group. | `bool` | `false` | no |
 | <a name="input_extra_routes"></a> [extra\_routes](#input\_extra\_routes) | Routes to add to a custom route table. | <pre>map(object({<br>    address_prefix         = string<br>    next_hop_type          = optional(string, "VirtualAppliance")<br>    next_hop_in_ip_address = optional(string)<br>  }))</pre> | `{}` | no |
+| <a name="input_flow_log_config"></a> [flow\_log\_config](#input\_flow\_log\_config) | Configuration for flow logs. | <pre>object({<br>    name                   = string<br>    create_storage_account = optional(bool, false)<br>    storage_account_name   = optional(string)<br>    storage_account_id     = optional(string)<br>    retention_days         = optional(number, 7)<br><br>    enable_analytics               = optional(bool, false)<br>    create_log_analytics_workspace = optional(bool, false)<br>    log_analytics_workspace_name   = optional(string)<br>    analytics_interval_minutes     = optional(number, 10)<br>    workspace_resource_id          = optional(string)<br>    workspace_region               = optional(string)<br>    workspace_id                   = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_include_azure_dns"></a> [include\_azure\_dns](#input\_include\_azure\_dns) | If using custom DNS servers, include Azure DNS IP as a DNS server. | `bool` | `false` | no |
 | <a name="input_network_security_group_name"></a> [network\_security\_group\_name](#input\_network\_security\_group\_name) | Name of the default Network Security Group | `string` | `"default-nsg"` | no |
 | <a name="input_network_watcher_name"></a> [network\_watcher\_name](#input\_network\_watcher\_name) | Name of the Network Watcher | `string` | `null` | no |
@@ -76,8 +97,10 @@ This module deploys a spoke network in Azure.
 
 | Name | Type |
 |------|------|
+| [azurerm_log_analytics_workspace.flow_log-law](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/log_analytics_workspace) | resource |
 | [azurerm_network_watcher.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_watcher) | resource |
 | [azurerm_resource_group.network_watcher](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [azurerm_storage_account.flow_log_sa](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_subnet.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_virtual_network_peering.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
 | [azurerm_virtual_network_peering.reverse](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |

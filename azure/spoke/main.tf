@@ -50,29 +50,6 @@ resource "azurerm_subnet" "main" {
   depends_on = [module.network]
 }
 
-#########################
-# Network Security Group
-#########################
-
-# Conditions for Route Table Association:
-# If var.subnet[].associate_default_network_security_group == true then the default nsg is associated with the subnet.
-
-module "network_security_group" {
-  count  = var.create_default_network_security_group ? 1 : 0
-  source = "../network-security-group"
-
-  name                = var.network_security_group_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  tags                = var.tags
-
-  subnet_ids = local.subnet_assoc_network_security_group
-
-
-  rules_inbound  = var.nsg_rules_inbound
-  rules_outbound = var.nsg_rules_outbound
-}
-
 ##############
 # Route Table
 ##############
@@ -120,7 +97,7 @@ resource "azurerm_network_watcher" "main" {
 
   name                = var.network_watcher_name != null ? var.network_watcher_name : "nw-${var.location}"
   location            = var.location
-  resource_group_name = var.network_watcher_resource_group != null ? var.network_watcher_resource_group : var.resource_group_name
+  resource_group_name = local.network_watcher_resource_group_name
   tags                = var.tags
 }
 
