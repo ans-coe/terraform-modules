@@ -40,9 +40,9 @@ module "network" {
 module "route-table" {
   source = "../.."
 
-  name = "${local.resource_prefix}-rt"
+  name                = "${local.resource_prefix}-rt"
   resource_group_name = azurerm_resource_group.main.name
-  tags = local.tags
+  tags                = local.tags
 
   subnet_ids = [module.network.subnets["snet-prod"].id]
 

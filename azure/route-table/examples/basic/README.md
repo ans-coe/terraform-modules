@@ -17,13 +17,16 @@ No outputs.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [azurerm_resource_group.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_example"></a> [example](#module\_example) | ../../ | n/a |
+| <a name="module_network"></a> [network](#module\_network) | ans-coe/virtual-network/azurerm | 1.3.0 |
+| <a name="module_route-table"></a> [route-table](#module\_route-table) | ../.. | n/a |
 <!-- END_TF_DOCS -->
 _______________
 | Classified  |
