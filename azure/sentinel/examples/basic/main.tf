@@ -33,10 +33,10 @@ module "sentinel" {
   log_analytics_workspace_name = "law-${local.resource_prefix}"
 
   # dc_ad_enabled                                            = true
-  dc_security_center_enabled                                 = true
+  dc_security_center_enabled = true
   # dc_advanced_threat_protection_enabled                    = true
   # dc_microsoft_cloud_app_security_enabled                  = true
-  dc_microsoft_threat_intelligence_enabled                   = true
+  dc_microsoft_threat_intelligence_enabled = true
   # dc_office_365_enabled                                    = true
   # dc_microsoft_defender_advanced_threat_protection_enabled = true
   # dc_microsoft_threat_protection_enabled                   = true
