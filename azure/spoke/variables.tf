@@ -238,15 +238,6 @@ variable "vnet_peering" {
     allow_forwarded_traffic      = optional(bool, true)
     allow_gateway_transit        = optional(bool, false)
     use_remote_gateways          = optional(bool, true)
-  })
-  default = null
-}
-
-variable "network_watcher_config" {
-  description = "Configuration for the network watcher resource."
-  type = object({
-    name                = optional(string)
-    resource_group_name = optional(string)
-  })
+  }))
   default = null
 }
