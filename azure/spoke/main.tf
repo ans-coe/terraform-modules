@@ -95,7 +95,7 @@ resource "azurerm_route" "default" {
   name                = var.default_route_name
   resource_group_name = var.resource_group_name
 
-  route_table_name    = azurerm_route_table.main[0].name
+  route_table_name = azurerm_route_table.main[0].name
 
   address_prefix         = "0.0.0.0/0"
   next_hop_type          = "VirtualAppliance"

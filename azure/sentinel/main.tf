@@ -11,12 +11,12 @@ resource "azurerm_log_analytics_workspace" "main" {
   retention_in_days   = var.log_analytics_workspace_retention
   sku                 = var.log_analytics_workspace_sku
 
-  lifecycle {  
-    precondition {  
-      condition = (var.log_analytics_workspace_id == null) != (var.log_analytics_workspace_name == null)
-      error_message = "Either log_analytics_workspace_id OR log_analytics_workspace_name must be specificed."  
-    }  
-  }  
+  lifecycle {
+    precondition {
+      condition     = (var.log_analytics_workspace_id == null) != (var.log_analytics_workspace_name == null)
+      error_message = "Either log_analytics_workspace_id OR log_analytics_workspace_name must be specificed."
+    }
+  }
 }
 
 ###########

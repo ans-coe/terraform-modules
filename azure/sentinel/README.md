@@ -23,14 +23,14 @@ If an existing Log Analytics Workspace ID is not provided then a log_analytics_w
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.78 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.65 |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of the resource group. | `string` | n/a | yes |
-| <a name="input_cloud_app_security_config"></a> [cloud\_app\_security\_config](#input\_cloud\_app\_security\_config) | Configuration for the Microsoft 365 Defender Data Connector | <pre>object({<br>    alerts_enabled         = optional(bool, true)<br>    discovery_logs_enabled = optional(bool, true)<br>  })</pre> | <pre>{<br>  "alerts_enabled": true,<br>  "discovery_logs_enabled": true<br>}</pre> | no |
+| <a name="input_cloud_app_security_config"></a> [cloud\_app\_security\_config](#input\_cloud\_app\_security\_config) | Configuration for the Microsoft 365 Defender Data Connector | <pre>object({<br>    alerts_enabled         = optional(bool, true)<br>    discovery_logs_enabled = optional(bool, true)<br>  })</pre> | `{}` | no |
 | <a name="input_customer_managed_key_enabled"></a> [customer\_managed\_key\_enabled](#input\_customer\_managed\_key\_enabled) | pecifies if the Workspace is using Customer managed key. Defaults to false. Changing this forces a new resource to be created. | `bool` | `false` | no |
 | <a name="input_dc_ad_enabled"></a> [dc\_ad\_enabled](#input\_dc\_ad\_enabled) | Enable the Data Connector: Azure Active Directory | `bool` | `false` | no |
 | <a name="input_dc_advanced_threat_protection_enabled"></a> [dc\_advanced\_threat\_protection\_enabled](#input\_dc\_advanced\_threat\_protection\_enabled) | Enable the Data Connector: Azure Active Directory Identity Protection | `bool` | `false` | no |
@@ -40,12 +40,13 @@ If an existing Log Analytics Workspace ID is not provided then a log_analytics_w
 | <a name="input_dc_microsoft_threat_protection_enabled"></a> [dc\_microsoft\_threat\_protection\_enabled](#input\_dc\_microsoft\_threat\_protection\_enabled) | Enable the Data Connector: Microsoft Threat Protection | `bool` | `false` | no |
 | <a name="input_dc_office_365_enabled"></a> [dc\_office\_365\_enabled](#input\_dc\_office\_365\_enabled) | Enable the Data Connector: Office 365 | `bool` | `false` | no |
 | <a name="input_dc_security_center_enabled"></a> [dc\_security\_center\_enabled](#input\_dc\_security\_center\_enabled) | Enable the Data Connector: Azure Security Centre | `bool` | `false` | no |
-| <a name="input_location"></a> [location](#input\_location) | The region in which resources will be created | `string` | `null` | no |
+| <a name="input_location"></a> [location](#input\_location) | The region in which resources will be created | `string` | `"uksouth"` | no |
 | <a name="input_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#input\_log\_analytics\_workspace\_id) | The id of an existing Log Anylitics Workspace | `string` | `null` | no |
 | <a name="input_log_analytics_workspace_name"></a> [log\_analytics\_workspace\_name](#input\_log\_analytics\_workspace\_name) | Name of the new Log Anylitics Workspace to be created | `string` | `null` | no |
+| <a name="input_log_analytics_workspace_retention"></a> [log\_analytics\_workspace\_retention](#input\_log\_analytics\_workspace\_retention) | Retention in days. | `number` | `90` | no |
 | <a name="input_log_analytics_workspace_sku"></a> [log\_analytics\_workspace\_sku](#input\_log\_analytics\_workspace\_sku) | The SKU of the Log Analytics Workspace | `string` | `"PerGB2018"` | no |
 | <a name="input_microsoft_threat_intelligence_feed_lookback_date"></a> [microsoft\_threat\_intelligence\_feed\_lookback\_date](#input\_microsoft\_threat\_intelligence\_feed\_lookback\_date) | The lookback date for the Microsoft Emerging Threat Feed in RFC3339. Changing this forces a new Data Connector to be created. | `string` | `"1970-01-01T00:00:00Z"` | no |
-| <a name="input_office_365_config"></a> [office\_365\_config](#input\_office\_365\_config) | Configuration for the Office 365 Data Connector | <pre>object({<br>    exchange_enabled   = optional(bool, true)<br>    sharepoint_enabled = optional(bool, true)<br>    teams_enabled      = optional(bool, true)<br>  })</pre> | <pre>{<br>  "exchange_enabled": true,<br>  "sharepoint_enabled": true,<br>  "teams_enabled": true<br>}</pre> | no |
+| <a name="input_office_365_config"></a> [office\_365\_config](#input\_office\_365\_config) | Configuration for the Office 365 Data Connector | <pre>object({<br>    exchange_enabled   = optional(bool, true)<br>    sharepoint_enabled = optional(bool, true)<br>    teams_enabled      = optional(bool, true)<br>  })</pre> | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |
 | <a name="input_tenant_id"></a> [tenant\_id](#input\_tenant\_id) | The tenant ID | `string` | `null` | no |
 
