@@ -42,11 +42,3 @@ output "network_watcher" {
   description = "The output of the Network Watcher."
   value       = azurerm_network_watcher.main
 }
-
-output "snet" {
-  value = [for v in var.subnets : can(cidrhost("${v.address_prefixes}", 0))]
-}
-
-output "subnet_config" {
-  value = var.subnets
-}
