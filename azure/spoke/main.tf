@@ -47,7 +47,6 @@ resource "azurerm_subnet" "main" {
       }
     }
   }
-
   depends_on = [module.network]
 }
 
@@ -95,6 +94,7 @@ resource "azurerm_route" "default" {
 
   name                = var.default_route_name
   resource_group_name = var.resource_group_name
+
   route_table_name    = azurerm_route_table.main[0].name
 
   address_prefix         = "0.0.0.0/0"

@@ -119,17 +119,21 @@ resource "azurerm_windows_web_app" "main" {
         }
       }
 
-      virtual_application {
-        physical_path = var.virtual_application["physical_path"]
-        preload       = var.virtual_application["preload"]
-        virtual_path  = var.virtual_application["virtual_path"]
-        dynamic "virtual_directory" {
-          for_each = var.virtual_application["virtual_directories"]
-          content {
-            physical_path = virtual_directory.physical_path
-            virtual_path  = virtual_directory.virtual_path
+      dynamic "virtual_application" {
+        for_each = var.virtual_application
+        content {
+          virtual_path  = virtual_application.value.virtual_path
+          preload       = virtual_application.value.preload
+          physical_path = virtual_application.value.physical_path
+          dynamic "virtual_directory" {
+            for_each = virtual_application.value.virtual_directories
+            content {
+              physical_path = virtual_directory.physical_path
+              virtual_path  = virtual_directory.virtual_path
+            }
           }
         }
+
       }
 
       dynamic "ip_restriction" {
@@ -308,17 +312,21 @@ resource "azurerm_windows_web_app_slot" "main" {
         tomcat_version               = var.application_stack.tomcat_version
       }
 
-      virtual_application {
-        physical_path = var.virtual_application["physical_path"]
-        preload       = var.virtual_application["preload"]
-        virtual_path  = var.virtual_application["virtual_path"]
-        dynamic "virtual_directory" {
-          for_each = var.virtual_application["virtual_directories"]
-          content {
-            physical_path = virtual_directory.physical_path
-            virtual_path  = virtual_directory.virtual_path
+      dynamic "virtual_application" {
+        for_each = var.virtual_application
+        content {
+          virtual_path  = virtual_application.value.virtual_path
+          preload       = virtual_application.value.preload
+          physical_path = virtual_application.value.physical_path
+          dynamic "virtual_directory" {
+            for_each = virtual_application.value.virtual_directories
+            content {
+              physical_path = virtual_directory.physical_path
+              virtual_path  = virtual_directory.virtual_path
+            }
           }
         }
+
       }
     }
   }

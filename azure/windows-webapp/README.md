@@ -54,7 +54,7 @@ Once deployed, management is expected to be through another medium, so changes t
 | <a name="input_sticky_connection_strings"></a> [sticky\_connection\_strings](#input\_sticky\_connection\_strings) | A list of sticky connection\_strings values. | `list(string)` | `[]` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | The subnet to deploy this app service to. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |
-| <a name="input_virtual_application"></a> [virtual\_application](#input\_virtual\_application) | Virtual application configuration for the app service. | <pre>object({<br>    physical_path = optional(string, "site\\wwwroot")<br>    preload       = optional(bool, false)<br>    virtual_path  = optional(string, "/")<br>    virtual_directories = optional(list(object({<br>      physical_path = string<br>      virtual_path  = string<br>    })), [])<br>  })</pre> | `{}` | no |
+| <a name="input_virtual_application"></a> [virtual\_application](#input\_virtual\_application) | Virtual application configuration for the app service. | <pre>set(object({<br>    virtual_path  = string<br>    physical_path = string<br>    preload       = optional(bool, false)<br>    virtual_directories = optional(list(object({<br>      physical_path = string<br>      virtual_path  = string<br>    })), [])<br>  }))</pre> | <pre>[<br>  {<br>    "physical_path": "site\\wwwroot",<br>    "virtual_path": "/"<br>  }<br>]</pre> | no |
 | <a name="input_zip_deploy_file"></a> [zip\_deploy\_file](#input\_zip\_deploy\_file) | Path to a zip file to deploy to the app service. | `string` | `null` | no |
 
 ## Outputs
