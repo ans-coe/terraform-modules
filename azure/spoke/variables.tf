@@ -33,7 +33,7 @@ variable "address_space" {
 
   validation {
     error_message = "Must be valid IPv4 CIDR."
-    condition     = can(cidrhost(one(var.address_space[*]), 0))
+    condition     = alltrue([for v in var.address_space : can(cidrhost(v, 0))])
   }
 }
 
@@ -41,6 +41,11 @@ variable "dns_servers" {
   description = "The DNS servers to use with this virtual network."
   type        = list(string)
   default     = []
+
+  validation {
+    error_message = "Value must be a valid IPv4 address."
+    condition     = alltrue([for v in var.dns_servers : can(cidrhost("${v}/32", 0))])
+  }
 }
 
 variable "include_azure_dns" {
@@ -93,6 +98,11 @@ variable "subnets" {
     associate_default_network_security_group = optional(bool, true)
   }))
   default = {}
+
+  validation {
+    error_message = "Must be valid IPv4 CIDR."
+    condition     = alltrue(flatten([for v in var.subnets : [for a in v.address_prefixes : can(cidrhost("${a}", 0))]]))
+  }
 }
 
 #########################
@@ -183,16 +193,10 @@ variable "default_route_name" {
 variable "default_route_ip" {
   description = "Default route IP Address."
   type        = string
-
-  default = null
-
-  validation {
-    condition     = can(cidrhost("${var.default_route_ip}/32", 0))
-    error_message = "Invalid IP address provided."
-  }
+  default     = null
 }
 
-variable "routes" {
+variable "extra_routes" {
   description = "Routes to add to a custom route table."
   type = map(object({
     address_prefix         = string

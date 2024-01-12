@@ -54,6 +54,9 @@ resource "azurerm_subnet" "main" {
 # Network Security Group
 #########################
 
+# Conditions for Route Table Association:
+# If var.subnet[].associate_default_network_security_group == true then the default nsg is associated with the subnet.
+
 module "network_security_group" {
   count  = var.create_default_network_security_group ? 1 : 0
   source = "../network-security-group"
@@ -61,11 +64,11 @@ module "network_security_group" {
   name                = var.network_security_group_name
   location            = var.location
   resource_group_name = var.resource_group_name
+  tags                = var.tags
 
-  # Awaiting future change to network_security_group module
-  # subnets = [for v in var.subnets : azurerm_subnet.main[v.key].id if v.associate_default_route_table == "true" ]
+  subnet_ids = local.subnet_assoc_network_security_group
 
-  tags           = var.tags
+
   rules_inbound  = var.nsg_rules_inbound
   rules_outbound = var.nsg_rules_outbound
 }
@@ -74,8 +77,12 @@ module "network_security_group" {
 # Route Table
 ##############
 
-resource "azurerm_route_table" "main" {
-  count = var.create_default_route_table ? 1 : 0
+# Conditions for Route Table Association:
+# If var.subnet[].associate_default_route_table == true then the default route table is associated with the subnet.
+
+module "route-table" {
+  count  = var.create_default_route_table ? 1 : 0
+  source = "../route-table"
 
   name                = var.route_table_name
   location            = var.location
@@ -83,53 +90,13 @@ resource "azurerm_route_table" "main" {
   tags                = var.tags
 
   disable_bgp_route_propagation = var.disable_bgp_route_propagation
-}
 
-#########
-# Routes
-#########
+  subnet_ids = local.subnet_assoc_route_table
 
-resource "azurerm_route" "default" {
-  count = var.create_default_route_table ? 1 : 0
+  default_route_name = var.default_route_name
+  default_route_ip   = var.default_route_ip
 
-  name                = var.default_route_name
-  resource_group_name = var.resource_group_name
-
-  route_table_name = azurerm_route_table.main[0].name
-
-  address_prefix         = "0.0.0.0/0"
-  next_hop_type          = "VirtualAppliance"
-  next_hop_in_ip_address = var.default_route_ip
-
-  depends_on = [azurerm_route_table.main]
-}
-
-resource "azurerm_route" "custom" {
-  for_each = var.routes
-
-  name                = each.key
-  resource_group_name = var.resource_group_name
-  route_table_name    = var.route_table_name
-
-  address_prefix         = each.value["address_prefix"]
-  next_hop_type          = each.value["next_hop_type"]
-  next_hop_in_ip_address = each.value["next_hop_in_ip_address"]
-
-  depends_on = [azurerm_route_table.main]
-}
-
-##########################
-# Route Table Association
-##########################
-
-# Conditions for Route Table Association:
-# If var.subnet[].associate_default_route_table = true then the default route table is associated with the subnet.
-
-resource "azurerm_subnet_route_table_association" "main" {
-  for_each = { for k, v in var.subnets : k => v if v.associate_default_route_table }
-
-  subnet_id      = azurerm_subnet.main[each.key].id
-  route_table_id = azurerm_route_table.main[0].id
+  routes = var.extra_routes
 }
 
 ##################
