@@ -70,8 +70,6 @@ This module deploys a spoke network in Azure.
 | <a name="output_nsg_rules_outbound"></a> [nsg\_rules\_outbound](#output\_nsg\_rules\_outbound) | The output of the Outbound NSG rules. |
 | <a name="output_route_table"></a> [route\_table](#output\_route\_table) | The output of the route table rsource. |
 | <a name="output_routes"></a> [routes](#output\_routes) | The output of all routes, default and custom. |
-| <a name="output_snet"></a> [snet](#output\_snet) | n/a |
-| <a name="output_subnet_config"></a> [subnet\_config](#output\_subnet\_config) | n/a |
 | <a name="output_subnets"></a> [subnets](#output\_subnets) | The output of the subnets. |
 
 ## Resources
