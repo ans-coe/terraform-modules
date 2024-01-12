@@ -239,5 +239,5 @@ variable "vnet_peering" {
     allow_gateway_transit        = optional(bool, false)
     use_remote_gateways          = optional(bool, true)
   }))
-  default = null
+  default = {}
 }
