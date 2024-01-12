@@ -187,7 +187,7 @@ variable "default_route_ip" {
   default = null
 
   validation {
-    condition     = can(regex("^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.default_route_ip))
+    condition     = can(cidrhost("${var.default_route_ip}/32", 0))
     error_message = "Invalid IP address provided."
   }
 }
