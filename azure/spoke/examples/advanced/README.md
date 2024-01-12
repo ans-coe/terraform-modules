@@ -1,8 +1,27 @@
-# Example - Spoke - Basic
+# Example - Spoke - Advanced
 
-This example is used to illustrate the basic usage of this module.  It deploys a single spoke network.
+This example is used to illustrate the basic usage of this module.
 
-For an advanced example use case of this module, please see: https://github.com/ans-coe/terraform-modules/tree/main/azure/hub/examples/advanced
+It deploys a single spoke network with the following resources:
+ - 3 Resource Groups
+ - 3 subnets
+   - snet-prod
+   - snet-app1 - not associated with an NSG
+   - snet-app2 - not associated with a route table
+ - Default Route Table (prod)
+   - Default Route
+   - 1 Extra Route
+ - App2 Route Table
+   - Default Rule
+ - Default Network Security Group (prod)
+   - 1 Inbound NSG Rule
+   - 1 Outbound NSG Rule
+ - App1 Network Security Group
+   - 3 Inbound Rules
+   - 2 Outbound Rules
+ - Network Watcher
+
+
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
