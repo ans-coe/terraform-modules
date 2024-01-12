@@ -25,8 +25,8 @@ variable "tags" {
 
 variable "subnet_ids" {
   description = "A list of Subnet IDs to associate with this Route Table."
-  type = list(string)
-  default = null
+  type        = list(string)
+  default     = null
 }
 
 ##############
@@ -50,22 +50,22 @@ variable "disable_bgp_route_propagation" {
 
 variable "route" {
   description = "Details of a route to be added to the Route Table with the name of the route as the key."
-  type        = map(object({
-    address_prefix = string
-    next_hop_type = optional(string, "VirtualAppliance")
+  type = map(object({
+    address_prefix         = string
+    next_hop_type          = optional(string, "VirtualAppliance")
     next_hop_in_ip_address = optional(string)
   }))
-  default     = {}
+  default = {}
 }
 
 variable "default_route_ip" {
   description = "The next hop IP address for the default route (0.0.0.0/0). If none is specified, no route is created."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "default_route_name" {
   description = "The name of the default route."
-  type = string
-  default = "default-route"  
+  type        = string
+  default     = "default-route"
 }

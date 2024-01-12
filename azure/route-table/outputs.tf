@@ -15,11 +15,11 @@ output "routes" {
 
 output "subnets" {
   description = "The output of subnets that are associated with this Route Table."
-  value = azurerm_route_table.main.subnets
-  
+  value       = azurerm_route_table.main.subnets
+
 }
 
 output "bgp_route_propagation_enabled" {
   description = "The output of whether BGP Route Propagation is enabled or not."
-  value = azurerm_route_table.main.disable_bgp_route_propagation
+  value       = azurerm_route_table.main.disable_bgp_route_propagation
 }
