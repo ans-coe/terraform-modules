@@ -1,8 +1,8 @@
-# Example - Spoke -Basic
+# Example - Spoke - Basic
 
 This example is used to illustrate the basic usage of this module.  It deploys a single spoke network.
 
-For an advanced example use case of this module, please see: https://github.com/ans-coe/terraform-modules/blob/e36aab78f84662cc792382162c384ff56451cad8/azure/hub/examples/advanced
+For an advanced example use case of this module, please see: https://github.com/ans-coe/terraform-modules/tree/main/azure/hub/examples/advanced
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -24,6 +24,8 @@ No outputs.
 
 | Name | Type |
 |------|------|
+| [azurerm_resource_group.app1](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [azurerm_resource_group.app2](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_resource_group.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 
 ## Modules
