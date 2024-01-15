@@ -49,10 +49,10 @@ output "flow_log" {
 
 output "flow_log_sa" {
   description = "The output of the flow log storage account."
-  value = azurerm_storage_account.flow_log_sa
+  value       = azurerm_storage_account.flow_log_sa
 }
 
 output "flow_log_law" {
   description = "The output of the flow log log analytics workspace."
-  value = azurerm_log_analytics_workspace.flow_log_law
+  value       = azurerm_log_analytics_workspace.flow_log_law
 }

@@ -19,9 +19,35 @@ module "network_security_group" {
   rules_inbound  = var.nsg_rules_inbound
   rules_outbound = var.nsg_rules_outbound
 
-  enable_flow_log = var.enable_flow_log
-  flow_log_config = local.flow_log_config
+
+  # flow_log_config = var.flow_log_config != null ? merge(
+  #   {
+  #     name = ""
+  #     storage_account_id = ""
+  #   },
+  #   var.flow_log_config,
+  #   {
+  #   network_watcher_name                = local.network_watcher_name
+  #   network_watcher_resource_group_name = local.network_watcher_resource_group_name
+  #   }
+  # ) : null
+
+  enable_flow_log = var.flow_log_config != null
+  flow_log_config = var.flow_log_config != null ? {
+    name                                = lookup(var.flow_log_config, "name", "") // using lookup to satisfy nsg module requirement
+    storage_account_id                  = local.create_flow_log_storage_account ? azurerm_storage_account.flow_log_sa[0].id : lookup(var.flow_log_config, "storage_account_id", "") // using lookup to satisfy nsg module requirement
+    network_watcher_name                = var.network_watcher_name != null ? var.network_watcher_name : "network-watcher-${var.location}"
+    network_watcher_resource_group_name = var.network_watcher_resource_group_name != null ? var.network_watcher_resource_group_name : var.resource_group_name
+    retention_days                      = var.flow_log_config.retention_days
+    enable_analytics                    = var.flow_log_config.enable_analytics
+    analytics_interval_minutes          = var.flow_log_config.analytics_interval_minutes
+    workspace_id                        = local.flow_log_workspace_id
+    workspace_region                    = var.location
+    workspace_resource_id               = local.flow_log_workspace_resource_id
+  } : null
+
 }
+
 
 ###########################
 # Flow Log Storage Account

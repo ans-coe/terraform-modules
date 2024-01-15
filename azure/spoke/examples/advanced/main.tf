@@ -100,19 +100,19 @@ module "spoke" {
     name = "rule-out-01"
   }]
 
-  network_watcher_name           = "nw-${local.resource_infix}-${local.location}"
+  network_watcher_name                = "nw-${local.resource_infix}-${local.location}"
   network_watcher_resource_group_name = azurerm_resource_group.nw.name
 
-  enable_flow_log = true
-  create_flow_log_storage_account = true
+  enable_flow_log                         = true
+  create_flow_log_storage_account         = true
   create_flow_log_log_analytics_workspace = true
 
   flow_log_config = {
-    name                   = "fl-${local.resource_infix}"
-    storage_account_name   = lower(replace("fl-sa-${local.resource_infix}", "/[-_]/", ""))
+    name                 = "fl-${local.resource_infix}"
+    storage_account_name = lower(replace("fl-sa-${local.resource_infix}", "/[-_]/", ""))
 
-    enable_analytics               = true
-    log_analytics_workspace_name   = "fl-law-${local.resource_infix}"
+    enable_analytics             = true
+    log_analytics_workspace_name = "fl-law-${local.resource_infix}"
   }
 }
 

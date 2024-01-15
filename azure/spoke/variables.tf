@@ -124,8 +124,8 @@ variable "network_security_group_name" {
 variable "nsg_rules_inbound" {
   description = "A list of objects describing a rule inbound."
   type = list(object({
-    rule = optional(string)
-    name = string
+    rule        = optional(string)
+    name        = string
     description = optional(string, "Created by Terraform.")
 
     access   = optional(string, "Allow")
@@ -146,8 +146,8 @@ variable "nsg_rules_inbound" {
 variable "nsg_rules_outbound" {
   description = "A list of objects describing a rule outbound."
   type = list(object({
-    rule = optional(string)
-    name = string
+    rule        = optional(string)
+    name        = string
     description = optional(string, "Created by Terraform.")
 
     access   = optional(string, "Allow")
@@ -168,38 +168,31 @@ variable "nsg_rules_outbound" {
 ############
 # Flow Logs
 ############
-
-variable "enable_flow_log" {
-  description = "Enable flog log for the network security group."
+variable "create_flow_log_storage_account" {
+  description = "Create a Storage Account for Flow Logs."
   type        = bool
   default     = false
 }
 
-variable "create_flow_log_storage_account" {
-  description = "Create a Storage Account for Flow Logs."
-  type = bool
-  default = false
-}
-
 variable "create_flow_log_log_analytics_workspace" {
   description = "Create a Log Analytics Workspace for Flow Logs Analytics."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "flow_log_config" {
   description = "Configuration for flow logs."
   type = object({
-    name                   = optional(string)
-    storage_account_name   = optional(string)
-    storage_account_id     = optional(string)
-    retention_days         = optional(number)
+    name                 = string
+    storage_account_name = optional(string)
+    storage_account_id   = optional(string)
+    retention_days       = optional(number)
 
-    enable_analytics               = optional(bool)
-    log_analytics_workspace_name   = optional(string)
-    analytics_interval_minutes     = optional(number)
-    workspace_resource_id          = optional(string)
-    workspace_id                   = optional(string)
+    enable_analytics             = optional(bool)
+    log_analytics_workspace_name = optional(string)
+    analytics_interval_minutes   = optional(number)
+    workspace_resource_id        = optional(string)
+    workspace_id                 = optional(string)
   })
   default = null
 }
