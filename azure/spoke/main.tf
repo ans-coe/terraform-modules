@@ -85,7 +85,7 @@ module "route-table" {
 # If var.network_watcher_resource_group_name is not specified, use var.resource_group_name
 
 resource "azurerm_network_watcher" "main" {
-  count = var.create_network_watcher ? 1 : 0
+  count = var.enable_network_watcher ? 1 : 0
 
   name                = local.network_watcher_name
   location            = var.location

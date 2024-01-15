@@ -53,5 +53,5 @@ module "spoke" {
     }
   }
 
-  create_network_watcher = false
+  enable_network_watcher = false
 }

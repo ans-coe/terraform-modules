@@ -44,7 +44,7 @@ output "network_watcher" {
 }
 
 output "flow_log" {
-  value = module.network_security_group[*].flow_log
+  value = module.network_security_group[0].flow_log
 }
 
 output "flow_log_sa" {

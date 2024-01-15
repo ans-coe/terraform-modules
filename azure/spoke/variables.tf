@@ -126,7 +126,6 @@ variable "nsg_rules_inbound" {
   type = list(object({
     rule = optional(string)
     name = string
-    # nsg_name    = string
     description = optional(string, "Created by Terraform.")
 
     access   = optional(string, "Allow")
@@ -149,7 +148,6 @@ variable "nsg_rules_outbound" {
   type = list(object({
     rule = optional(string)
     name = string
-    # nsg_name    = string
     description = optional(string, "Created by Terraform.")
 
     access   = optional(string, "Allow")
@@ -192,14 +190,14 @@ variable "create_flow_log_log_analytics_workspace" {
 variable "flow_log_config" {
   description = "Configuration for flow logs."
   type = object({
-    name                   = string
+    name                   = optional(string)
     storage_account_name   = optional(string)
     storage_account_id     = optional(string)
-    retention_days         = optional(number, 7)
+    retention_days         = optional(number)
 
-    enable_analytics               = optional(bool, false)
+    enable_analytics               = optional(bool)
     log_analytics_workspace_name   = optional(string)
-    analytics_interval_minutes     = optional(number, 10)
+    analytics_interval_minutes     = optional(number)
     workspace_resource_id          = optional(string)
     workspace_id                   = optional(string)
   })
@@ -249,7 +247,7 @@ variable "extra_routes" {
 # Network Watcher
 ##################
 
-variable "create_network_watcher" {
+variable "enable_network_watcher" {
   description = "Enables Network Watcher for the region & subscription."
   type        = bool
   default     = true
@@ -261,7 +259,7 @@ variable "network_watcher_name" {
   default     = null
 }
 
-variable "network_watcher_resource_group" {
+variable "network_watcher_resource_group_name" {
   description = "Name of the Network Watcher Resourece Group"
   type        = string
   default     = null

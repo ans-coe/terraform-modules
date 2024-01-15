@@ -20,19 +20,7 @@ module "network_security_group" {
   rules_outbound = var.nsg_rules_outbound
 
   enable_flow_log = var.enable_flow_log
-  flow_log_config = {
-    name                                = var.flow_log_config.name
-    network_watcher_name                = azurerm_network_watcher.main[count.index].name
-    network_watcher_resource_group_name = var.network_watcher_resource_group
-    storage_account_id                  = local.flow_log_sa_id
-    retention_days                      = var.flow_log_config.retention_days
-
-    enable_analytics               = var.flow_log_config.enable_analytics
-    analytics_interval_minutes     = var.flow_log_config.analytics_interval_minutes
-    workspace_id                   = local.flow_log_workspace_id
-    workspace_region               = var.location
-    workspace_resource_id          = local.flow_log_workspace_resource_id
-  }
+  flow_log_config = local.flow_log_config
 }
 
 ###########################

@@ -58,7 +58,7 @@ To disable Azure automatically enabling Network Watcher with it's default values
 | <a name="input_bgp_community"></a> [bgp\_community](#input\_bgp\_community) | The BGP Community for this virtual network. | `string` | `null` | no |
 | <a name="input_create_default_network_security_group"></a> [create\_default\_network\_security\_group](#input\_create\_default\_network\_security\_group) | Create a Network Security Group to associate with all subnets. | `bool` | `true` | no |
 | <a name="input_create_default_route_table"></a> [create\_default\_route\_table](#input\_create\_default\_route\_table) | Create a route table to associate with all subnets. | `bool` | `true` | no |
-| <a name="input_create_network_watcher"></a> [create\_network\_watcher](#input\_create\_network\_watcher) | Enables Network Watcher for the region & subscription. | `bool` | `true` | no |
+| <a name="input_enable_network_watcher"></a> [create\_network\_watcher](#input\_create\_network\_watcher) | Enables Network Watcher for the region & subscription. | `bool` | `true` | no |
 | <a name="input_ddos_protection_plan_id"></a> [ddos\_protection\_plan\_id](#input\_ddos\_protection\_plan\_id) | A DDoS Protection plan ID to assign to the virtual network. | `string` | `null` | no |
 | <a name="input_default_route_ip"></a> [default\_route\_ip](#input\_default\_route\_ip) | Default route IP Address. | `string` | `null` | no |
 | <a name="input_default_route_name"></a> [default\_route\_name](#input\_default\_route\_name) | Name of the default route. | `string` | `"default-route"` | no |

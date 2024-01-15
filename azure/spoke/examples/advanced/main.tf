@@ -35,6 +35,12 @@ resource "azurerm_resource_group" "main" {
   tags     = local.tags
 }
 
+resource "azurerm_resource_group" "nw" {
+  name     = "rg-${local.resource_infix}-nw-${local.location}"
+  location = local.location
+  tags     = local.tags
+}
+
 resource "azurerm_resource_group" "app1" {
   name     = "rg-${local.resource_infix}-app1"
   location = local.location
@@ -95,17 +101,17 @@ module "spoke" {
   }]
 
   network_watcher_name           = "nw-${local.resource_infix}-${local.location}"
-  network_watcher_resource_group = "rg-nw-${local.resource_infix}-${local.location}"
+  network_watcher_resource_group_name = azurerm_resource_group.nw.name
 
   enable_flow_log = true
+  create_flow_log_storage_account = true
+  create_flow_log_log_analytics_workspace = true
 
   flow_log_config = {
     name                   = "fl-${local.resource_infix}"
-    create_storage_account = true
     storage_account_name   = lower(replace("fl-sa-${local.resource_infix}", "/[-_]/", ""))
 
     enable_analytics               = true
-    create_log_analytics_workspace = true
     log_analytics_workspace_name   = "fl-law-${local.resource_infix}"
   }
 }
@@ -113,7 +119,7 @@ module "spoke" {
 module "app1-nsg" {
   source = "../../../network-security-group"
 
-  name                = "nsg-app1-${local.resource_infix}"
+  name                = "nsg-${local.resource_infix}-app1"
   location            = local.location
   resource_group_name = azurerm_resource_group.app1.name
   tags                = local.tags
@@ -153,7 +159,7 @@ module "app1-nsg" {
 module "app2-route-table" {
   source = "../../../route-table"
 
-  name                = "rt-app2-${local.resource_infix}"
+  name                = "rt-${local.resource_infix}-app2"
   resource_group_name = azurerm_resource_group.app2.name
   tags                = local.tags
 
