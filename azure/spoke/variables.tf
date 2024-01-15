@@ -168,17 +168,8 @@ variable "nsg_rules_outbound" {
 ############
 # Flow Logs
 ############
-variable "create_flow_log_storage_account" {
-  description = "Create a Storage Account for Flow Logs."
-  type        = bool
-  default     = false
-}
 
-variable "create_flow_log_log_analytics_workspace" {
-  description = "Create a Log Analytics Workspace for Flow Logs Analytics."
-  type        = bool
-  default     = false
-}
+
 
 variable "flow_log_config" {
   description = "Configuration for flow logs."
@@ -188,13 +179,19 @@ variable "flow_log_config" {
     storage_account_id   = optional(string)
     retention_days       = optional(number)
 
-    enable_analytics             = optional(bool)
-    log_analytics_workspace_name = optional(string)
-    analytics_interval_minutes   = optional(number)
-    workspace_resource_id        = optional(string)
-    workspace_id                 = optional(string)
+    enable_analytics                        = optional(bool)
+    create_flow_log_log_analytics_workspace = optional(bool, false)
+    log_analytics_workspace_name            = optional(string)
+    analytics_interval_minutes              = optional(number)
+    workspace_resource_id                   = optional(string)
+    workspace_id                            = optional(string)
   })
   default = null
+
+  validation {
+    condition     = var.flow_log_config != null ? (var.flow_log_config.storage_account_name != null) != (var.flow_log_config.storage_account_id != null) : true
+    error_message = "Either storage_account_name or storage_account_id must be set but not both"
+  }
 }
 
 ##############
