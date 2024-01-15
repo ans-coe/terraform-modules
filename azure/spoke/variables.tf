@@ -169,8 +169,6 @@ variable "nsg_rules_outbound" {
 # Flow Logs
 ############
 
-
-
 variable "flow_log_config" {
   description = "Configuration for flow logs."
   type = object({
@@ -179,18 +177,26 @@ variable "flow_log_config" {
     storage_account_id   = optional(string)
     retention_days       = optional(number)
 
-    enable_analytics                        = optional(bool)
-    create_flow_log_log_analytics_workspace = optional(bool, false)
-    log_analytics_workspace_name            = optional(string)
-    analytics_interval_minutes              = optional(number)
-    workspace_resource_id                   = optional(string)
-    workspace_id                            = optional(string)
+    enable_analytics             = optional(bool)
+    log_analytics_workspace_name = optional(string)
+    analytics_interval_minutes   = optional(number)
+    workspace_resource_id        = optional(string)
+    workspace_id                 = optional(string)
   })
   default = null
 
   validation {
     condition     = var.flow_log_config != null ? (var.flow_log_config.storage_account_name != null) != (var.flow_log_config.storage_account_id != null) : true
     error_message = "Either storage_account_name or storage_account_id must be set but not both"
+  }
+
+  validation {
+    condition = var.flow_log_config != null ? (
+      var.flow_log_config.enable_analytics ? (
+        var.flow_log_config.log_analytics_workspace_name != null) != ((var.flow_log_config.workspace_resource_id != null) && (var.flow_log_config.workspace_id != null)
+      ) : true
+    ) : true
+    error_message = "Either log_analytics_workspace_name is supplied to create a new Log Analytics Workspace or workspace_resource_id AND workspace_id from an existing Log Analytics Workspace must be specificed."
   }
 }
 
@@ -221,6 +227,11 @@ variable "default_route_ip" {
   description = "Default route IP Address."
   type        = string
   default     = null
+
+  validation {
+    error_message = "Value must be a valid IPv4 address."
+    condition     = can(cidrhost("${var.default_route_ip}/32", 0))
+  }
 }
 
 variable "extra_routes" {
@@ -231,6 +242,16 @@ variable "extra_routes" {
     next_hop_in_ip_address = optional(string)
   }))
   default = {}
+
+  validation {
+    error_message = "Must be valid IPv4 CIDR."
+    condition     = alltrue([for v in var.extra_routes : can(cidrhost(v.address_prefix, 0))])
+  }
+
+  validation {
+    error_message = "Value must be a valid IPv4 address."
+    condition     = alltrue([for v in var.extra_routes : can(cidrhost("${v.next_hop_in_ip_address}/32", 0))])
+  }
 }
 
 ##################

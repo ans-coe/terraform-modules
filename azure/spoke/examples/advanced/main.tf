@@ -90,22 +90,20 @@ module "spoke" {
   }
 
   network_security_group_name = "nsg-prod-${local.resource_infix}"
-  nsg_rules_inbound = [{
-    name     = "rule-in-01"
-    protocol = "Tcp"
-    ports    = ["443"]
-  }]
+  nsg_rules_inbound = [
+    {
+      rule     = "https"
+      name     = "AllowHttpsInBound"
+      priority = 105
+    }
+  ]
 
   nsg_rules_outbound = [{
-    name = "rule-out-01"
+    name = "AllowALLOutBound"
   }]
 
   network_watcher_name                = "nw-${local.resource_infix}-${local.location}"
   network_watcher_resource_group_name = azurerm_resource_group.nw.name
-
-  enable_flow_log                         = true
-  create_flow_log_storage_account         = true
-  create_flow_log_log_analytics_workspace = true
 
   flow_log_config = {
     name                 = "fl-${local.resource_infix}"

@@ -19,14 +19,16 @@ This module deploys a spoke network in Azure.
 - There is an option for peering to a hub vNet.  Peering from the hub vNet back to the Spoke is created when hub_peering.create_reverse_peering = true (default).
 
 ### Network Watcher
-Best practise is to create a Network Watcher per region & per subscription.  A Network Watcher is created if network_watcher_config.name is specified.
+Best practise is to create a Network Watcher per region & per subscription.  Network Watcher is enabled if var.enable_network_watcher is set to true.
+If a seperate Resource Group is not specified, Network Watcher will be deployed in the Resource Groups specified for the Virtual Network.
 
 #### Flog Log Storage Account
 If creating a storage account for flow logs, storage_account_name is required.
 If no storage account is created, a storage_account_id is required for flow logs.
 
 #### Flog Log Analytics
-If create_log_analytics_workspace is true, log_analytics_workspace_name is required.
+If enable_analytics is true, one of the below is required:
+If a new Log Analytics Workspace is needed, specify log_analytics_workspace_name.
 If using an existing log analytics workspace, workspace_resource_id (the Azure resource id) and workspace_id is required.
 
 #### Disable Automatic Network Watcher Creation.
@@ -65,7 +67,7 @@ To disable Azure automatically enabling Network Watcher with it's default values
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | The DNS servers to use with this virtual network. | `list(string)` | `[]` | no |
 | <a name="input_enable_network_watcher"></a> [enable\_network\_watcher](#input\_enable\_network\_watcher) | Enables Network Watcher for the region & subscription. | `bool` | `true` | no |
 | <a name="input_extra_routes"></a> [extra\_routes](#input\_extra\_routes) | Routes to add to a custom route table. | <pre>map(object({<br>    address_prefix         = string<br>    next_hop_type          = optional(string, "VirtualAppliance")<br>    next_hop_in_ip_address = optional(string)<br>  }))</pre> | `{}` | no |
-| <a name="input_flow_log_config"></a> [flow\_log\_config](#input\_flow\_log\_config) | Configuration for flow logs. | <pre>object({<br>    name                 = string<br>    storage_account_name = optional(string)<br>    storage_account_id   = optional(string)<br>    retention_days       = optional(number)<br><br>    enable_analytics                        = optional(bool)<br>    create_flow_log_log_analytics_workspace = optional(bool, false)<br>    log_analytics_workspace_name            = optional(string)<br>    analytics_interval_minutes              = optional(number)<br>    workspace_resource_id                   = optional(string)<br>    workspace_id                            = optional(string)<br>  })</pre> | `null` | no |
+| <a name="input_flow_log_config"></a> [flow\_log\_config](#input\_flow\_log\_config) | Configuration for flow logs. | <pre>object({<br>    name                 = string<br>    storage_account_name = optional(string)<br>    storage_account_id   = optional(string)<br>    retention_days       = optional(number)<br><br>    enable_analytics             = optional(bool)<br>    log_analytics_workspace_name = optional(string)<br>    analytics_interval_minutes   = optional(number)<br>    workspace_resource_id        = optional(string)<br>    workspace_id                 = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_include_azure_dns"></a> [include\_azure\_dns](#input\_include\_azure\_dns) | If using custom DNS servers, include Azure DNS IP as a DNS server. | `bool` | `false` | no |
 | <a name="input_network_security_group_name"></a> [network\_security\_group\_name](#input\_network\_security\_group\_name) | Name of the default Network Security Group | `string` | `"default-nsg"` | no |
 | <a name="input_network_watcher_name"></a> [network\_watcher\_name](#input\_network\_watcher\_name) | Name of the Network Watcher | `string` | `null` | no |
