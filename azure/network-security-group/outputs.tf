@@ -40,5 +40,5 @@ output "rules_outbound" {
 
 output "flow_log" {
   description = "The output of the flow log."
-  value = azurerm_network_watcher_flow_log.main
+  value = one(azurerm_network_watcher_flow_log.main[*])
 }

@@ -1,6 +1,6 @@
 # Example - Spoke - Advanced
 
-This example is used to illustrate the basic usage of this module.
+This example is used to illustrate the advanced usage of this module.
 
 It deploys a single spoke network with the following resources:
  - 3 Resource Groups

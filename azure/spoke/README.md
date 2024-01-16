@@ -15,7 +15,8 @@
 This module deploys a spoke network in Azure.
 - There is an option to create a single NSG that can be applied to subnets if the associate_default_network_security_group is true (default).
 - There is an option to create a single Route Table that can be applied to subnets if the associate_default_route_table is true (default).
-- A default route is created can be created which routes "0.0.0.0/0" > default_route_ip.
+- A default_route is created can be created which routes "0.0.0.0/0" > default_route_ip.
+- Additional routes can be added to a Route Table using extra_routes.
 - There is an option for peering to a hub vNet.  Peering from the hub vNet back to the Spoke is created when hub_peering.create_reverse_peering = true (default).
 
 ### Network Watcher

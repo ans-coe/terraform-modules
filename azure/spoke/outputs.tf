@@ -35,7 +35,7 @@ output "route_table" {
 
 output "routes" {
   description = "The output of all routes, default and custom."
-  value       = module.route-table[0].routes
+  value       = one(module.route-table).routes
 }
 
 output "network_watcher" {

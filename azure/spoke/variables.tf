@@ -32,7 +32,7 @@ variable "address_space" {
   type        = list(string)
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "Values for address_space must be valid IPv4 CIDR."
     condition     = alltrue([for v in var.address_space : can(cidrhost(v, 0))])
   }
 }
@@ -43,7 +43,7 @@ variable "dns_servers" {
   default     = []
 
   validation {
-    error_message = "Value must be a valid IPv4 address."
+    error_message = "Values for dns_servers must be valid IPv4 addresses."
     condition     = alltrue([for v in var.dns_servers : can(cidrhost("${v}/32", 0))])
   }
 }
@@ -100,7 +100,7 @@ variable "subnets" {
   default = {}
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "Values for address_prefixes must be valid IPv4 CIDR."
     condition     = alltrue(flatten([for v in var.subnets : [for a in v.address_prefixes : can(cidrhost(a, 0))]]))
   }
 }
@@ -229,7 +229,7 @@ variable "default_route_ip" {
   default     = null
 
   validation {
-    error_message = "Value must be a valid IPv4 address."
+    error_message = "Value for default_route_ip must be a valid IPv4 address."
     condition     = can(cidrhost("${var.default_route_ip}/32", 0))
   }
 }
@@ -244,12 +244,12 @@ variable "extra_routes" {
   default = {}
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
+    error_message = "Value for next_hop_in_ip_address be valid IPv4 CIDR."
     condition     = alltrue([for v in var.extra_routes : can(cidrhost(v.address_prefix, 0))])
   }
 
   validation {
-    error_message = "Value must be a valid IPv4 address."
+    error_message = "Value for next_hop_in_ip_address must be a valid IPv4 address."
     condition     = alltrue([for v in var.extra_routes : can(cidrhost("${v.next_hop_in_ip_address}/32", 0))])
   }
 }

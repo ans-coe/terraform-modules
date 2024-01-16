@@ -53,7 +53,7 @@ resource "azurerm_log_analytics_workspace" "nsg" {
 }
 
 resource "azurerm_storage_account" "nsg" {
-  name                = lower(replace("${local.resource_prefix}sa1", "/[-_]/", ""))
+  name                = lower(replace("${local.resource_prefix}sa1${random_integer.sa.result}", "/[-_]/", ""))
   location            = local.location
   resource_group_name = azurerm_resource_group.nsg.name
   tags                = local.tags
@@ -111,4 +111,9 @@ module "nsg" {
     workspace_region      = azurerm_log_analytics_workspace.nsg.location
     workspace_resource_id = azurerm_log_analytics_workspace.nsg.id
   }
+}
+
+resource "random_integer" "sa" {
+  min = 1
+  max = 999
 }
