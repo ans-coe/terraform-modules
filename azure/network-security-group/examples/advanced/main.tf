@@ -9,6 +9,8 @@ terraform {
   }
 }
 
+provider "random" {}  
+
 provider "azurerm" {
   features {
     resource_group {
