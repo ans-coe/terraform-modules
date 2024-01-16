@@ -50,6 +50,7 @@ No outputs.
 | [azurerm_resource_group.app2](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_resource_group.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_resource_group.nw](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
+| [random_integer.sa](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) | resource |
 
 ## Modules
 
