@@ -48,7 +48,7 @@ output "private_ip" {
 }
 
 output "key_vault_id" {
-  description = "The idea of the keyvault is one is set"
+  description = "The id of the keyvault if one is set"
   value = try(coalesce(
     try(azurerm_key_vault.main[0].id, null), // try use the created keyvault ID first
     var.key_vault_id,                        // next, try to use the variable inputted
