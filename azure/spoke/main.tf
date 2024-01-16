@@ -106,7 +106,7 @@ resource "azurerm_virtual_network_peering" "main" {
   name                      = format("%s_to_%s", module.network.name, each.key)
   virtual_network_name      = module.network.id
   resource_group_name       = var.resource_group_name
-  remote_virtual_network_id = each.key
+  remote_virtual_network_id = each.value["id"]
 
   allow_virtual_network_access = each.value["allow_virtual_network_access"]
   allow_forwarded_traffic      = each.value["allow_forwarded_traffic"]
@@ -118,7 +118,7 @@ resource "azurerm_virtual_network_peering" "reverse" {
   for_each = { for k, v in var.vnet_peering : k => v if v.create_reverse_peering }
 
   name                      = format("%s_to_%s", each.key, module.network.name)
-  virtual_network_name      = each.key
+  virtual_network_name      = each.value["id"]
   resource_group_name       = each.value["vnet_resource_group_name"]
   remote_virtual_network_id = module.network.id
 
