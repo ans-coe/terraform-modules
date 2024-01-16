@@ -127,5 +127,7 @@ resource "azurerm_virtual_network_peering" "reverse" {
   allow_gateway_transit        = true
   use_remote_gateways          = false
 
-  provider = each.value["provider_alias"]
+  provider = {
+    vnet_provider = each.value["provider_alias"]
+  }
 }
