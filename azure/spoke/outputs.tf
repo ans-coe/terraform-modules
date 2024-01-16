@@ -18,17 +18,41 @@ output "network_security_group" {
   value       = module.network_security_group
 }
 
+output "nsg_rules_inbound" {
+  description = "The output of the Inbound NSG rules."
+  value       = module.network_security_group[0].rules_inbound
+}
+
+output "nsg_rules_outbound" {
+  description = "The output of the Outbound NSG rules."
+  value       = module.network_security_group[0].rules_outbound
+}
+
 output "route_table" {
   description = "The output of the route table rsource."
-  value       = azurerm_route_table.main
+  value       = one(module.route-table)
 }
 
 output "routes" {
   description = "The output of all routes, default and custom."
-  value       = local.routes
+  value       = one(module.route-table).routes
 }
 
 output "network_watcher" {
   description = "The output of the Network Watcher."
   value       = azurerm_network_watcher.main
+}
+
+output "flow_log" {
+  value = module.network_security_group[0].flow_log
+}
+
+output "flow_log_sa" {
+  description = "The output of the flow log storage account."
+  value       = azurerm_storage_account.flow_log_sa
+}
+
+output "flow_log_law" {
+  description = "The output of the flow log log analytics workspace."
+  value       = azurerm_log_analytics_workspace.flow_log_law
 }

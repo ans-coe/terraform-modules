@@ -35,7 +35,7 @@ There is the option to create a "default route" which routes all IPs (0.0.0.0/0)
 | <a name="input_default_route_name"></a> [default\_route\_name](#input\_default\_route\_name) | The name of the default route. | `string` | `"default-route"` | no |
 | <a name="input_disable_bgp_route_propagation"></a> [disable\_bgp\_route\_propagation](#input\_disable\_bgp\_route\_propagation) | Disable Route Propagation for the Route Table. True = Disabled | `bool` | `true` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
-| <a name="input_route"></a> [route](#input\_route) | Details of a route to be added to the Route Table with the name of the route as the key. | <pre>map(object({<br>    address_prefix         = string<br>    next_hop_type          = optional(string, "VirtualAppliance")<br>    next_hop_in_ip_address = optional(string)<br>  }))</pre> | `{}` | no |
+| <a name="input_routes"></a> [routes](#input\_routes) | Details of a route to be added to the Route Table with the name of the route as the key. | <pre>map(object({<br>    address_prefix         = string<br>    next_hop_type          = optional(string, "VirtualAppliance")<br>    next_hop_in_ip_address = optional(string)<br>  }))</pre> | `{}` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | A list of Subnet IDs to associate with this Route Table. | `list(string)` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |
 

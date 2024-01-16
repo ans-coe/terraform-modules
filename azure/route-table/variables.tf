@@ -48,7 +48,7 @@ variable "disable_bgp_route_propagation" {
 # Routes
 #########
 
-variable "route" {
+variable "routes" {
   description = "Details of a route to be added to the Route Table with the name of the route as the key."
   type = map(object({
     address_prefix         = string
@@ -56,6 +56,11 @@ variable "route" {
     next_hop_in_ip_address = optional(string)
   }))
   default = {}
+
+  validation {
+    error_message = "address_prefix must be valid IPv4 CIDR."
+    condition     = alltrue(flatten([for v in var.routes : can(cidrhost("${v.address_prefix}", 0))]))
+  }
 }
 
 variable "default_route_ip" {
@@ -64,10 +69,9 @@ variable "default_route_ip" {
   default     = null
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
-    condition     = can(cidrhost(one(var.address_space[*]), 0))
+    error_message = "Must be a valid IPv4 address."
+    condition     = can(cidrhost("${var.default_route_ip}/32", 0))
   }
-
 }
 
 variable "default_route_name" {

@@ -32,8 +32,8 @@ variable "address_space" {
   type        = list(string)
 
   validation {
-    error_message = "Must be valid IPv4 CIDR."
-    condition     = can(cidrhost(one(var.address_space[*]), 0))
+    error_message = "Values for address_space must be valid IPv4 CIDR."
+    condition     = alltrue([for v in var.address_space : can(cidrhost(v, 0))])
   }
 }
 
@@ -41,6 +41,11 @@ variable "dns_servers" {
   description = "The DNS servers to use with this virtual network."
   type        = list(string)
   default     = []
+
+  validation {
+    error_message = "Values for dns_servers must be valid IPv4 addresses."
+    condition     = alltrue([for v in var.dns_servers : can(cidrhost("${v}/32", 0))])
+  }
 }
 
 variable "include_azure_dns" {
@@ -93,6 +98,11 @@ variable "subnets" {
     associate_default_network_security_group = optional(bool, true)
   }))
   default = {}
+
+  validation {
+    error_message = "Values for address_prefixes must be valid IPv4 CIDR."
+    condition     = alltrue(flatten([for v in var.subnets : [for a in v.address_prefixes : can(cidrhost(a, 0))]]))
+  }
 }
 
 #########################
@@ -114,9 +124,8 @@ variable "network_security_group_name" {
 variable "nsg_rules_inbound" {
   description = "A list of objects describing a rule inbound."
   type = list(object({
-    rule = optional(string)
-    name = string
-    # nsg_name    = string
+    rule        = optional(string)
+    name        = string
     description = optional(string, "Created by Terraform.")
 
     access   = optional(string, "Allow")
@@ -137,9 +146,8 @@ variable "nsg_rules_inbound" {
 variable "nsg_rules_outbound" {
   description = "A list of objects describing a rule outbound."
   type = list(object({
-    rule = optional(string)
-    name = string
-    # nsg_name    = string
+    rule        = optional(string)
+    name        = string
     description = optional(string, "Created by Terraform.")
 
     access   = optional(string, "Allow")
@@ -155,6 +163,41 @@ variable "nsg_rules_outbound" {
     destination_application_security_group_ids = optional(set(string), null)
   }))
   default = []
+}
+
+############
+# Flow Logs
+############
+
+variable "flow_log_config" {
+  description = "Configuration for flow logs."
+  type = object({
+    name                 = string
+    storage_account_name = optional(string)
+    storage_account_id   = optional(string)
+    retention_days       = optional(number)
+
+    enable_analytics             = optional(bool)
+    log_analytics_workspace_name = optional(string)
+    analytics_interval_minutes   = optional(number)
+    workspace_resource_id        = optional(string)
+    workspace_id                 = optional(string)
+  })
+  default = null
+
+  validation {
+    condition     = var.flow_log_config != null ? (var.flow_log_config.storage_account_name != null) != (var.flow_log_config.storage_account_id != null) : true
+    error_message = "Either storage_account_name or storage_account_id must be set but not both"
+  }
+
+  validation {
+    condition = var.flow_log_config != null ? (
+      var.flow_log_config.enable_analytics ? (
+        var.flow_log_config.log_analytics_workspace_name != null) != ((var.flow_log_config.workspace_resource_id != null) && (var.flow_log_config.workspace_id != null)
+      ) : true
+    ) : true
+    error_message = "Either log_analytics_workspace_name is supplied to create a new Log Analytics Workspace or workspace_resource_id AND workspace_id from an existing Log Analytics Workspace must be specificed."
+  }
 }
 
 ##############
@@ -183,16 +226,15 @@ variable "default_route_name" {
 variable "default_route_ip" {
   description = "Default route IP Address."
   type        = string
-
-  default = null
+  default     = null
 
   validation {
+    error_message = "Value for default_route_ip must be a valid IPv4 address."
     condition     = can(cidrhost("${var.default_route_ip}/32", 0))
-    error_message = "Invalid IP address provided."
   }
 }
 
-variable "routes" {
+variable "extra_routes" {
   description = "Routes to add to a custom route table."
   type = map(object({
     address_prefix         = string
@@ -200,13 +242,23 @@ variable "routes" {
     next_hop_in_ip_address = optional(string)
   }))
   default = {}
+
+  validation {
+    error_message = "Value for next_hop_in_ip_address be valid IPv4 CIDR."
+    condition     = alltrue([for v in var.extra_routes : can(cidrhost(v.address_prefix, 0))])
+  }
+
+  validation {
+    error_message = "Value for next_hop_in_ip_address must be a valid IPv4 address."
+    condition     = alltrue([for v in var.extra_routes : can(cidrhost("${v.next_hop_in_ip_address}/32", 0))])
+  }
 }
 
 ##################
 # Network Watcher
 ##################
 
-variable "create_network_watcher" {
+variable "enable_network_watcher" {
   description = "Enables Network Watcher for the region & subscription."
   type        = bool
   default     = true
@@ -218,7 +270,7 @@ variable "network_watcher_name" {
   default     = null
 }
 
-variable "network_watcher_resource_group" {
+variable "network_watcher_resource_group_name" {
   description = "Name of the Network Watcher Resourece Group"
   type        = string
   default     = null

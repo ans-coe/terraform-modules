@@ -22,7 +22,7 @@ The network security group will be associated to a provided list of subnet ids.
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.0 |
 
 ## Inputs
@@ -32,7 +32,7 @@ The network security group will be associated to a provided list of subnet ids.
 | <a name="input_name"></a> [name](#input\_name) | Name of the created network security group. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | n/a | yes |
 | <a name="input_enable_flow_log"></a> [enable\_flow\_log](#input\_enable\_flow\_log) | Enable flog log for this network security group. | `bool` | `false` | no |
-| <a name="input_flow_log_config"></a> [flow\_log\_config](#input\_flow\_log\_config) | Configuration for flow logs. | <pre>object({<br>    version                             = optional(number, 2)<br>    network_watcher_name                = string<br>    network_watcher_resource_group_name = string<br>    storage_account_id                  = string<br>    retention_days                      = optional(number, 7)<br><br>    enable_analytics           = optional(bool, false)<br>    analytics_interval_minutes = optional(number, 10)<br>    workspace_resource_id      = optional(string)<br>    workspace_region           = optional(string)<br>    workspace_id               = optional(string)<br>  })</pre> | `null` | no |
+| <a name="input_flow_log_config"></a> [flow\_log\_config](#input\_flow\_log\_config) | Configuration for flow logs. | <pre>object({<br>    name                                = string<br>    version                             = optional(number, 2)<br>    network_watcher_name                = string<br>    network_watcher_resource_group_name = string<br>    storage_account_id                  = string<br>    retention_days                      = optional(number, 7)<br><br>    enable_analytics           = optional(bool, false)<br>    analytics_interval_minutes = optional(number, 10)<br>    workspace_resource_id      = optional(string)<br>    workspace_region           = optional(string)<br>    workspace_id               = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_priority_interval"></a> [priority\_interval](#input\_priority\_interval) | The interval to use when moving onto the next rules' priority. | `number` | `5` | no |
 | <a name="input_rules_inbound"></a> [rules\_inbound](#input\_rules\_inbound) | A list of objects describing a rule inbound. | <pre>list(object({<br>    rule        = optional(string)<br>    name        = string<br>    description = optional(string, "Created by Terraform.")<br><br>    access   = optional(string, "Allow")<br>    priority = optional(number)<br><br>    protocol = optional(string, "*")<br>    ports    = optional(set(string), ["*"])<br><br>    source_prefixes      = optional(set(string), ["*"])<br>    destination_prefixes = optional(set(string), ["VirtualNetwork"])<br><br>    source_application_security_group_ids      = optional(set(string), null)<br>    destination_application_security_group_ids = optional(set(string), null)<br>  }))</pre> | `[]` | no |

@@ -37,3 +37,8 @@ output "rules_outbound" {
   description = "The output of the Outbound NSG rules."
   value       = azurerm_network_security_rule.outbound
 }
+
+output "flow_log" {
+  description = "The output of the flow log."
+  value = one(azurerm_network_watcher_flow_log.main[*])
+}

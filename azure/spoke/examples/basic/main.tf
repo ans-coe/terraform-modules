@@ -1,16 +1,20 @@
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.6.0"
 
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.85"
+      version = "~> 3.86"
     }
   }
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 locals {
@@ -49,5 +53,5 @@ module "spoke" {
     }
   }
 
-  create_network_watcher = false
+  enable_network_watcher = false
 }

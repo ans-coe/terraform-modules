@@ -83,7 +83,7 @@ resource "azurerm_network_security_rule" "outbound" {
 resource "azurerm_network_watcher_flow_log" "main" {
   count = var.enable_flow_log ? 1 : 0
 
-  name                      = "${var.name}-fl"
+  name                      = var.flow_log_config["name"]
   network_security_group_id = azurerm_network_security_group.main.id
   tags                      = var.tags
 
