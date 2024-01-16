@@ -124,10 +124,8 @@ resource "azurerm_virtual_network_peering" "reverse" {
 
   allow_virtual_network_access = each.value["allow_virtual_network_access"]
   allow_forwarded_traffic      = each.value["allow_forwarded_traffic"]
-  allow_gateway_transit        = true
-  use_remote_gateways          = false
+  allow_gateway_transit        = each.value["allow_reverse_gateway_transit"]
+  use_remote_gateways          = each.value["use_remote_gateways"]
 
-  provider = {
-    vnet_provider = each.value["provider_alias"]
-  }
+  provider = azurerm.vnet_peering_provider
 }
