@@ -107,7 +107,7 @@ module "spoke" {
 
   flow_log_config = {
     name                 = "fl-${local.resource_infix}"
-    storage_account_name = lower(replace("fl-sa-${local.resource_infix}", "/[-_]/", ""))
+    storage_account_name = lower(replace("fl-sa-${local.resource_infix}${random_integer.sa.result}", "/[-_]/", ""))
 
     enable_analytics             = true
     log_analytics_workspace_name = "fl-law-${local.resource_infix}"
@@ -164,4 +164,9 @@ module "app2-route-table" {
   subnet_ids = [module.spoke.subnets["snet-app2"].id]
 
   default_route_ip = "10.10.4.30"
+}
+
+resource "random_integer" "sa" {
+  min = 1
+  max = 999
 }
