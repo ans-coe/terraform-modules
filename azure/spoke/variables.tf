@@ -281,7 +281,7 @@ variable "network_watcher_resource_group_name" {
 ##########
 
 variable "vnet_peering" {
-  description = "Config for peering to the other hub/spoke vnets."
+  description = "Config for peering to the other hub/spoke vnets. The remote VNet name is the key."
   type = map(object({
     id                           = string
     create_reverse_peering       = optional(bool, true)
