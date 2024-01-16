@@ -284,6 +284,7 @@ variable "vnet_peering" {
   description = "Config for peering to the other hub/spoke vnets. The remote VNet name is the key."
   type = map(object({
     id                           = string
+    provider_alias               = optional(string)
     create_reverse_peering       = optional(bool, true)
     vnet_resource_group_name     = optional(string)
     allow_virtual_network_access = optional(bool, true)
