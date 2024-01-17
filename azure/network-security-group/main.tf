@@ -113,5 +113,5 @@ resource "azurerm_network_watcher_flow_log" "main" {
     }
   }
 
-  depends_on = [ azurerm_network_security_group.main ]
+  depends_on = [azurerm_network_security_group.main]
 }
