@@ -67,6 +67,7 @@ You can only enable WAF_v2 by setting the waf_configuration variable. If this va
 | <a name="output_id"></a> [id](#output\_id) | ID of the application gateway. |
 | <a name="output_identity_id"></a> [identity\_id](#output\_identity\_id) | Identity of the AppGW if KV is used. |
 | <a name="output_identity_principal_id"></a> [identity\_principal\_id](#output\_identity\_principal\_id) | principal\_id of the AppGW if KV is used. |
+| <a name="output_key_vault_id"></a> [key\_vault\_id](#output\_key\_vault\_id) | The id of the keyvault if one is set |
 | <a name="output_location"></a> [location](#output\_location) | Location of the application gateway. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the application gateway. |
 | <a name="output_private_ip"></a> [private\_ip](#output\_private\_ip) | Private IP Address |

@@ -247,7 +247,21 @@ variable "rewrite_rule_set" {
     )
   )
   default = {}
-  // To-Do: Validation - "Either path or query_string must be set or both"
+  validation {
+    condition = alltrue([
+      for k1, v1 in var.rewrite_rule_set
+      : alltrue([
+        for k2, v2 in v1
+        : v2.url != [] ?
+        alltrue([
+          for v3 in v2.url
+          : ((v3.path != null) || (v3.query_string != null))
+        ])
+        : true // set true if v2.url is an empty list.
+      ])
+    ])
+    error_message = "url.path or url.query_string (or both) must be set if url is used"
+  }
 }
 
 ## Backend Variables
