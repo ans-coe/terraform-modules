@@ -12,15 +12,21 @@
   - [Modules](#modules)
 
 ## Usage
-This module deploys a spoke network in Azure.
-- There is an option to create a single NSG that can be applied to subnets if the associate_default_network_security_group is true (default).
-- There is an option to create a single Route Table that can be applied to subnets if the associate_default_route_table is true (default).
-- A default_route is created can be created which routes "0.0.0.0/0" > default_route_ip.
-- Additional routes can be added to a Route Table using extra_routes.
-- There is an option for peering to a hub vNet.  Peering from the hub vNet back to the Spoke is created when hub_peering.create_reverse_peering = true (default).
+This module deploys a spoke network vNet and accompanying resources in Azure.
 
-### Network Watcher
-Best practise is to create a Network Watcher per region & per subscription.  Network Watcher is enabled if var.enable_network_watcher is set to true.
+### `Network Security Group` 
+There is an option to create a single NSG that can be applied to subnets if the associate_default_network_security_group is true (default).
+
+### `Route Table`
+There is an option to create a single Route Table that can be applied to subnets if the associate_default_route_table is true (default).
+- A default_route can be created which routes "0.0.0.0/0" > default_route_ip.
+- Additional routes can be added to a Route Table using extra_routes.
+
+### `Peering`
+There is an option for peering the spoke vNet to another remote vNet.  Peering is only set up one way, from the spoke vNet to the remote vNet.  Peering from the remote vNet to the spoke vNet will need to be configured seperate to this module.
+
+### `Network Watcher`
+Best practise is to create a Network Watcher per region & per subscription.  Network Watcher is enabled if var.enable_network_watcher is set to true (default).
 If a seperate Resource Group is not specified, Network Watcher will be deployed in the Resource Groups specified for the Virtual Network.
 
 #### Flog Log Storage Account

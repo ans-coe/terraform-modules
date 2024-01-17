@@ -97,35 +97,16 @@ resource "azurerm_network_watcher" "main" {
 # Peering 
 ##########
 
-# Conditions for reverse peering
-# If vnet_peering.create_reverse_peering = true (default) > create peering from remote vnet back to the new spoke vnet.
-
 resource "azurerm_virtual_network_peering" "main" {
   for_each = var.vnet_peering
-
-  name                      = format("%s_to_%s", module.network.name, each.key)
+  
+  name                      = format("%s_to_%s", module.network.name, var.vnet_peering.remote_vnet_name)
   virtual_network_name      = module.network.name
-  resource_group_name       = var.resource_group_name
-  remote_virtual_network_id = each.value["id"]
+  resource_group_name       = module.network.resource_group_name
+  remote_virtual_network_id = var.vnet_peering.remote_vnet_id
 
-  allow_virtual_network_access = each.value["allow_virtual_network_access"]
-  allow_forwarded_traffic      = each.value["allow_forwarded_traffic"]
-  allow_gateway_transit        = each.value["allow_gateway_transit"]
-  use_remote_gateways          = each.value["use_remote_gateways"]
-}
-
-resource "azurerm_virtual_network_peering" "reverse" {
-  for_each = { for k, v in var.vnet_peering : k => v if v.create_reverse_peering }
-
-  name                      = format("%s_to_%s", each.key, module.network.name)
-  virtual_network_name      = each.key
-  resource_group_name       = each.value["vnet_resource_group_name"]
-  remote_virtual_network_id = module.network.id
-
-  allow_virtual_network_access = each.value["allow_virtual_network_access"]
-  allow_forwarded_traffic      = each.value["allow_forwarded_traffic"]
-  allow_gateway_transit        = each.value["allow_reverse_gateway_transit"]
-  use_remote_gateways          = each.value["use_remote_gateways"]
-
-  provider = azurerm.vnet_peering_provider
+  allow_virtual_network_access = var.vnet_peering.allow_virtual_network_access
+  allow_forwarded_traffic      = var.vnet_peering.allow_forwarded_traffic
+  allow_gateway_transit        = var.vnet_peering.allow_gateway_transit
+  use_remote_gateways          = var.vnet_peering.use_remote_gateways
 }
