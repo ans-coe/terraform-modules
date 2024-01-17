@@ -99,14 +99,14 @@ resource "azurerm_network_watcher" "main" {
 
 resource "azurerm_virtual_network_peering" "main" {
   for_each = var.vnet_peering
-  
-  name                      = format("%s_to_%s", module.network.name, var.vnet_peering.remote_vnet_name)
+
+  name                      = format("%s_to_%s", module.network.name, each.key)
   virtual_network_name      = module.network.name
   resource_group_name       = module.network.resource_group_name
-  remote_virtual_network_id = var.vnet_peering.remote_vnet_id
+  remote_virtual_network_id = each.value["remote_vnet_id"]
 
-  allow_virtual_network_access = var.vnet_peering.allow_virtual_network_access
-  allow_forwarded_traffic      = var.vnet_peering.allow_forwarded_traffic
-  allow_gateway_transit        = var.vnet_peering.allow_gateway_transit
-  use_remote_gateways          = var.vnet_peering.use_remote_gateways
+  allow_virtual_network_access = each.value["allow_virtual_network_access"]
+  allow_forwarded_traffic      = each.value["allow_forwarded_traffic"]
+  allow_gateway_transit        = each.value["allow_gateway_transit"]
+  use_remote_gateways          = each.value["use_remote_gateways"]
 }

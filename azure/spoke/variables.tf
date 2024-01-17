@@ -281,14 +281,13 @@ variable "network_watcher_resource_group_name" {
 ##########
 
 variable "vnet_peering" {
-  description = "Configuration for peering spoke vNet to another hub/spoke vnet."
+  description = "Configuration for peering spoke vNet to another hub/spoke vnet with the remote vNet name as the key."
   type = map(object({
-    remote_vnet_name                         = string
-    remote_vnet_id                           = string
+    remote_vnet_id               = string
     allow_virtual_network_access = optional(bool, true)
     allow_forwarded_traffic      = optional(bool, true)
     allow_gateway_transit        = optional(bool, true)
     use_remote_gateways          = optional(bool, false)
   }))
-  default = null
+  default = {}
 }

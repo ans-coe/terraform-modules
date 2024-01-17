@@ -23,7 +23,7 @@ There is an option to create a single Route Table that can be applied to subnets
 - Additional routes can be added to a Route Table using extra_routes.
 
 ### `Peering`
-There is an option for peering the spoke vNet to another remote vNet.  Peering is only set up one way, from the spoke vNet to the remote vNet.  Peering from the remote vNet to the spoke vNet will need to be configured seperate to this module.
+There is an option for peering the spoke vNet to other remote vNets.  Peering is only set up one way, from the spoke vNet to the remote vNet.  Peering from the remote vNet to the spoke vNet will need to be configured seperate to this module.
 
 ### `Network Watcher`
 Best practise is to create a Network Watcher per region & per subscription.  Network Watcher is enabled if var.enable_network_watcher is set to true (default).
@@ -85,7 +85,7 @@ To disable Azure automatically enabling Network Watcher with it's default values
 | <a name="input_route_table_name"></a> [route\_table\_name](#input\_route\_table\_name) | Name of the default Route Table | `string` | `"default-rt"` | no |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | Subnets to create in this virtual network with the map name indicating the subnet name. | <pre>map(object({<br>    address_prefixes                              = list(string)<br>    service_endpoints                             = optional(list(string))<br>    private_endpoint_network_policies_enabled     = optional(bool)<br>    private_link_service_network_policies_enabled = optional(bool)<br>    delegations = optional(map(<br>      object({<br>        service = string<br>        actions = list(string)<br>      })<br>    ), {})<br>    associate_default_route_table            = optional(bool, true)<br>    associate_default_network_security_group = optional(bool, true)<br>  }))</pre> | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |
-| <a name="input_vnet_peering"></a> [vnet\_peering](#input\_vnet\_peering) | Config for peering to the other hub/spoke vnets. | <pre>map(object({<br>    id                           = string<br>    create_reverse_peering       = optional(bool, true)<br>    vnet_resource_group_name     = optional(string)<br>    allow_virtual_network_access = optional(bool, true)<br>    allow_forwarded_traffic      = optional(bool, true)<br>    allow_gateway_transit        = optional(bool, false)<br>    use_remote_gateways          = optional(bool, true)<br>  }))</pre> | `{}` | no |
+| <a name="input_vnet_peering"></a> [vnet\_peering](#input\_vnet\_peering) | Configuration for peering spoke vNet to another hub/spoke vnet with the remote vNet name as the key. | <pre>map(object({<br>    remote_vnet_id               = string<br>    allow_virtual_network_access = optional(bool, true)<br>    allow_forwarded_traffic      = optional(bool, true)<br>    allow_gateway_transit        = optional(bool, true)<br>    use_remote_gateways          = optional(bool, false)<br>  }))</pre> | `{}` | no |
 
 ## Outputs
 
@@ -113,7 +113,6 @@ To disable Azure automatically enabling Network Watcher with it's default values
 | [azurerm_storage_account.flow_log_sa](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_subnet.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
 | [azurerm_virtual_network_peering.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
-| [azurerm_virtual_network_peering.reverse](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_peering) | resource |
 
 ## Modules
 
