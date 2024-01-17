@@ -112,4 +112,6 @@ resource "azurerm_network_watcher_flow_log" "main" {
       days    = var.flow_log_config["retention_days"]
     }
   }
+
+  depends_on = [ azurerm_network_security_group.main ]
 }
