@@ -20,12 +20,12 @@ output "network_security_group" {
 
 output "nsg_rules_inbound" {
   description = "The output of the Inbound NSG rules."
-  value       = try(one(module.network_security_group[0].rules_inbound), null)
+  value       = try(module.network_security_group[0].rules_inbound, null) 
 }
 
 output "nsg_rules_outbound" {
   description = "The output of the Outbound NSG rules."
-  value       = try(one(module.network_security_group[0].rules_outbound), null)
+  value       = try(module.network_security_group[0].rules_outbound, null)
 }
 
 output "route_table" {
@@ -44,7 +44,7 @@ output "network_watcher" {
 }
 
 output "flow_log" {
-  value = try(one(module.network_security_group[0].flow_log), null)
+  value = try(module.network_security_group[0].flow_log, null)
 }
 
 output "flow_log_sa" {
