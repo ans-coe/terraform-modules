@@ -65,6 +65,17 @@ module "example" {
     example_cert = {}
   }
 
+  rewrite_rule_set = {
+    example_rule_set = {
+      example_rule = {
+        rule_sequence = 100
+        request_header_configuration = {
+          "Cache-Control" = "no-cache" // headers are key, value pair
+        }
+      }
+    }
+  }
+
   ssl_policy = "AppGwSslPolicy20220101"
 
   http_listeners = {
@@ -93,6 +104,7 @@ module "example" {
           priority                   = 200
           backend_address_pool_name  = "default_backend"
           backend_http_settings_name = "default_settings"
+          rewrite_rule_set_name      = "example_rule_set"
           path_rules = {
             example_path = {
               paths                     = ["/path", "/another-path"]

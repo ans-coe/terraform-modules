@@ -137,6 +137,7 @@ variable "http_listeners" {
         paths                      = list(string)
         backend_address_pool_name  = string
         backend_http_settings_name = optional(string, "default_settings")
+        rewrite_rule_set_name      = optional(string)
       })))
       redirect_configuration = optional(object({
         redirect_type        = optional(string, "Permanent")
@@ -147,6 +148,7 @@ variable "http_listeners" {
       }))
       backend_address_pool_name  = optional(string)
       backend_http_settings_name = optional(string, "default_settings")
+      rewrite_rule_set_name      = optional(string)
       priority                   = optional(number, 100)
       })),
       {
@@ -219,6 +221,46 @@ variable "http_listeners" {
       ])
     ])
     error_message = "If backend_address_pool_name is set, redirect_configuration must not be set."
+  }
+}
+
+variable "rewrite_rule_set" {
+  description = "Map of rewrite rule sets"
+  type = map( // key = rewrite_rule_set name
+    map(      // key rewrite_rule name
+      object({
+        rule_sequence = number
+        condition = optional(list(object({
+          variable    = string
+          pattern     = string
+          ignore_case = optional(bool)
+          negate      = optional(bool)
+        })), [])
+        request_header_configuration  = optional(map(string), {}) // key = header_name, value = header_value
+        response_header_configuration = optional(map(string), {}) // key = header_name, value = header_value
+        url = optional(list(object({
+          path         = optional(string)
+          query_string = optional(string)
+          reroute      = optional(bool)
+        })), [])
+      })
+    )
+  )
+  default = {}
+  validation {
+    condition = alltrue([
+      for k1, v1 in var.rewrite_rule_set
+      : alltrue([
+        for k2, v2 in v1
+        : v2.url != [] ?
+        alltrue([
+          for v3 in v2.url
+          : ((v3.path != null) || (v3.query_string != null))
+        ])
+        : true // set true if v2.url is an empty list.
+      ])
+    ])
+    error_message = "url.path or url.query_string (or both) must be set if url is used"
   }
 }
 
