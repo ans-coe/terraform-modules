@@ -16,7 +16,7 @@ locals {
     example = "privatelink"
     usage   = "demo"
   }
-  resource_prefix = "tfmex-pl-wwa"
+  resource_prefix = "tfmex-pl-aswa"
 }
 
 resource "azurerm_resource_group" "webapp" {

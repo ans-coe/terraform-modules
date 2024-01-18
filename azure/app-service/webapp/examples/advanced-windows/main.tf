@@ -12,11 +12,13 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "app-service-webapp"
-    example = "advanced"
-    usage   = "demo"
+    module     = "app-service-webapp"
+    example    = "advanced-windows"
+    usage      = "demo"
+    department = "technical"
+    owner      = "Dee Vops"
   }
-  resource_prefix = "tfmex-adv-wwa"
+  resource_prefix = "tfmex-adv-win-aswa"
 }
 
 resource "azurerm_resource_group" "webapp" {

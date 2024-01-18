@@ -153,6 +153,23 @@ resource "azurerm_linux_web_app" "main" {
       auth_settings_v2,
       app_settings["MICROSOFT_PROVIDER_AUTHENTICATION_SECRET"],
     ]
+    precondition {
+      error_message = "If os_type is Linux, you can only use Linux Application Stack Variables"
+      condition = local.is_linux ? alltrue([for attr in local.application_stack_keys
+        : !contains(
+          [ // List of invalid attributes (aka Windows only ones)
+            "current_stack",
+            "dotnet_core_version",
+            "tomcat_version",
+            "java_embedded_server_enabled",
+            "python"
+        ], attr)]
+      ) : true
+    }
+    precondition {
+      error_message = "If os_type is Linux, virtual_application must be unset (or an empty set)"
+      condition     = local.is_linux ? var.virtual_application == null : true
+    }
   }
 }
 

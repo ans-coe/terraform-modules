@@ -70,7 +70,7 @@ resource "azurerm_windows_web_app" "main" {
     }
 
     dynamic "virtual_application" {
-      for_each = var.virtual_application
+      for_each = var.virtual_application != null ? var.virtual_application : []
       content {
         virtual_path  = virtual_application.value.virtual_path
         preload       = virtual_application.value.preload
@@ -170,6 +170,20 @@ resource "azurerm_windows_web_app" "main" {
       auth_settings_v2,
       app_settings["MICROSOFT_PROVIDER_AUTHENTICATION_SECRET"],
     ]
+
+    precondition {
+      error_message = "If os_type is Windows, you can only use Windows Application Stack Variables"
+      condition = !local.is_linux ? alltrue([for attr in local.application_stack_keys
+        : !contains(
+          [ // List of invalid attributes (aka Linux only ones)
+            "go_version",
+            "java_server",
+            "java_server_version",
+            "python_version",
+            "ruby_version"
+        ], attr)]
+      ) : true
+    }
   }
 }
 
@@ -266,7 +280,7 @@ resource "azurerm_windows_web_app_slot" "main" {
       }
 
       dynamic "virtual_application" {
-        for_each = var.virtual_application
+        for_each = var.virtual_application != null ? var.virtual_application : []
         content {
           virtual_path  = virtual_application.value.virtual_path
           preload       = virtual_application.value.preload

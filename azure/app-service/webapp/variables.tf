@@ -58,7 +58,7 @@ variable "zip_deploy_file" {
 }
 
 variable "application_stack" {
-  description = "A map detailing the application stack."
+  description = "An object detailing the application stack."
   type = object({
     docker_image_name        = optional(string)
     docker_registry_url      = optional(string)

@@ -16,7 +16,7 @@ locals {
     example = "basic"
     usage   = "demo"
   }
-  resource_prefix = "tfmex-basic-wwa"
+  resource_prefix = "tfmex-basic-aswa"
 }
 
 resource "azurerm_resource_group" "webapp" {
