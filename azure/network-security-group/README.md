@@ -45,6 +45,7 @@ The network security group will be associated to a provided list of subnet ids.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_flow_log"></a> [flow\_log](#output\_flow\_log) | The output of the flow log. |
 | <a name="output_id"></a> [id](#output\_id) | Resource ID of the network security group. |
 | <a name="output_location"></a> [location](#output\_location) | Location of the network security group. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the network security group. |

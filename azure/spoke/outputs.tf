@@ -20,12 +20,12 @@ output "network_security_group" {
 
 output "nsg_rules_inbound" {
   description = "The output of the Inbound NSG rules."
-  value       = module.network_security_group[0].rules_inbound
+  value       = try(module.network_security_group[0].rules_inbound, null) 
 }
 
 output "nsg_rules_outbound" {
   description = "The output of the Outbound NSG rules."
-  value       = module.network_security_group[0].rules_outbound
+  value       = try(module.network_security_group[0].rules_outbound, null)
 }
 
 output "route_table" {
@@ -40,11 +40,11 @@ output "routes" {
 
 output "network_watcher" {
   description = "The output of the Network Watcher."
-  value       = azurerm_network_watcher.main
+  value       = one(azurerm_network_watcher.main)
 }
 
 output "flow_log" {
-  value = module.network_security_group[0].flow_log
+  value = try(module.network_security_group[0].flow_log, null)
 }
 
 output "flow_log_sa" {
