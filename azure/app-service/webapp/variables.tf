@@ -2,32 +2,31 @@
 # Global Variables
 ###################
 
+variable "name" {
+  description = "The name of the app service."
+  type        = string
+}
+
+variable "resource_group_name" {
+  description = "The name of the resource group this module will use."
+  type        = string
+}
+
 variable "location" {
   description = "The location of created resources."
   type        = string
   default     = "uksouth"
 }
 
-variable "resource_group_name" {
-  description = "The name of the resource group this module will use."
-  type        = string
-  default     = null
-}
-
 variable "tags" {
   description = "Tags applied to created resources."
   type        = map(string)
-  default     = null
+  default     = {}
 }
 
 ##############
 # App Service
 ##############
-
-variable "name" {
-  description = "The name of the app service."
-  type        = string
-}
 
 variable "plan" {
   description = "Object detailing the plan, if creating one with this module."
@@ -280,10 +279,9 @@ variable "cert_options" {
   type = object({
     pfx_blob = optional(string)
     password = optional(string)
-    // Setting Keyvault to empty map will cause the creation of Keyvault with default name and example cert
     key_vault = optional(object({
       certificate_name      = string           // Use this value to set the name of the certificate
-      key_vault_custom_name = optional(string) // If you wanted to name the keyvault something different to the default.
+      key_vault_custom_name = optional(string) // If you wanted to name the Key Vault something different to the default.
       key_vault_secret_id   = optional(string) // If the cert already exists, it can be provided here
     }))
   })
