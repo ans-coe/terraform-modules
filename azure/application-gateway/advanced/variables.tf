@@ -252,7 +252,7 @@ variable "rewrite_rule_set" {
       for k1, v1 in var.rewrite_rule_set
       : alltrue([
         for k2, v2 in v1
-        : length(v2.url) >= 1 ?
+        : length(v2.url) != 0 ?
         alltrue([
           for v3 in v2.url
           : ((v3.path != null) || (v3.query_string != null))
