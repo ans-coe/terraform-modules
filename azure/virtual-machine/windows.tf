@@ -22,6 +22,7 @@ resource "azurerm_windows_virtual_machine" "main" {
   license_type          = var.license_type
   patch_assessment_mode = var.patch_assessment_mode
   patch_mode            = var.patch_mode
+  hotpatching_enabled   = var.hotpatching_enabled
 
   os_disk {
     name                 = var.os_disk["name"] == null ? "osdisk-${var.name}" : var.os_disk["name"]

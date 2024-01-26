@@ -177,6 +177,12 @@ variable "patch_mode" {
   default     = null
 }
 
+variable "hotpatching_enabled" {
+  description = "Should the VM be patched without requiring a reboot?  Hotpatching can only be enabled if the patch_mode is set to AutomaticByPlatform, the provision_vm_agent is set to true, your source_image_reference references a hotpatching enabled image, and the VM's size is set to a Azure generation 2 VM."
+  type        = string
+  default     = false
+}
+
 variable "os_disk" {
   description = "OS Disk configuration."
   type = object({
