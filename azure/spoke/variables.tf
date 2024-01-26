@@ -286,8 +286,8 @@ variable "vnet_peering" {
     remote_vnet_id               = string
     allow_virtual_network_access = optional(bool, true)
     allow_forwarded_traffic      = optional(bool, true)
-    allow_gateway_transit        = optional(bool, true)
-    use_remote_gateways          = optional(bool, false)
+    allow_gateway_transit        = optional(bool, false)
+    use_remote_gateways          = optional(bool, true)
   }))
   default = {}
 }
