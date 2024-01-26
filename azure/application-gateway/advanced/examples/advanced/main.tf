@@ -129,7 +129,10 @@ module "example" {
     }
   }
 
+  // This is the global waf_configuration
   // By setting waf_configuration, we change the sku to WAF_v2
+  // If waf_configuration is removed, the application gateway will need replacing
+  // otherwise Terraform will try to delete the firewall policy before removing it from the AGW
   waf_configuration = {
     policy_name            = "agw-waf-policy"
     firewall_mode          = "Prevention"
@@ -157,6 +160,31 @@ module "example" {
             match_variables    = [{ variable_name = "RemoteAddr" }]
           }
         ]
+      }
+    }
+  }
+
+  // This is the listener waf_configurations, you can set multiple configurations and apply each one to multiple listeners.
+  // However, a listener can itself only have 1 policy.
+  listener_waf_configuration = {
+    "agw-waf-policy_https_listener" = {
+      associated_listeners   = ["https_listener"]
+      firewall_mode          = "Prevention"
+      enable_OWASP           = true // default value
+      OWASP_rule_set_version = "3.2"
+      custom_rules = {
+        example_rule = {
+          priority = 5
+          match_conditions = [
+            {
+              // Rule to only allow local traffic
+              match_values       = ["192.168.1.0/24", "10.0.0.0/24"]
+              operator           = "IPMatch"
+              negation_condition = true
+              match_variables    = [{ variable_name = "RemoteAddr" }]
+            }
+          ]
+        }
       }
     }
   }

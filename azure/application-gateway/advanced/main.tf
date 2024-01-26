@@ -10,109 +10,6 @@ resource "azurerm_public_ip" "main" {
   sku               = "Standard"
 }
 
-resource "azurerm_web_application_firewall_policy" "main" {
-  count = var.waf_configuration != null ? 1 : 0
-
-  name                = var.waf_configuration.policy_name
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = var.tags
-
-  dynamic "custom_rules" {
-    for_each = var.waf_configuration.custom_rules
-    content {
-      name      = custom_rules.key
-      priority  = custom_rules.value["priority"]
-      rule_type = "MatchRule"
-      action    = custom_rules.value["action"]
-      dynamic "match_conditions" {
-        for_each = custom_rules.value["match_conditions"]
-
-        content {
-          dynamic "match_variables" {
-            for_each = match_conditions.value["match_variables"]
-            content {
-              variable_name = match_variables.value["variable_name"]
-              selector      = match_variables.value["selector"]
-            }
-          }
-          match_values       = match_conditions.value["match_values"]
-          operator           = match_conditions.value["operator"]
-          negation_condition = match_conditions.value["negation_condition"]
-          transforms         = match_conditions.value["transforms"]
-        }
-      }
-    }
-  }
-
-  managed_rules {
-    dynamic "exclusion" {
-      for_each = var.waf_configuration.managed_rule_exclusion
-      content {
-        match_variable          = exclusion.value["match_variable"]
-        selector_match_operator = exclusion.value["selector_match_operator"]
-        selector                = exclusion.value["selector"]
-      }
-    }
-
-    ## OWASP
-    dynamic "managed_rule_set" {
-      for_each = var.waf_configuration.enable_OWASP ? [0] : []
-      content {
-        type    = "OWASP"
-        version = var.waf_configuration.OWASP_rule_set_version
-        dynamic "rule_group_override" {
-          for_each = var.waf_configuration.OWASP_rule_group_override
-          content {
-            rule_group_name = rule_group_override.key
-            dynamic "rule" {
-              for_each = rule_group_override.value
-              content {
-                id      = rule.key
-                enabled = rule.value["enabled"]
-                action  = rule.value["action"]
-              }
-            }
-          }
-        }
-      }
-    }
-
-    ## Microsoft_BotManagerRuleSet
-
-    dynamic "managed_rule_set" {
-      for_each = var.waf_configuration.enable_Microsoft_BotManagerRuleSet ? [0] : []
-      content {
-        type    = "Microsoft_BotManagerRuleSet"
-        version = var.waf_configuration.Microsoft_BotManagerRuleSet_rule_set_version
-        dynamic "rule_group_override" {
-          for_each = var.waf_configuration.Microsoft_BotManagerRuleSet_rule_group_override
-          content {
-            rule_group_name = rule_group_override.key
-            dynamic "rule" {
-              for_each = rule_group_override.value
-              content {
-                id      = rule.key
-                enabled = rule.value["enabled"]
-                action  = rule.value["action"]
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  policy_settings {
-    enabled = true
-    mode    = var.waf_configuration.firewall_mode
-    # Global parameters
-    request_body_check          = true
-    max_request_body_size_in_kb = var.waf_configuration.max_request_body_size_kb
-    file_upload_limit_in_mb     = var.waf_configuration.file_upload_limit_mb
-  }
-}
-
 resource "azurerm_application_gateway" "main" {
   name                = var.name
   resource_group_name = var.resource_group_name
@@ -129,8 +26,8 @@ resource "azurerm_application_gateway" "main" {
   }
 
   sku {
-    name     = var.waf_configuration != null ? "WAF_v2" : "Standard_v2"
-    tier     = var.waf_configuration != null ? "WAF_v2" : "Standard_v2"
+    name     = local.use_waf ? "WAF_v2" : "Standard_v2"
+    tier     = local.use_waf ? "WAF_v2" : "Standard_v2"
     capacity = local.enable_autoscaling ? null : var.sku.capacity
   }
 
@@ -228,6 +125,7 @@ resource "azurerm_application_gateway" "main" {
         length(regexall("^(\\*\\.){1}([\\w-]+\\.)+[\\w-]+$", try(http_listener.value["host_names"][0], ""))) > 0 // OR check if the single hostname is a wildcard
       ]) ? http_listener.value["host_names"] : null
       ssl_certificate_name = http_listener.value["ssl_certificate_name"]
+      firewall_policy_id   = try(azurerm_web_application_firewall_policy.listener[local.listener_policy_map[http_listener.key]].id, null)
     }
   }
 
@@ -275,6 +173,7 @@ resource "azurerm_application_gateway" "main" {
           backend_address_pool_name  = path_rule.value["backend_address_pool_name"]
           backend_http_settings_name = path_rule.value["backend_http_settings_name"]
           rewrite_rule_set_name      = path_rule.value["rewrite_rule_set_name"]
+          firewall_policy_id         = try(azurerm_web_application_firewall_policy.path_rule[local.path_rule_policy_map[path_rule.key]].id, null)
         }
       }
     }
