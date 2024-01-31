@@ -252,7 +252,7 @@ variable "rewrite_rule_set" {
       for k1, v1 in var.rewrite_rule_set
       : alltrue([
         for k2, v2 in v1
-        : v2.url != [] ?
+        : length(v2.url) != 0 ?
         alltrue([
           for v3 in v2.url
           : ((v3.path != null) || (v3.query_string != null))
@@ -326,7 +326,7 @@ variable "probe" {
 # WAF Variable
 
 variable "waf_configuration" {
-  description = "Rules Defining The WAF"
+  description = "Defining the WAF policy globally on the App Gateway"
   type = object({
     policy_name   = string
     firewall_mode = optional(string, "Prevention")
@@ -369,4 +369,119 @@ variable "waf_configuration" {
     })), {})
   })
   default = null
+}
+
+variable "listener_waf_configuration" {
+  description = "Defining the WAF policy per listener"
+  type = map(object({ // Key = policy name
+    associated_listeners = list(string)
+    firewall_mode        = optional(string, "Prevention")
+
+    enable_OWASP           = optional(bool, true)
+    OWASP_rule_set_version = optional(string, "3.2")
+    OWASP_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
+    enable_Microsoft_BotManagerRuleSet           = optional(bool, false)
+    Microsoft_BotManagerRuleSet_rule_set_version = optional(string, "1.0")
+    Microsoft_BotManagerRuleSet_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
+    file_upload_limit_mb     = optional(number, 500)
+    max_request_body_size_kb = optional(number, 128)
+    managed_rule_exclusion = optional(list(object({
+      match_variable          = string
+      selector_match_operator = optional(string)
+      selector                = optional(string)
+    })), [])
+    custom_rules = optional(map(object({
+      priority = number
+      action   = optional(string, "Block")
+      match_conditions = list(object({
+        match_values       = list(string)
+        operator           = optional(string, "Contains")
+        negation_condition = optional(bool, true)
+        transforms         = optional(list(string))
+
+        match_variables = optional(list(object({
+          variable_name = string
+          selector      = optional(string)
+        })), [{ variable_name = "RemoteAddr" }])
+      }))
+    })), {})
+  }))
+  default = null
+
+  validation {
+    condition = (
+      length(flatten( // Get a list of all listeners
+        [for k, v in coalesce(var.listener_waf_configuration, {}) : v.associated_listeners]
+      )) ==                    // List of listeners must be equal to the lists of listeners with duplicates removed.
+      length(distinct(flatten( // Get a list of listeners with duplicates removed
+        [for k, v in coalesce(var.listener_waf_configuration, {}) : v.associated_listeners]
+      )))
+    )
+    error_message = "A listener is defined in multiple policies. This module only supports assigning a listener to a single policy."
+  }
+}
+
+variable "path_rule_waf_configuration" {
+  description = "Defining the WAF policy per path rule"
+  type = map(object({ // Key = policy name
+    associated_path_rules = list(string)
+    firewall_mode         = optional(string, "Prevention")
+
+    enable_OWASP           = optional(bool, true)
+    OWASP_rule_set_version = optional(string, "3.2")
+    OWASP_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
+    enable_Microsoft_BotManagerRuleSet           = optional(bool, false)
+    Microsoft_BotManagerRuleSet_rule_set_version = optional(string, "1.0")
+    Microsoft_BotManagerRuleSet_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
+    file_upload_limit_mb     = optional(number, 500)
+    max_request_body_size_kb = optional(number, 128)
+    managed_rule_exclusion = optional(list(object({
+      match_variable          = string
+      selector_match_operator = optional(string)
+      selector                = optional(string)
+    })), [])
+    custom_rules = optional(map(object({
+      priority = number
+      action   = optional(string, "Block")
+      match_conditions = list(object({
+        match_values       = list(string)
+        operator           = optional(string, "Contains")
+        negation_condition = optional(bool, true)
+        transforms         = optional(list(string))
+
+        match_variables = optional(list(object({
+          variable_name = string
+          selector      = optional(string)
+        })), [{ variable_name = "RemoteAddr" }])
+      }))
+    })), {})
+  }))
+  default = null
+  validation {
+    condition = (
+      length(flatten( // Get a list of all path_rules
+        [for k, v in coalesce(var.path_rule_waf_configuration, {}) : v.associated_path_rules]
+      )) ==                    // List of path_rules must be equal to the lists of path_rules with duplicates removed.
+      length(distinct(flatten( // Get a list of path_rules with duplicates removed
+        [for k, v in coalesce(var.path_rule_waf_configuration, {}) : v.associated_path_rules]
+      )))
+    )
+    error_message = "A path_rule is defined in multiple policies. This module only supports assigning a path_rule to a single policy."
+  }
 }
