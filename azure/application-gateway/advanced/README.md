@@ -17,6 +17,8 @@ To set auto-scaling, set sku.max_capacity to a value greater than sku.capacity.
 
 Default Port Names are: `"http"` for 80 and `"https"` for 443.
 
+To use `private_frontend` (Frontend IP Configuration for Private IP Address), Azure requires a static IP address on v2 SKU. Azure does not accept "Dynamic" as an option for Frontend IP (despite Terraform AzureRM docs giving the option for this). Therefore, to enable a private frontend IP address, you would set `private_ip` and this will create the private frontend for you.
+
 ### WAF_v2
 
 You can only enable WAF_v2 by setting any of the `waf_configuration`, `listener_waf_configuration` or `path_rule_waf_configuration` variables. If any of these variable are set, then the WAF is enabled, otherwise the WAF is disabled.
