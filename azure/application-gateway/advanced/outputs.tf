@@ -43,7 +43,7 @@ output "private_ip" {
   value = one([
     for ipconfig in azurerm_application_gateway.main.frontend_ip_configuration[*]
     : ipconfig.private_ip_address
-    if ipconfig.private_ip_address != ""
+    if ipconfig.name == "private_frontend"
   ])
 }
 

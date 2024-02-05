@@ -71,13 +71,13 @@ resource "azurerm_application_gateway" "main" {
   }
 
   dynamic "frontend_ip_configuration" {
-    for_each = var.private_ip != null ? [0] : []
+    for_each = var.enable_private_frontend_ip_configuration ? [0] : []
 
     content {
       name                          = "private_frontend"
       private_ip_address            = var.private_ip
       subnet_id                     = var.subnet_id
-      private_ip_address_allocation = "Static"
+      private_ip_address_allocation = var.private_ip != null ? "Static" : "Dynamic"
     }
   }
 

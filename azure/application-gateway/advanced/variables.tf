@@ -41,8 +41,14 @@ variable "sku" {
 
 ## Frontend Variables
 
+variable "enable_private_frontend_ip_configuration" {
+  description = "Bool to enable private_frontend_ip_configuration. Disable this if you don't want private_frontend created."
+  type = bool
+  default = true
+}
+
 variable "private_ip" {
-  description = "A private IP address for the frontend"
+  description = "A private IP address for the frontend if private_frontend_ip_configuration is enabled"
   type        = string
   default     = null
 }
