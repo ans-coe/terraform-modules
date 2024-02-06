@@ -9,18 +9,20 @@ provider "azurerm" {
   }
 }
 
-variable "password" {
-  description = "VM Password."
-  type        = string
-  sensitive   = true
-}
+# variable "password" {
+#   description = "VM Password."
+#   type        = string
+#   sensitive   = true
+# }
 
 locals {
   location = "uksouth"
   tags = {
-    module  = "virtual-machine"
-    example = "basic"
-    usage   = "demo"
+    module     = "virtual-machine"
+    example    = "basic"
+    usage      = "demo"
+    department = "technical"
+    owner      = "Dee Vops"
   }
   resource_prefix = "vm-bas-demo-uks-03"
 }
@@ -57,7 +59,21 @@ module "vm" {
   tags                = local.tags
 
   computer_name = "vm"
-  password      = var.password
+  password      = "ASfdskjh3&^"
   subnet_id     = azurerm_subnet.vm.id
   size          = "Standard_B2s"
+
+  enable_vm_diagnostics = true
+
+  diagnostics_storage_account_name = azurerm_storage_account.diag.name
+}
+
+resource "azurerm_storage_account" "diag" {
+  name                     = "asfdgsdafgerfavavbad"
+  resource_group_name      = azurerm_resource_group.vm.name
+  location                 = azurerm_resource_group.vm.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  tags = local.tags
 }
