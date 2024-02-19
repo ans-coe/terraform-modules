@@ -92,7 +92,7 @@ module "network" {
 #############
 
 resource "azurerm_private_dns_zone" "main" {
-  for_each = var.private_dns_domains
+  for_each = toset(local.private_dns_zones)
 
   name                = each.key
   resource_group_name = azurerm_resource_group.main.name

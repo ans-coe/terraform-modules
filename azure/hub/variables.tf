@@ -242,8 +242,18 @@ variable "network_watcher_resource_group" {
 
 variable "private_dns_domains" {
   description = "A set of private domains to configure."
-  type        = set(string)
+  type        = list(string)
   default     = []
+}
+
+#######################
+# Private Endpoint DNS 
+#######################
+
+variable "create_private_endpoint_private_dns_zones" {
+  description = "Add the list of private endpoint private dns zones to the list of private dns zones to create."
+  type = bool
+  default = false
 }
 
 ##########################

@@ -9,11 +9,11 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module     = "hub-hub-example"
-    example    = "advanced"
-    usage      = "demo"
-    department = "technical"
-    owner      = "Dee Vops"
+    module      = "hub-hub-example"
+    example     = "advanced"
+    usage       = "demo"
+    department  = "technical"
+    owner       = "Dee Vops"
   }
   resource_prefix = "tfmex-adv"
 }
@@ -64,19 +64,10 @@ module "hub" {
     outbound_subnet_prefix = "10.0.14.240/28"
   }
 
-  spoke_peering = {
-    spoke_mgmt = {
-      id = module.spoke_mgmt.id
-    }
-    spoke_prd = {
-      id = module.spoke_prd.id
-    }
-  }
+  create_private_endpoint_private_dns_zones = true
 
-  network_watcher_config = {
-    name                = "nw_uks-${local.resource_prefix}"
-    resource_group_name = "rg-nw-${local.resource_prefix}"
-  }
+  network_watcher_name = "nw_uks-${local.resource_prefix}"
+  network_watcher_resource_group = "rg-nw-${local.resource_prefix}"
 }
 
 module "firewall-policy" {
@@ -117,9 +108,8 @@ module "spoke_mgmt" {
   }
 
   hub_peering = {
-    #hub = {
-      id = module.hub.id
-    #}
+    id = module.hub.id
+    use_remote_gateways = false
   }
 
   network_security_group_name = "nsg-spoke-mgmt-${local.resource_prefix}"
@@ -144,9 +134,8 @@ module "spoke_prd" {
   }
 
   hub_peering = {
-    #hub = {
-      id = module.hub.id
-    #}
+    id = module.hub.id
+    use_remote_gateways = false
   }
 
   network_security_group_name = "nsg-spoke-prd-${local.resource_prefix}"
