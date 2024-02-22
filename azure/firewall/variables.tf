@@ -94,5 +94,5 @@ variable "firewall_policy_id" {
 variable "firewall_zones" {
   description = "Specifies a list of Availability Zones in which this Azure Firewall should be located."
   type        = list(string)
-  default     = null
+  default     = [1, 2, 3]
 }

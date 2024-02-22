@@ -10,6 +10,7 @@ resource "azurerm_public_ip" "main" {
 
   allocation_method = "Static"
   sku               = "Standard"
+  zones             = var.firewall_zones
 }
 
 resource "azurerm_subnet" "main" {
