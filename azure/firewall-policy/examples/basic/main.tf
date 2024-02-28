@@ -82,16 +82,14 @@ module "firewall_policy" {
 
   rule_collection_groups = {
     ApplicationOne = {
-      priority             = "100"
+      priority             = 100
       firewall_policy_name = "fw-policy"
-
-      application_rule_collection = {
-        AppOne-App-Collection = {
+      application_rule_collections = {
+        "AppOne-App-Collection" = {
           action   = "Allow"
-          priority = "100"
-
-          rule = {
-            Windows_Updates = {
+          priority = 101
+          rules = {
+            "Windows_Updates" = {
               protocols = {
                 80  = "Http"
                 443 = "Https"
@@ -103,13 +101,12 @@ module "firewall_policy" {
         }
       }
 
-      network_rule_collection = {
-        AppOne-Net-Collection = {
+      network_rule_collections = {
+        "AppOne-Net-Collection" = {
           action   = "Allow"
-          priority = "101"
-
-          rule = {
-            ntp = {
+          priority = 102
+          rules = {
+            "ntp" = {
               action                = "Allow"
               source_addresses      = azurerm_virtual_network.example.address_space
               destination_ports     = ["123"]
