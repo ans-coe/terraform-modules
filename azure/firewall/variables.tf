@@ -91,8 +91,9 @@ variable "firewall_policy_id" {
   default     = null
 }
 
-variable "firewall_zones" {
-  description = "Specifies a list of Availability Zones in which this Azure Firewall should be located."
-  type        = list(string)
-  default     = [1, 2, 3]
+
+variable "zone_redundant" {
+  description = "Specifies whether or not the Firewall is Zone Redundant."
+  type = bool
+  default = true
 }
