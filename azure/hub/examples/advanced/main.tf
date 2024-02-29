@@ -9,7 +9,6 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    DateCreated = "02/22/2024"
     module      = "hub-hub-example"
     example     = "advanced"
     usage       = "demo"
