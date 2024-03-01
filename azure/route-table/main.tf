@@ -29,15 +29,15 @@ resource "azurerm_route" "main" {
 }
 
 resource "azurerm_route" "default" {
-  count = var.default_route_ip != null ? 1 : 0
+  count = var.default_route != null ? 1 : 0
 
-  name                = var.default_route_name
+  name                = var.default_route.name
   resource_group_name = var.resource_group_name
   route_table_name    = azurerm_route_table.main.name
 
   address_prefix         = "0.0.0.0/0"
   next_hop_type          = "VirtualAppliance"
-  next_hop_in_ip_address = var.default_route_ip
+  next_hop_in_ip_address = var.default_route.ip
 }
 
 ##########################

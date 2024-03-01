@@ -63,19 +63,17 @@ variable "routes" {
   }
 }
 
-variable "default_route_ip" {
-  description = "The next hop IP address for the default route (0.0.0.0/0). If none is specified, no route is created."
-  type        = string
-  default     = null
+
+variable "default_route" {
+  description = "Configuration for the default route."
+  type = object({
+    name = optional(string, "default-route")
+    ip   = string
+  })
+  default = null
 
   validation {
     error_message = "Must be a valid IPv4 address."
-    condition     = can(cidrhost("${var.default_route_ip}/32", 0))
+    condition     = var.default_route != null ? can(cidrhost("${var.default_route.ip}/32", 0)) : true
   }
-}
-
-variable "default_route_name" {
-  description = "The name of the default route."
-  type        = string
-  default     = "default-route"
 }

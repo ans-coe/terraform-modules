@@ -30,7 +30,7 @@ locals {
 }
 
 resource "azurerm_resource_group" "main" {
-  name     = "${local.resource_prefix}-rg"
+  name     = "rg-${local.resource_prefix}"
   location = local.location
   tags     = local.tags
 }
@@ -39,7 +39,7 @@ module "network" {
   source  = "ans-coe/virtual-network/azurerm"
   version = "1.3.0"
 
-  name                = "${local.resource_prefix}-vnet"
+  name                = "vnet-${local.resource_prefix}"
   location            = local.location
   resource_group_name = azurerm_resource_group.main.name
   tags                = local.tags
@@ -55,11 +55,13 @@ module "network" {
 module "route-table" {
   source = "../.."
 
-  name                = "${local.resource_prefix}-rt"
+  name                = "rt-${local.resource_prefix}"
   resource_group_name = azurerm_resource_group.main.name
   tags                = local.tags
 
   subnet_ids = [module.network.subnets["snet-prod"].id]
 
-  default_route_ip = "1.2.3.4"
+  default_route = {
+    ip = "1.2.3.4"
+  }
 }
