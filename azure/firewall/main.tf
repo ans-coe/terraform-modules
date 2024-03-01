@@ -10,6 +10,7 @@ resource "azurerm_public_ip" "main" {
 
   allocation_method = "Static"
   sku               = "Standard"
+  zones             = var.zone_redundant ? local.zones : []
 }
 
 resource "azurerm_subnet" "main" {
@@ -33,7 +34,7 @@ resource "azurerm_firewall" "main" {
   private_ip_ranges   = var.private_ip_ranges
   tags                = var.tags
   firewall_policy_id  = var.firewall_policy_id
-  zones               = var.firewall_zones
+  zones               = var.zone_redundant ? local.zones : []
 
   ip_configuration {
     name                 = "ip_configuration"
