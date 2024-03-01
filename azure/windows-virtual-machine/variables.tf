@@ -145,7 +145,7 @@ variable "availability_set_id" {
   default     = null
 }
 
-variable "capacity_reservation_group_id " {
+variable "capacity_reservation_group_id" {
   description = "Capacity Reservation Group ID to add this virtual machine to."
   type        = string
   default     = null
