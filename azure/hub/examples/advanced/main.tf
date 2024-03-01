@@ -9,11 +9,11 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module      = "hub-hub-example"
-    example     = "advanced"
-    usage       = "demo"
-    department  = "technical"
-    owner       = "Dee Vops"
+    module     = "hub-hub-example"
+    example    = "advanced"
+    usage      = "demo"
+    department = "technical"
+    owner      = "Dee Vops"
   }
   resource_prefix = "tfmex-adv"
 }
@@ -52,10 +52,12 @@ module "hub" {
     subnet_prefix       = "10.0.15.0/26"
   }
 
-  virtual_network_gateway_config = {
-    name          = "vpngw-hub-${local.resource_prefix}"
-    subnet_prefix = "10.0.15.128/26"
-  }
+  # Commented out as this takes ~30 mins to deploy.  Uncomment if specifically testing VNGs
+
+  # virtual_network_gateway_config = {
+  #   name          = "vpngw-hub-${local.resource_prefix}"
+  #   subnet_prefix = "10.0.15.128/26"
+  # }
 
   private_resolver_config = {
     name                   = "dnspr-hub-${local.resource_prefix}"
@@ -92,8 +94,8 @@ module "firewall-policy" {
 
 resource "azurerm_resource_group" "mgmt" {
   location = local.location
-  name = "rg-spoke-mgmt-${local.resource_prefix}"
-  tags = local.tags
+  name     = "rg-spoke-mgmt-${local.resource_prefix}"
+  tags     = local.tags
 }
 
 module "spoke-mgmt" {
@@ -115,16 +117,16 @@ module "spoke-mgmt" {
   }
 
   network_security_group_name = "nsg-spoke-mgmt-${local.resource_prefix}"
-  route_table_name            = azurerm_resource_group.mgmt.name
-  default_route_ip            = module.hub.firewall.private_ip
-
-  depends_on = [ module.hub ]
+  route_table_name            = "rt-spoke-mgmt-${local.resource_prefix}"
+  default_route = {
+    ip = module.hub.firewall.private_ip
+  }
 }
 
 resource "azurerm_resource_group" "prd" {
   location = local.location
-  name = "rg-spoke-prd-${local.resource_prefix}"
-  tags = local.tags
+  name     = "rg-spoke-prd-${local.resource_prefix}"
+  tags     = local.tags
 }
 
 module "spoke-prd" {
@@ -147,9 +149,9 @@ module "spoke-prd" {
 
   network_security_group_name = "nsg-spoke-prd-${local.resource_prefix}"
   route_table_name            = "rt-spoke-prd-${local.resource_prefix}"
-  default_route_ip            = module.hub.firewall.private_ip
-
-  depends_on = [ module.hub ]
+  default_route = {
+    ip = module.hub.firewall.private_ip
+  }
 }
 
 ##########

@@ -97,7 +97,7 @@ variable "firewall_config" {
     subnet_prefix      = string
     public_ip_name     = optional(string)
     sku_tier           = optional(string, "Standard")
-    zones              = optional(list(string), [1,2,3])
+    zone_redundant     = optional(bool, true)
     route_table_name   = optional(string)
     firewall_policy_id = optional(string)
   })
