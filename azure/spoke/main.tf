@@ -70,8 +70,7 @@ module "route-table" {
 
   subnet_ids = local.subnet_assoc_route_table
 
-  default_route_name = var.default_route_name
-  default_route_ip   = var.default_route_ip
+  default_route = var.default_route
 
   routes = var.extra_routes
 }
