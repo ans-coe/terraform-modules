@@ -72,9 +72,10 @@ resource "azurerm_linux_virtual_machine" "main" {
   }
   user_data = var.user_data_b64
 
-  availability_set_id   = var.availability_set_id
-  size                  = var.size
-  network_interface_ids = [azurerm_network_interface.main.id]
+  availability_set_id           = var.availability_set_id
+  capacity_reservation_group_id = var.capacity_reservation_group_id
+  size                          = var.size
+  network_interface_ids         = [azurerm_network_interface.main.id]
   boot_diagnostics {}
 
   patch_assessment_mode = var.patch_assessment_mode
