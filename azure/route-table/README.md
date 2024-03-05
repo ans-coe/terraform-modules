@@ -31,8 +31,7 @@ There is the option to create a "default route" which routes all IPs (0.0.0.0/0)
 |------|-------------|------|---------|:--------:|
 | <a name="input_name"></a> [name](#input\_name) | Name of the Route Table | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | n/a | yes |
-| <a name="input_default_route_ip"></a> [default\_route\_ip](#input\_default\_route\_ip) | The next hop IP address for the default route (0.0.0.0/0). If none is specified, no route is created. | `string` | `null` | no |
-| <a name="input_default_route_name"></a> [default\_route\_name](#input\_default\_route\_name) | The name of the default route. | `string` | `"default-route"` | no |
+| <a name="input_default_route"></a> [default\_route](#input\_default\_route) | Configuration for the default route. | <pre>object({<br>    name = optional(string, "default-route")<br>    ip   = string<br>  })</pre> | `null` | no |
 | <a name="input_disable_bgp_route_propagation"></a> [disable\_bgp\_route\_propagation](#input\_disable\_bgp\_route\_propagation) | Disable Route Propagation for the Route Table. True = Disabled | `bool` | `true` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_routes"></a> [routes](#input\_routes) | Details of a route to be added to the Route Table with the name of the route as the key. | <pre>map(object({<br>    address_prefix         = string<br>    next_hop_type          = optional(string, "VirtualAppliance")<br>    next_hop_in_ip_address = optional(string)<br>  }))</pre> | `{}` | no |

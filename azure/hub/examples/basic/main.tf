@@ -44,10 +44,12 @@ module "hub" {
     subnet_prefix = "10.0.15.0/26"
   }
 
-  virtual_network_gateway_config = {
-    name          = "vpngw-hub-${local.resource_prefix}"
-    subnet_prefix = "10.0.15.128/26"
-  }
+  # Commented out as this takes ~30 mins to deploy.  Uncomment if specifically testing VNGs
+
+  # virtual_network_gateway_config = {
+  #   name          = "vpngw-hub-${local.resource_prefix}"
+  #   subnet_prefix = "10.0.15.128/26"
+  # }
 
   private_resolver_config = {
     name                   = "dnspr-hub-${local.resource_prefix}"

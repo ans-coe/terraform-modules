@@ -216,21 +216,17 @@ variable "route_table_name" {
   default     = "default-rt"
 }
 
-
-variable "default_route_name" {
-  description = "Name of the default route."
-  type        = string
-  default     = "default-route"
-}
-
-variable "default_route_ip" {
-  description = "Default route IP Address."
-  type        = string
-  default     = null
+variable "default_route" {
+  description = "Configuration for the default route."
+  type = object({
+    name = optional(string, "default-route")
+    ip   = string
+  })
+  default = null
 
   validation {
-    error_message = "Value for default_route_ip must be a valid IPv4 address."
-    condition     = can(cidrhost("${var.default_route_ip}/32", 0))
+    error_message = "Must be a valid IPv4 address."
+    condition     = var.default_route != null ? can(cidrhost("${var.default_route.ip}/32", 0)) : true
   }
 }
 

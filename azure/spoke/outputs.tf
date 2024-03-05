@@ -20,7 +20,7 @@ output "network_security_group" {
 
 output "nsg_rules_inbound" {
   description = "The output of the Inbound NSG rules."
-  value       = try(module.network_security_group[0].rules_inbound, null) 
+  value       = try(module.network_security_group[0].rules_inbound, null)
 }
 
 output "nsg_rules_outbound" {

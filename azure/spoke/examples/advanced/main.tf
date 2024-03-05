@@ -88,7 +88,9 @@ module "spoke" {
   }
 
   route_table_name = "rt-prod-${local.resource_infix}"
-  default_route_ip = "10.10.4.10"
+  default_route = {
+    ip = "10.10.4.10"
+  }
   extra_routes = {
     route_01 = {
       address_prefix         = "10.0.1.0/24"
@@ -170,7 +172,9 @@ module "app2-route-table" {
 
   subnet_ids = [module.spoke.subnets["snet-app2"].id]
 
-  default_route_ip = "10.10.4.30"
+  default_route = {
+    ip = "10.10.4.30"
+  }
 }
 
 resource "random_integer" "sa" {
