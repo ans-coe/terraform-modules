@@ -1,13 +1,37 @@
+terraform {
+  required_version = ">= 1.6.0"
+
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
+
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.86"
+    }
+  }
+}
+
+provider "random" {}
+
 provider "azurerm" {
-  features {}
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 }
 
 locals {
   location = "uksouth"
   tags = {
-    module  = "network-security-group"
-    example = "adv"
-    usage   = "demo"
+    module     = "network-security-group"
+    example    = "adv"
+    usage      = "demo"
+    department = "technical"
+    owner      = "Dee Vops"
   }
   resource_prefix = "tfmex-adv-nsg"
 }
@@ -36,7 +60,7 @@ resource "azurerm_log_analytics_workspace" "nsg" {
 }
 
 resource "azurerm_storage_account" "nsg" {
-  name                = lower(replace("${local.resource_prefix}sa", "/[-_]/", ""))
+  name                = lower(replace("${local.resource_prefix}sa1${random_integer.sa.result}", "/[-_]/", ""))
   location            = local.location
   resource_group_name = azurerm_resource_group.nsg.name
   tags                = local.tags
@@ -84,6 +108,7 @@ module "nsg" {
 
   enable_flow_log = true
   flow_log_config = {
+    name                                = "${local.resource_prefix}-fl"
     network_watcher_name                = azurerm_network_watcher.nsg.name
     network_watcher_resource_group_name = azurerm_resource_group.nsg.name
     storage_account_id                  = azurerm_storage_account.nsg.id
@@ -93,4 +118,9 @@ module "nsg" {
     workspace_region      = azurerm_log_analytics_workspace.nsg.location
     workspace_resource_id = azurerm_log_analytics_workspace.nsg.id
   }
+}
+
+resource "random_integer" "sa" {
+  min = 1
+  max = 999
 }

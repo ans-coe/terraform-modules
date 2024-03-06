@@ -17,3 +17,28 @@ output "resource_group_name" {
   description = "Name of the resource group."
   value       = azurerm_network_security_group.main.resource_group_name
 }
+
+output "subnet_associations" {
+  description = "The output of the subnets associated with this NSG."
+  value       = azurerm_subnet_network_security_group_association.main
+}
+
+output "subnet_ids" {
+  description = "The output of subnet IDs associated with this NSG"
+  value       = var.subnet_ids
+}
+
+output "rules_inbound" {
+  description = "The output of the Inbound NSG rules."
+  value       = azurerm_network_security_rule.inbound
+}
+
+output "rules_outbound" {
+  description = "The output of the Outbound NSG rules."
+  value       = azurerm_network_security_rule.outbound
+}
+
+output "flow_log" {
+  description = "The output of the flow log."
+  value       = one(azurerm_network_watcher_flow_log.main[*])
+}

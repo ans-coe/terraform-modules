@@ -30,7 +30,12 @@ output "frontend_ip_configuration" {
 
 output "identity_id" {
   description = "Identity of the AppGW if KV is used."
-  value       = azurerm_user_assigned_identity.main_gateway[0].id
+  value       = try(azurerm_user_assigned_identity.main_gateway[0].id, null)
+}
+
+output "identity_principal_id" {
+  description = "principal_id of the AppGW if KV is used."
+  value       = try(azurerm_user_assigned_identity.main_gateway[0].principal_id, null)
 }
 
 output "private_ip" {
@@ -40,6 +45,16 @@ output "private_ip" {
     : ipconfig.private_ip_address
     if ipconfig.private_ip_address != ""
   ])
+}
+
+output "key_vault_id" {
+  description = "The id of the keyvault if one is set"
+  value = try(coalesce(
+    try(azurerm_key_vault.main[0].id, null), // try use the created keyvault ID first
+    var.key_vault_id,                        // next, try to use the variable inputted
+    ),
+    null // if use_key_vault is false, no keyvault will be set so this should be null
+  )
 }
 
 output "public_ip" {

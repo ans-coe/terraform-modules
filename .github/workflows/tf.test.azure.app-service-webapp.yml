@@ -1,0 +1,29 @@
+name: terraform - test - azure/app-service/webapp
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.windows-webapp.yml
+      - azure/app-service/webapp/*.tf
+      - azure/app-service/webapp/*.hcl
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/tf.test.yml
+      - .github/workflows/tf.test.azure.windows-webapp.yml
+      - azure/app-service/webapp/*.tf
+      - azure/app-service/webapp/*.hcl
+
+jobs:
+  test:
+    uses: ./.github/workflows/tf.test.yml
+    with:
+      tf_path: azure/app-service/webapp
+      tf_version: latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write

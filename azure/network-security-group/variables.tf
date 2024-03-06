@@ -28,6 +28,20 @@ variable "name" {
   type        = string
 }
 
+#########################
+# Subnet NSG Association 
+#########################
+
+variable "subnet_ids" {
+  description = "A list of subnet ids to associate with this NSG."
+  type        = list(string)
+  default     = []
+}
+
+############
+# NSG Rules
+############
+
 variable "start_priority" {
   description = "The priority number to start from when creating rules."
   type        = number
@@ -97,6 +111,7 @@ variable "enable_flow_log" {
 variable "flow_log_config" {
   description = "Configuration for flow logs."
   type = object({
+    name                                = string
     version                             = optional(number, 2)
     network_watcher_name                = string
     network_watcher_resource_group_name = string

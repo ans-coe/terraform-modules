@@ -2,14 +2,17 @@
 
 #### Table of Contents
 
-1. [Usage](#usage)
-2. [Requirements](#requirements)
-3. [Inputs](#inputs)
-4. [Outputs](#outputs)
-5. [Resources](#resources)
-6. [Modules](#modules)
+- [Terraform (Module) - Azurerm - Hub](#terraform-module---azurerm---hub)
+      - [Table of Contents](#table-of-contents)
+  - [Usage](#usage)
+    - [Network Watcher](#network-watcher)
+  - [Requirements](#requirements)
+  - [Inputs](#inputs)
+  - [Outputs](#outputs)
+  - [Resources](#resources)
+  - [Modules](#modules)
 
-### Usage
+## Usage
 
 This module deploys a predefined hub network with the option to include focused features - Firewall, Bastion, Virtual Network Gateway & Private DNS Resolver.
 
@@ -47,7 +50,7 @@ az provider register -n Microsoft.Network
 | <a name="input_bastion_config"></a> [bastion\_config](#input\_bastion\_config) | Configuration for the bastion if enabled. | <pre>object({<br>    name                        = string<br>    resource_group_name         = optional(string)<br>    subnet_prefix               = string<br>    public_ip_name              = optional(string)<br>    network_security_group_name = optional(string)<br>    whitelist_cidrs             = optional(list(string), ["Internet"])<br>  })</pre> | `null` | no |
 | <a name="input_create_network_watcher"></a> [create\_network\_watcher](#input\_create\_network\_watcher) | Enables Network Watcher for the region & subscription. | `bool` | `true` | no |
 | <a name="input_extra_subnets"></a> [extra\_subnets](#input\_extra\_subnets) | Miscelaneous additional subnets to add. | <pre>map(object({<br>    prefix                                        = string<br>    service_endpoints                             = optional(list(string))<br>    private_endpoint_network_policies_enabled     = optional(bool)<br>    private_link_service_network_policies_enabled = optional(bool)<br>    delegations = optional(map(<br>      object({<br>        service = string<br>        actions = list(string)<br>      })<br>    ), {})<br>  }))</pre> | `{}` | no |
-| <a name="input_firewall_config"></a> [firewall\_config](#input\_firewall\_config) | Configuration for the firewall if enabled. | <pre>object({<br>    name               = string<br>    subnet_prefix      = string<br>    public_ip_name     = optional(string)<br>    sku_tier           = optional(string, "Standard")<br>    route_table_name   = optional(string)<br>    default_route_name = optional(string, "default")<br>    firewall_policy_id = optional(string)<br>  })</pre> | `null` | no |
+| <a name="input_firewall_config"></a> [firewall\_config](#input\_firewall\_config) | Configuration for the firewall if enabled. | <pre>object({<br>    name               = string<br>    subnet_prefix      = string<br>    public_ip_name     = optional(string)<br>    sku_tier           = optional(string, "Standard")<br>    zone_redundant     = optional(bool, true)<br>    route_table_name   = optional(string)<br>    firewall_policy_id = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#input\_log\_analytics\_workspace\_id) | Log analytics workspace ID to forward diagnostics to. | `string` | `null` | no |
 | <a name="input_network_watcher_name"></a> [network\_watcher\_name](#input\_network\_watcher\_name) | Name of the Network Watcher | `string` | `null` | no |
 | <a name="input_network_watcher_resource_group"></a> [network\_watcher\_resource\_group](#input\_network\_watcher\_resource\_group) | Name of the Network Watcher Resourece Group | `string` | `null` | no |
