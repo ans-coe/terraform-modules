@@ -22,6 +22,13 @@ module "network" {
   tags                = var.tags
 
   address_space = var.address_space
+
+  dns_servers       = var.dns_servers != "" ? var.dns_servers : []
+  include_azure_dns = var.include_azure_dns
+
+  ddos_protection_plan_id = var.ddos_protection_plan_id
+  bgp_community           = var.bgp_community
+
   subnets = merge(
     local.enable_private_endpoint_subnet ? {
       (var.private_endpoint_subnet["subnet_name"]) = {
@@ -73,7 +80,7 @@ module "network" {
       },
     } : {},
     {
-      for k, v in var.extra_subnets
+      for k, v in var.subnets
       : k => merge(v, {
         associate_rt   = local.enable_firewall
         route_table_id = azurerm_route_table.firewall[0].id
@@ -83,7 +90,10 @@ module "network" {
 
   private_dns_zones = {
     for zone in azurerm_private_dns_zone.main
-    : zone.name => { resource_group_name = zone.resource_group_name }
+    : zone.name => {
+      resource_group_name  = zone.resource_group_name != null ? zone.resource_group_name : azurerm_resource_group.main.name
+      registration_enabled = zone.registration_enabled
+    }
   }
 }
 
@@ -95,6 +105,18 @@ resource "azurerm_private_dns_zone" "main" {
   for_each = toset(local.private_dns_zones)
 
   name                = each.key
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = each.value["resource_group_name"] != null ? each.value["resource_group_name"] : azurerm_resource_group.main.name
   tags                = var.tags
+  dynamic "soa_record" {
+    for_each = each.value.soa_record
+    content {
+      email        = soa_record.email
+      expire_time  = soa_record.expire_time
+      minimum_ttl  = soa_record.minimum_ttl
+      refresh_time = soa_record.refresh_time
+      retry_time   = soa_record.retry_time
+      ttl          = soa_record.ttl
+      tags         = soa_record.tags
+    }
+  }
 }

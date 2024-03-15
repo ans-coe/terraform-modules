@@ -7,18 +7,18 @@
 # If network_watcher_resource_group is unspecified = spoke resource group
 
 resource "azurerm_resource_group" "network_watcher" {
-  count = var.network_watcher_resource_group != null ? 1 : 0
+  count = var.network_watcher_resource_group_name != null ? 1 : 0
 
-  name     = var.network_watcher_resource_group
+  name     = var.network_watcher_resource_group_name
   location = var.location
   tags     = var.tags
 }
 
 resource "azurerm_network_watcher" "main" {
-  count = var.create_network_watcher ? 1 : 0
+  count = var.enable_network_watcher ? 1 : 0
 
-  name                = var.network_watcher_name != null ? var.network_watcher_name : "nw-${var.location}"
+  name                = local.network_watcher_name
   location            = var.location
-  resource_group_name = var.network_watcher_resource_group != null ? var.network_watcher_resource_group : var.resource_group_name
+  resource_group_name = local.network_watcher_resource_group_name
   tags                = var.tags
 }

@@ -5,18 +5,34 @@
 locals {
   enable_private_endpoint_subnet = var.private_endpoint_subnet != null
 
+  ###########
+  # Firewall
+  ###########
+
   enable_firewall      = var.firewall_config != null
   firewall             = one(module.firewall)
   firewall_route_table = one(azurerm_route_table.firewall)
+
+  ##########
+  # Bastion
+  ##########
 
   enable_bastion              = var.bastion_config != null
   bastion                     = one(module.bastion)
   bastion_resource_group_name = var.bastion_config.resource_group_name != null ? var.bastion_config.resource_group_name : azurerm_resource_group.main.name
   bastion_subnet              = local.enable_bastion ? module.network.subnets["AzureBastionSubnet"] : null
 
+  ##########################
+  # Virtual Network Gateway
+  ##########################
+
   enable_virtual_network_gateway = var.virtual_network_gateway_config != null
   virtual_network_gateway        = one(azurerm_virtual_network_gateway.main)
   virtual_network_gateway_subnet = local.enable_virtual_network_gateway ? module.network.subnets["GatewaySubnet"] : null
+
+  ###################
+  # Private Resolver
+  ###################
 
   enable_private_resolver            = var.private_resolver_config != null
   private_resolver                   = one(azurerm_private_dns_resolver.main)
@@ -95,5 +111,46 @@ locals {
     "privatelink.vaultcore.azure.net",
     "privatelink.web.core.windows.net",
     "privatelink.webpubsub.azure.com"
+  ]
+}
+  ##################
+  # Network Watcher
+  ##################
+
+  network_watcher_name = var.enable_network_watcher ? (
+    var.network_watcher_name != null ? var.network_watcher_name : "network-watcher-${var.location}"
+  ) : null
+
+  network_watcher_resource_group_name = var.enable_network_watcher ? (
+    var.network_watcher_resource_group_name != null ? var.network_watcher_resource_group_name : var.resource_group_name
+  ) : null
+
+  ############
+  # Flow Log
+  ############
+
+  create_flow_log_storage_account = var.flow_log_config != null ? var.flow_log_config.storage_account_name != null : false
+  flow_log_sa_id                  = local.create_flow_log_storage_account ? azurerm_storage_account.flow_log_sa[0].id : try(var.flow_log_config.storage_account_id, "")
+
+  create_flow_log_log_analytics_workspace = var.flow_log_config != null ? var.flow_log_config.log_analytics_workspace_name != null : false
+
+  flow_log_workspace_id = local.create_flow_log_log_analytics_workspace ? azurerm_log_analytics_workspace.flow_log_law[0].workspace_id : try(var.flow_log_config.workspace_id, null)
+
+  flow_log_workspace_resource_id = local.create_flow_log_log_analytics_workspace ? azurerm_log_analytics_workspace.flow_log_law[0].id : try(var.flow_log_config.workspace_resource_id, null)
+
+  ##################################
+  # Subnet > RT and NSG Association
+  ##################################
+
+  subnet_assoc_network_security_group = [
+    for k, s in var.subnets
+    : module.network.subnets[k].id
+    if s.associate_default_network_security_group
+  ]
+
+  subnet_assoc_route_table = [
+    for k, s in var.subnets
+    : module.network.subnets[k].id
+    if s.associate_default_route_table
   ]
 }

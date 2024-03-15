@@ -32,9 +32,10 @@ module "hub" {
   virtual_network_name = "vnet-hub-${local.resource_prefix}"
 
   address_space = ["10.0.0.0/16"]
-  extra_subnets = {
+  include_azure_dns = true
+  subnets = {
     "hub-net-default" = {
-      prefix = "10.0.0.0/24"
+      address_prefixes = [ "10.0.0.0/24" ]
     }
   }
 
@@ -67,8 +68,9 @@ module "hub" {
 
   create_private_endpoint_private_dns_zones = true
 
+  enable_network_watcher = true
   network_watcher_name = "nw_uks-${local.resource_prefix}"
-  network_watcher_resource_group = "rg-nw-${local.resource_prefix}"
+  network_watcher_resource_group_name = "rg-nw-${local.resource_prefix}"
 }
 
 module "firewall-policy" {

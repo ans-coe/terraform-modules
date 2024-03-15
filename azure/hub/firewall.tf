@@ -43,3 +43,21 @@ resource "azurerm_route" "firewall" {
   next_hop_type          = "VirtualAppliance"
   next_hop_in_ip_address = module.firewall[count.index].private_ip
 }
+
+module "route-table" {
+  count  = local.enable_firewall ? 1 : 0
+  source = "../route-table"
+
+  name                = var.firewall_config["route_table_name"] != null ? var.firewall_config["route_table_name"] : "rt-hub-${module.network.name}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  tags                = var.tags
+
+  disable_bgp_route_propagation = var.disable_bgp_route_propagation
+
+  subnet_ids = local.subnet_assoc_route_table
+
+  default_route = var.default_route
+
+  routes = var.extra_routes
+}

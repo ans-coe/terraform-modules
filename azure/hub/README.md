@@ -36,7 +36,7 @@ az provider register -n Microsoft.Network
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.94 |
 
 ## Inputs
 
@@ -51,6 +51,8 @@ az provider register -n Microsoft.Network
 | <a name="input_create_network_watcher"></a> [create\_network\_watcher](#input\_create\_network\_watcher) | Enables Network Watcher for the region & subscription. | `bool` | `true` | no |
 | <a name="input_extra_subnets"></a> [extra\_subnets](#input\_extra\_subnets) | Miscelaneous additional subnets to add. | <pre>map(object({<br>    prefix                                        = string<br>    service_endpoints                             = optional(list(string))<br>    private_endpoint_network_policies_enabled     = optional(bool)<br>    private_link_service_network_policies_enabled = optional(bool)<br>    delegations = optional(map(<br>      object({<br>        service = string<br>        actions = list(string)<br>      })<br>    ), {})<br>  }))</pre> | `{}` | no |
 | <a name="input_firewall_config"></a> [firewall\_config](#input\_firewall\_config) | Configuration for the firewall if enabled. | <pre>object({<br>    name               = string<br>    subnet_prefix      = string<br>    public_ip_name     = optional(string)<br>    sku_tier           = optional(string, "Standard")<br>    zone_redundant     = optional(bool, true)<br>    route_table_name   = optional(string)<br>    firewall_policy_id = optional(string)<br>  })</pre> | `null` | no |
+| <a name="input_flow_log_config"></a> [flow\_log\_config](#input\_flow\_log\_config) | Configuration for flow logs. | <pre>object({<br>    name                 = string<br>    storage_account_name = optional(string)<br>    storage_account_id   = optional(string)<br>    retention_days       = optional(number)<br><br>    enable_analytics             = optional(bool)<br>    log_analytics_workspace_name = optional(string)<br>    analytics_interval_minutes   = optional(number)<br>    workspace_resource_id        = optional(string)<br>    workspace_id                 = optional(string)<br>  })</pre> | `null` | no |
+| <a name="input_include_azure_dns"></a> [include\_azure\_dns](#input\_include\_azure\_dns) | If using custom DNS servers, include Azure DNS IP as a DNS server. | `bool` | `false` | no |
 | <a name="input_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#input\_log\_analytics\_workspace\_id) | Log analytics workspace ID to forward diagnostics to. | `string` | `null` | no |
 | <a name="input_network_watcher_name"></a> [network\_watcher\_name](#input\_network\_watcher\_name) | Name of the Network Watcher | `string` | `null` | no |
 | <a name="input_network_watcher_resource_group"></a> [network\_watcher\_resource\_group](#input\_network\_watcher\_resource\_group) | Name of the Network Watcher Resourece Group | `string` | `null` | no |
@@ -80,6 +82,7 @@ az provider register -n Microsoft.Network
 
 | Name | Type |
 |------|------|
+| [azurerm_log_analytics_workspace.flow_log_law](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/log_analytics_workspace) | resource |
 | [azurerm_monitor_diagnostic_setting.bastion](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_diagnostic_setting) | resource |
 | [azurerm_network_watcher.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_watcher) | resource |
 | [azurerm_private_dns_resolver.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_resolver) | resource |
@@ -92,6 +95,7 @@ az provider register -n Microsoft.Network
 | [azurerm_resource_group.network_watcher](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_route.firewall](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route) | resource |
 | [azurerm_route_table.firewall](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/route_table) | resource |
+| [azurerm_storage_account.flow_log_sa](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_virtual_network_gateway.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network_gateway) | resource |
 
 ## Modules
@@ -101,6 +105,8 @@ az provider register -n Microsoft.Network
 | <a name="module_bastion"></a> [bastion](#module\_bastion) | ans-coe/bastion/azurerm | 1.0.0 |
 | <a name="module_firewall"></a> [firewall](#module\_firewall) | ../firewall | n/a |
 | <a name="module_network"></a> [network](#module\_network) | ans-coe/virtual-network/azurerm | 1.3.0 |
+| <a name="module_network_security_group"></a> [network\_security\_group](#module\_network\_security\_group) | ../network-security-group | n/a |
+| <a name="module_route-table"></a> [route-table](#module\_route-table) | ../route-table | n/a |
 <!-- END_TF_DOCS -->
 _______________
 | Classified  |
