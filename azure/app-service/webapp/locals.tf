@@ -156,10 +156,11 @@ locals {
   key_vault_name                      = local.use_key_vault ? coalesce(var.cert_options.key_vault.key_vault_custom_name, "kv-${var.name}") : ""
   key_vault_secret_id                 = local.use_key_vault ? coalesce(one(azurerm_key_vault_certificate.main[*].id), var.cert_options.key_vault.key_vault_secret_id) : null
 
-  use_umid    = try(var.identity_options.use_umid, false)
-  umid_name   = local.use_umid ? coalesce(var.identity_options.umid_custom_name, "umid-${var.name}") : ""
-  create_umid = local.use_umid ? var.identity_options.umid_id == null : false
-  umid_id     = local.use_umid ? coalesce(one(azurerm_user_assigned_identity.main[*].id), var.identity_options.umid_id) : null
+  use_umid          = try(var.identity_options.use_umid, false)
+  umid_name         = local.use_umid ? coalesce(var.identity_options.umid_custom_name, "umid-${var.name}") : ""
+  create_umid       = local.use_umid ? var.identity_options.umid_id == null : false
+  umid_id           = local.use_umid ? coalesce(one(azurerm_user_assigned_identity.main[*].id), var.identity_options.umid_id) : null
+  umid_principal_id = try(one(azurerm_user_assigned_identity.main[*].principal_id), null)
 
   ### Autoscaling
 
