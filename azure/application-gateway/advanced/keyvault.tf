@@ -20,7 +20,7 @@ resource "azurerm_key_vault_access_policy" "main_user" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
 
-  certificate_permissions = ["Create", "Delete", "Get", "List", "Update", "Recover", "Restore"]
+  certificate_permissions = ["Create", "Delete", "Get", "List", "Update", "Recover", "Restore", "Import"]
 
   key_permissions = ["Create", "Delete", "Get", "List", "Update", "Recover", "Restore"]
 
