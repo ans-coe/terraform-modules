@@ -126,7 +126,7 @@ locals {
   ) : false
 
   network_watcher_resource_group_name = var.enable_network_watcher ? (
-    var.network_watcher_resource_group_name != null ? (local.create_network_watcher_resource_group ? azurerm_resource_group.network_watcher.name : var.network_watcher_resource_group_name) : azurerm_resource_group.main.name
+    var.network_watcher_resource_group_name != null ? (local.create_network_watcher_resource_group ? one(azurerm_resource_group.network_watcher[*].name) : var.network_watcher_resource_group_name) : azurerm_resource_group.main.name
   ) : null
 
   ############
