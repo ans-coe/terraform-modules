@@ -34,7 +34,7 @@ resource "azurerm_route_table" "virtual_network_gateway" {
     name = name
     address_prefix = route.address_prefix
     next_hop_type          = route.next_hop_type
-    next_hop_in_ip_address = route.next_hop_in_ip_address == "firewall" ? module.firewall. private_ip : route.next_hop_in_ip_address
+    next_hop_in_ip_address = route.next_hop_in_ip_address == "firewall" ? one(module.firewall[*].private_ip) : route.next_hop_in_ip_address
   }]
 }
 

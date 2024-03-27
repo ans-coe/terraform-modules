@@ -53,7 +53,7 @@ module "network" {
       "GatewaySubnet" = {
         prefix         = var.virtual_network_gateway["address_prefix"]
         associate_rt   = local.use_virtual_network_gateway_route_table ? true : null
-        route_table_id = local.use_virtual_network_gateway_route_table ? true : null
+        route_table_id = local.use_virtual_network_gateway_route_table ? one(azurerm_route_table.virtual_network_gateway[*].id) : null
       }
     } : {},
 
