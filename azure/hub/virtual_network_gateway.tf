@@ -30,7 +30,12 @@ resource "azurerm_route_table" "virtual_network_gateway" {
   location            = var.location
   tags                = var.tags
 
-  route = [for name, route in var.virtual_network_gateway.route_table.routes : merge({ name = name }, route)]
+  route = [for name, route in var.virtual_network_gateway.route_table.routes : {
+    name = name
+    address_prefix = route.address_prefix
+    next_hop_type          = route.next_hop_type
+    next_hop_in_ip_address = route.next_hop_in_ip_address == "firewall" ? module.firewall. private_ip : route.next_hop_in_ip_address
+  }]
 }
 
 resource "azurerm_virtual_network_gateway" "main" {
