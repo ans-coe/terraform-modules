@@ -113,7 +113,7 @@ variable "private_endpoint_subnet" {
 
   validation {
     error_message = "private_endpoint_subnet.address_prefix must be a valid IPv4 CIDR."
-    condition = var.private_endpoint_subnet == null || can(cidrhost(var.private_endpoint_subnet.subnet_prefix, 0)
+    condition = var.private_endpoint_subnet == null || can(cidrhost(var.private_endpoint_subnet.address_prefix, 0)
     )
   }
 
@@ -143,7 +143,7 @@ variable "firewall" {
 
   validation {
     error_message = "firewall.address_prefix must be a valid IPv4 CIDR."
-    condition = var.firewall == null || can(cidrhost(var.firewall.subnet_prefix, 0)
+    condition = var.firewall == null || can(cidrhost(var.firewall.address_prefix, 0)
     )
   }
   validation {
@@ -170,7 +170,7 @@ variable "bastion" {
 
   validation {
     error_message = "bastion.address_prefix must be valid a IPv4 CIDR."
-    condition = var.bastion == null || can(cidrhost(var.bastion.subnet_prefix, 0)
+    condition = var.bastion == null || can(cidrhost(var.bastion.address_prefix, 0)
     )
   }
 }
@@ -196,7 +196,7 @@ variable "virtual_network_gateway" {
 
   validation {
     error_message = "virtual_network_gateway.address_prefix must be a valid IPv4 CIDR."
-    condition     = var.virtual_network_gateway == null || can(cidrhost(var.virtual_network_gateway.subnet_prefix, 0))
+    condition     = var.virtual_network_gateway == null || can(cidrhost(var.virtual_network_gateway.address_prefix, 0))
   }
 
   validation {
@@ -273,12 +273,12 @@ variable "private_resolver" {
 
   validation {
     error_message = "private_resolver.inbound_address_prefix must be a valid IPv4 CIDR."
-    condition     = var.private_resolver == null || can(cidrhost(var.private_resolver.inbound_subnet_prefix, 0))
+    condition     = var.private_resolver == null || can(cidrhost(var.private_resolver.inbound_address_prefix, 0))
   }
 
   validation {
     error_message = "private_resolver.outbound_address_prefix must be a valid IPv4 CIDR."
-    condition     = var.private_resolver == null || can(cidrhost(var.private_resolver.outbound_subnet_prefix, 0))
+    condition     = var.private_resolver == null || can(cidrhost(var.private_resolver.outbound_address_prefix, 0))
   }
 }
 
