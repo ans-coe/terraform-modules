@@ -199,6 +199,15 @@ variable "virtual_network_gateway" {
     sku                   = optional(string, "VpnGw1")
     type                  = optional(string, "Vpn")
     vpn_type              = optional(string, "RouteBased")
+
+    route_table = optional(object({
+      name = string
+      routes = optional(map(object({
+        address_prefix         = string
+        next_hop_type          = optional(string, "Internet")
+        next_hop_in_ip_address = optional(string)
+      })))
+    }))
   })
   default = null
 

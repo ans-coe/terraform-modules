@@ -42,10 +42,14 @@ locals {
   ) : false
 
   virtual_network_gateway_resource_group_name = local.enable_virtual_network_gateway ? (
-    try(var.virtual_network_gateway["resource_group_name"], null) != null ? (local.create_virtual_network_gateway_resource_group ? one(azurerm_resource_group.vng[*].name) : var.virtual_network_gateway["resource_group_name"]) : azurerm_resource_group.main.name
+    try(var.virtual_network_gateway["resource_group_name"], null) != null ? (
+      local.create_virtual_network_gateway_resource_group ? one(azurerm_resource_group.virtual_network_gateway[*].name) : var.virtual_network_gateway["resource_group_name"]
+    ) : azurerm_resource_group.main.name
   ) : null
 
   virtual_network_gateway_subnet = local.enable_virtual_network_gateway ? module.network.subnets["GatewaySubnet"] : null
+
+  use_virtual_network_gateway_route_table = var.virtual_network_gateway["route_table"] != null
 
   ###################
   # Private Resolver

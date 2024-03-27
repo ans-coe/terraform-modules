@@ -51,7 +51,9 @@ module "network" {
 
     local.enable_virtual_network_gateway ? {
       "GatewaySubnet" = {
-        prefix = var.virtual_network_gateway["address_prefix"]
+        prefix         = var.virtual_network_gateway["address_prefix"]
+        associate_rt   = local.use_virtual_network_gateway_route_table ? true : null
+        route_table_id = local.use_virtual_network_gateway_route_table ? true : null
       }
     } : {},
 
