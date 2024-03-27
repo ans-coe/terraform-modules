@@ -11,6 +11,7 @@ resource "azurerm_windows_virtual_machine" "main" {
   admin_password = var.password
 
   availability_set_id        = var.availability_set_id
+  zone                       = var.zone
   size                       = var.size
   network_interface_ids      = [azurerm_network_interface.main.id]
   encryption_at_host_enabled = var.enable_encryption_at_host

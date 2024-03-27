@@ -76,6 +76,12 @@ variable "availability_set_id" {
   default     = null
 }
 
+variable "zone" {
+  description = "Specifies the Availability Zone in which this Windows Virtual Machine should be located."
+  type        = list(string)
+  default     = null
+}
+
 variable "size" {
   description = "Size of the virtual machine."
   type        = string
