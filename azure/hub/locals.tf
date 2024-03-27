@@ -88,8 +88,17 @@ locals {
   flow_log_workspace_resource_id = local.create_flow_log_log_analytics_workspace ? azurerm_log_analytics_workspace.flow_log_law[0].id : try(var.flow_log.workspace_resource_id, null)
 
   ##################################
-  # Subnet > RT and NSG Association
+  # Subnets
   ##################################
+
+  subnets = {
+    for k, v in var.subnets
+    : k => merge(v, {
+      associate_rt   = v.associate_rt != null ? v.associate_rt : local.enable_firewall
+      route_table_id = v.route_table_id != null ? v.route_table_id : one(azurerm_route_table.firewall[*].id)
+      prefix         = v.address_prefix
+    })
+  }
 
   subnet_assoc_network_security_group = [
     for k, s in var.subnets

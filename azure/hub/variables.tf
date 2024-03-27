@@ -79,6 +79,9 @@ variable "subnets" {
     service_endpoints                             = optional(list(string))
     private_endpoint_network_policies_enabled     = optional(bool)
     private_link_service_network_policies_enabled = optional(bool)
+    associate_rt                                  = optional(bool, false)
+    route_table_id                                = optional(string)
+
     delegations = optional(map(
       object({
         service = string
@@ -92,7 +95,11 @@ variable "subnets" {
 
   validation {
     error_message = "Values for address_prefix must be valid IPv4 CIDR."
-    condition     = alltrue(flatten([for v in var.subnets : can(cidrhost(v.address_prefix, 0))]))
+    condition     = alltrue([for v in var.subnets : can(cidrhost(v.address_prefix, 0))])
+  }
+  validation {
+    error_message = "If associate_rt is set, route_table_id must also be set"
+    condition     = alltrue([for v in var.subnets : v.associate_rt ? v.route_table_id != null : true])
   }
 }
 

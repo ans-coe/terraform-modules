@@ -79,14 +79,7 @@ module "network" {
         }
       },
     } : {},
-    {
-      for k, v in var.subnets
-      : k => merge(v, {
-        associate_rt   = local.enable_firewall
-        route_table_id = azurerm_route_table.firewall[0].id
-        prefix         = v.address_prefix
-      })
-    }
+    local.subnets
   )
 
   private_dns_zones = {
