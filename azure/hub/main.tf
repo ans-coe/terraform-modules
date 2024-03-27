@@ -32,7 +32,7 @@ module "network" {
   subnets = merge(
     local.enable_private_endpoint_subnet ? {
       (var.private_endpoint_subnet["subnet_name"]) = {
-        prefix                                        = var.private_endpoint_subnet["subnet_prefix"]
+        prefix                                        = var.private_endpoint_subnet["address_prefix"]
         service_endpoints                             = var.private_endpoint_subnet["service_endpoints"]
         private_endpoint_network_policies_enabled     = false
         private_link_service_network_policies_enabled = false
@@ -41,23 +41,23 @@ module "network" {
 
     # The firewall subnet is managed by the module found in firewall.tf
     #   count  = local.enable_firewall ? 1 : 0
-    #   subnet_address_prefixes = [var.firewall["subnet_prefix"]
+    #   subnet_address_prefixes = [var.firewall["address_prefix"]
 
     local.enable_bastion ? {
       "AzureBastionSubnet" = {
-        prefix = var.bastion["subnet_prefix"]
+        prefix = var.bastion["address_prefix"]
       }
     } : {},
 
     local.enable_virtual_network_gateway ? {
       "GatewaySubnet" = {
-        prefix = var.virtual_network_gateway["subnet_prefix"]
+        prefix = var.virtual_network_gateway["address_prefix"]
       }
     } : {},
 
     local.enable_private_resolver ? {
       (var.private_resolver["inbound_subnet_name"]) = {
-        prefix         = var.private_resolver["inbound_subnet_prefix"]
+        prefix         = var.private_resolver["inbound_address_prefix"]
         associate_rt   = local.enable_firewall
         route_table_id = one(azurerm_route_table.firewall[*].id)
         delegations = {
@@ -68,7 +68,7 @@ module "network" {
         }
       },
       (var.private_resolver["outbound_subnet_name"]) = {
-        prefix         = var.private_resolver["outbound_subnet_prefix"]
+        prefix         = var.private_resolver["outbound_address_prefix"]
         associate_rt   = local.enable_firewall
         route_table_id = one(azurerm_route_table.firewall[*].id)
         delegations = {
@@ -89,8 +89,8 @@ module "network" {
   )
 
   private_dns_zones = {
-    for zone in azurerm_private_dns_zone.main
-    : zone.name => {
+    for name, zone in azurerm_private_dns_zone.main
+    : name => {
       resource_group_name  = zone.resource_group_name != null ? zone.resource_group_name : azurerm_resource_group.main.name
       registration_enabled = zone.registration_enabled
     }
@@ -102,7 +102,7 @@ module "network" {
 #############
 
 resource "azurerm_private_dns_zone" "main" {
-  for_each = toset(local.private_dns_zones)
+  for_each = var.private_dns_zones
 
   name                = each.key
   resource_group_name = each.value["resource_group_name"] != null ? each.value["resource_group_name"] : azurerm_resource_group.main.name

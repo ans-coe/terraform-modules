@@ -159,12 +159,13 @@ variable "firewall" {
 variable "bastion" {
   description = "Configuration for the bastion if enabled."
   type = object({
-    name                        = string
-    resource_group_name         = optional(string)
-    address_prefix              = string
-    public_ip_name              = optional(string)
-    network_security_group_name = optional(string)
-    whitelist_cidrs             = optional(list(string), ["Internet"])
+    name                          = string
+    create_bastion_resource_group = optional(bool, true)
+    resource_group_name           = optional(string)
+    address_prefix                = string
+    public_ip_name                = optional(string)
+    network_security_group_name   = optional(string)
+    whitelist_cidrs               = optional(list(string), ["Internet"])
   })
   default = null
 
@@ -232,7 +233,6 @@ variable "virtual_network_gateway" {
 variable "private_dns_zones" {
   description = "A set of private domains to configure."
   type = map(object({
-    name                 = string
     resource_group_name  = optional(string)
     registration_enabled = optional(string)
     soa_record = optional(object({
@@ -246,12 +246,6 @@ variable "private_dns_zones" {
     }), null)
   }))
   default = {}
-}
-
-variable "create_private_endpoint_private_dns_zones" {
-  description = "Create zones for all Azure private endpoint domains. e.g privatelink.blob.core.windows.net, privatelink.azurecr.io"
-  type        = bool
-  default     = false
 }
 
 ###################

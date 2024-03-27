@@ -5,9 +5,9 @@
 resource "azurerm_resource_group" "vng" {
   count = local.create_virtual_network_gateway_resource_group ? 1 : 0
 
-  name  = var.virtual_network_gateway["resource_group_name"]
+  name     = var.virtual_network_gateway["resource_group_name"]
   location = var.location
-  tags = var.tags
+  tags     = var.tags
 }
 
 resource "azurerm_public_ip" "virtual_network_gateway" {
