@@ -41,7 +41,7 @@ locals {
   private_resolver_inbound_subnet    = local.enable_private_resolver ? module.network.subnets[var.private_resolver_config["inbound_subnet_name"]] : null
   private_resolver_outbound_subnet   = local.enable_private_resolver ? module.network.subnets[var.private_resolver_config["outbound_subnet_name"]] : null
   
-  private_dns_zones = concat(var.private_dns_domains, [for p in local.private_endpoint_private_dns_zones : p if var.create_private_endpoint_private_dns_zones == true] )
+  private_dns_zones = concat(var.private_dns_zones, [for p in local.private_endpoint_private_dns_zones : p if var.create_private_endpoint_private_dns_zones == true] )
 
   private_endpoint_private_dns_zones = [
     "privatelink.adf.azure.com",
@@ -112,7 +112,7 @@ locals {
     "privatelink.web.core.windows.net",
     "privatelink.webpubsub.azure.com"
   ]
-}
+
   ##################
   # Network Watcher
   ##################

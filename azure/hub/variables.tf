@@ -223,6 +223,35 @@ variable "virtual_network_gateway_config" {
   }
 }
 
+##############
+# Private DNS
+##############
+
+variable "private_dns_zones" {
+  description = "A set of private domains to configure."
+  type = map(object({
+    name                 = string
+    resource_group_name  = optional(string)
+    registration_enabled = optional(string)
+    soa_record = optional(object({
+      email        = string
+      expire_time  = optional(number, 2419200)
+      minimum_ttl  = optional(number, 10)
+      refresh_time = optional(number, 3600)
+      retry_time   = optional(number, 300)
+      ttl          = optional(number, 3600)
+      tags         = optional(map(string))
+    }), null)
+  }))
+  default = {}
+}
+
+variable "create_private_endpoint_private_dns_zones" {
+  description = "Create zones for all Azure private endpoint domains. e.g privatelink.blob.core.windows.net, privatelink.azurecr.io"
+  type = bool
+  default = false
+}
+
 ###################
 # Private Resolver
 ###################
@@ -426,25 +455,6 @@ variable "create_network_watcher" {
   description = "Enables Network Watcher for the region & subscription."
   type        = bool
   default     = true
-}
-
-variable "private_dns_zones" {
-  description = "A set of private domains to configure."
-  type = map(object({
-    name                 = string
-    resource_group_name  = optional(string)
-    registration_enabled = optional(string)
-    soa_record = optional(object({
-      email        = string
-      expire_time  = optional(number, 2419200)
-      minimum_ttl  = optional(number, 10)
-      refresh_time = optional(number, 3600)
-      retry_time   = optional(number, 300)
-      ttl          = optional(number, 3600)
-      tags         = optional(map(string))
-    }), null)
-  }))
-  default = {}
 }
 
 ##########################

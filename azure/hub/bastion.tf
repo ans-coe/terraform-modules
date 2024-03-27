@@ -3,7 +3,7 @@
 #################
 
 resource "azurerm_resource_group" "bastion" {
-  count = var.bastion_config.resource_group_name != null ? 1 : 0
+  count = try(var.bastion_config.resource_group_name) != null ? 1 : 0
 
   name     = var.bastion_config.resource_group_name
   location = var.location
