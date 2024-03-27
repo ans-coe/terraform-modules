@@ -19,7 +19,7 @@ resource "azurerm_virtual_network_gateway" "main" {
 
   name                = var.virtual_network_gateway["name"]
   location            = var.location
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = try(var.virtual_network_gateway["resource_group_name"], null) != null ? var.virtual_network_gateway["resource_group_name"] : azurerm_resource_group.main.name
   tags                = var.tags
 
   generation = var.virtual_network_gateway["generation"]
