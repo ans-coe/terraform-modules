@@ -5,7 +5,7 @@
 resource "azurerm_public_ip" "virtual_network_gateway" {
   count = local.enable_virtual_network_gateway ? 1 : 0
 
-  name                = var.virtual_network_gateway_config["public_ip_name"] == null ? format("pip-%s", var.virtual_network_gateway_config["name"]) : var.virtual_network_gateway_config["public_ip_name"]
+  name                = var.virtual_network_gateway["public_ip_name"] == null ? format("pip-%s", var.virtual_network_gateway["name"]) : var.virtual_network_gateway["public_ip_name"]
   location            = var.location
   resource_group_name = azurerm_resource_group.main.name
   tags                = var.tags
@@ -17,15 +17,15 @@ resource "azurerm_public_ip" "virtual_network_gateway" {
 resource "azurerm_virtual_network_gateway" "main" {
   count = local.enable_virtual_network_gateway ? 1 : 0
 
-  name                = var.virtual_network_gateway_config["name"]
+  name                = var.virtual_network_gateway["name"]
   location            = var.location
   resource_group_name = azurerm_resource_group.main.name
   tags                = var.tags
 
-  generation = var.virtual_network_gateway_config["generation"]
-  sku        = var.virtual_network_gateway_config["sku"]
-  type       = var.virtual_network_gateway_config["type"]
-  vpn_type   = var.virtual_network_gateway_config["vpn_type"]
+  generation = var.virtual_network_gateway["generation"]
+  sku        = var.virtual_network_gateway["sku"]
+  type       = var.virtual_network_gateway["type"]
+  vpn_type   = var.virtual_network_gateway["vpn_type"]
 
   ip_configuration {
     name                 = "default"

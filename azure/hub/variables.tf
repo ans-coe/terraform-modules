@@ -127,7 +127,7 @@ variable "private_endpoint_subnet" {
 # Firewall
 ###########
 
-variable "firewall_config" {
+variable "firewall" {
   description = "Configuration for the firewall if enabled."
   type = object({
     name               = string
@@ -142,13 +142,13 @@ variable "firewall_config" {
   default = null
 
   validation {
-    error_message = "firewall_config.subnet_prefix must be a valid IPv4 CIDR."
-    condition = var.firewall_config == null || can(cidrhost(var.firewall_config.subnet_prefix, 0)
+    error_message = "firewall.subnet_prefix must be a valid IPv4 CIDR."
+    condition = var.firewall == null || can(cidrhost(var.firewall.subnet_prefix, 0)
     )
   }
   validation {
     error_message = "Firewall SKU can be either Basic, Standard or Premium."
-    condition     = var.firewall_config == null || can(contains(["Basic", "Standard", "Premium"], var.firewall_config.sku_tier))
+    condition     = var.firewall == null || can(contains(["Basic", "Standard", "Premium"], var.firewall.sku_tier))
   }
 }
 
@@ -156,7 +156,7 @@ variable "firewall_config" {
 # Bastion
 ##########
 
-variable "bastion_config" {
+variable "bastion" {
   description = "Configuration for the bastion if enabled."
   type = object({
     name                        = string
@@ -169,8 +169,8 @@ variable "bastion_config" {
   default = null
 
   validation {
-    error_message = "bastion_config.subnet_prefix must be valid a IPv4 CIDR."
-    condition = var.bastion_config == null || can(cidrhost(var.bastion_config.subnet_prefix, 0)
+    error_message = "bastion.subnet_prefix must be valid a IPv4 CIDR."
+    condition = var.bastion == null || can(cidrhost(var.bastion.subnet_prefix, 0)
     )
   }
 }
@@ -179,7 +179,7 @@ variable "bastion_config" {
 # Virtual Network Gateway
 ##########################
 
-variable "virtual_network_gateway_config" {
+variable "virtual_network_gateway" {
   description = "Configuration for virtual network gateway if enabled."
   type = object({
     name           = string
@@ -193,33 +193,33 @@ variable "virtual_network_gateway_config" {
   default = null
 
   validation {
-    error_message = "virtual_network_gateway_config.subnet_prefix must be a valid IPv4 CIDR."
-    condition     = var.virtual_network_gateway_config == null || can(cidrhost(var.virtual_network_gateway_config.subnet_prefix, 0))
+    error_message = "virtual_network_gateway.subnet_prefix must be a valid IPv4 CIDR."
+    condition     = var.virtual_network_gateway == null || can(cidrhost(var.virtual_network_gateway.subnet_prefix, 0))
   }
 
   validation {
     error_message = "The Virtual Network Gateway Generation can be either Generation1, Generation2 or None."
-    condition     = var.virtual_network_gateway_config == null || can(contains(["Generation1", "Generation2", "None"], var.virtual_network_gateway_config.generation))
+    condition     = var.virtual_network_gateway == null || can(contains(["Generation1", "Generation2", "None"], var.virtual_network_gateway.generation))
   }
 
   validation {
     error_message = "The Virtual Network Gateway Generation can be either Basic, VpnGw1, VpnGw2, VpnGw3, VpnGw4, VpnGw5, VpnGw1AZ, VpnGw2AZ, VpnGw3AZ, VpnGw4AZ, or VpnGw5AZ."
-    condition     = var.virtual_network_gateway_config == null || can(contains(["Basic", "VpnGw1", "VpnGw2", "VpnGw3", "VpnGw4", "VpnGw5", "VpnGw1AZ", "VpnGw2AZ", "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ"], var.virtual_network_gateway_config.sku))
+    condition     = var.virtual_network_gateway == null || can(contains(["Basic", "VpnGw1", "VpnGw2", "VpnGw3", "VpnGw4", "VpnGw5", "VpnGw1AZ", "VpnGw2AZ", "VpnGw3AZ", "VpnGw4AZ", "VpnGw5AZ"], var.virtual_network_gateway.sku))
   }
 
   validation {
     error_message = "If the sku is set to Basic, VpnGw1 or VpnGw1AZ, then generation must be set to Generation1."
-    condition     = contains(["Basic", "VpnGw1", "VpnGw1AZ"], try(var.virtual_network_gateway_config.sku, [])) ? var.virtual_network_gateway_config.generation == "Generation1" : true
+    condition     = contains(["Basic", "VpnGw1", "VpnGw1AZ"], try(var.virtual_network_gateway.sku, [])) ? var.virtual_network_gateway.generation == "Generation1" : true
   }
 
   validation {
     error_message = "The values for type are either Vpn or ExpressRoute."
-    condition     = var.virtual_network_gateway_config == null || can(contains(["Vpn", "ExpressRoute"], var.virtual_network_gateway_config.type))
+    condition     = var.virtual_network_gateway == null || can(contains(["Vpn", "ExpressRoute"], var.virtual_network_gateway.type))
   }
 
   validation {
     error_message = "The values for vpn_type are either RouteBased or PolicyBased."
-    condition     = var.virtual_network_gateway_config == null || can(contains(["RouteBased", "PolicyBased"], var.virtual_network_gateway_config.vpn_type))
+    condition     = var.virtual_network_gateway == null || can(contains(["RouteBased", "PolicyBased"], var.virtual_network_gateway.vpn_type))
   }
 }
 
@@ -248,15 +248,15 @@ variable "private_dns_zones" {
 
 variable "create_private_endpoint_private_dns_zones" {
   description = "Create zones for all Azure private endpoint domains. e.g privatelink.blob.core.windows.net, privatelink.azurecr.io"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 ###################
 # Private Resolver
 ###################
 
-variable "private_resolver_config" {
+variable "private_resolver" {
   description = "Configuration for virtual network gateway if enabled."
   type = object({
     name                   = string
@@ -270,13 +270,13 @@ variable "private_resolver_config" {
   default = null
 
   validation {
-    error_message = "private_resolver_config.inbound_subnet_prefix must be a valid IPv4 CIDR."
-    condition     = var.private_resolver_config == null || can(cidrhost(var.private_resolver_config.inbound_subnet_prefix, 0))
+    error_message = "private_resolver.inbound_subnet_prefix must be a valid IPv4 CIDR."
+    condition     = var.private_resolver == null || can(cidrhost(var.private_resolver.inbound_subnet_prefix, 0))
   }
 
   validation {
-    error_message = "private_resolver_config.outbound_subnet_prefix must be a valid IPv4 CIDR."
-    condition     = var.private_resolver_config == null || can(cidrhost(var.private_resolver_config.outbound_subnet_prefix, 0))
+    error_message = "private_resolver.outbound_subnet_prefix must be a valid IPv4 CIDR."
+    condition     = var.private_resolver == null || can(cidrhost(var.private_resolver.outbound_subnet_prefix, 0))
   }
 }
 
@@ -344,7 +344,7 @@ variable "nsg_rules_outbound" {
 # Flow Logs
 ############
 
-variable "flow_log_config" {
+variable "flow_log" {
   description = "Configuration for flow logs."
   type = object({
     name                 = string
@@ -361,14 +361,14 @@ variable "flow_log_config" {
   default = null
 
   validation {
-    condition     = var.flow_log_config != null ? (var.flow_log_config.storage_account_name != null) != (var.flow_log_config.storage_account_id != null) : true
+    condition     = var.flow_log != null ? (var.flow_log.storage_account_name != null) != (var.flow_log.storage_account_id != null) : true
     error_message = "Either storage_account_name or storage_account_id must be set but not both"
   }
 
   validation {
-    condition = var.flow_log_config != null ? (
-      var.flow_log_config.enable_analytics ? (
-        var.flow_log_config.log_analytics_workspace_name != null) != ((var.flow_log_config.workspace_resource_id != null) && (var.flow_log_config.workspace_id != null)
+    condition = var.flow_log != null ? (
+      var.flow_log.enable_analytics ? (
+        var.flow_log.log_analytics_workspace_name != null) != ((var.flow_log.workspace_resource_id != null) && (var.flow_log.workspace_id != null)
       ) : true
     ) : true
     error_message = "Either log_analytics_workspace_name is supplied to create a new Log Analytics Workspace or workspace_resource_id AND workspace_id from an existing Log Analytics Workspace must be specificed."

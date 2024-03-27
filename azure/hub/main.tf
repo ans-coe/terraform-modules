@@ -41,23 +41,23 @@ module "network" {
 
     # The firewall subnet is managed by the module found in firewall.tf
     #   count  = local.enable_firewall ? 1 : 0
-    #   subnet_address_prefixes = [var.firewall_config["subnet_prefix"]
+    #   subnet_address_prefixes = [var.firewall["subnet_prefix"]
 
     local.enable_bastion ? {
       "AzureBastionSubnet" = {
-        prefix = var.bastion_config["subnet_prefix"]
+        prefix = var.bastion["subnet_prefix"]
       }
     } : {},
 
     local.enable_virtual_network_gateway ? {
       "GatewaySubnet" = {
-        prefix = var.virtual_network_gateway_config["subnet_prefix"]
+        prefix = var.virtual_network_gateway["subnet_prefix"]
       }
     } : {},
 
     local.enable_private_resolver ? {
-      (var.private_resolver_config["inbound_subnet_name"]) = {
-        prefix         = var.private_resolver_config["inbound_subnet_prefix"]
+      (var.private_resolver["inbound_subnet_name"]) = {
+        prefix         = var.private_resolver["inbound_subnet_prefix"]
         associate_rt   = local.enable_firewall
         route_table_id = one(azurerm_route_table.firewall[*].id)
         delegations = {
@@ -67,8 +67,8 @@ module "network" {
           }
         }
       },
-      (var.private_resolver_config["outbound_subnet_name"]) = {
-        prefix         = var.private_resolver_config["outbound_subnet_prefix"]
+      (var.private_resolver["outbound_subnet_name"]) = {
+        prefix         = var.private_resolver["outbound_subnet_prefix"]
         associate_rt   = local.enable_firewall
         route_table_id = one(azurerm_route_table.firewall[*].id)
         delegations = {
