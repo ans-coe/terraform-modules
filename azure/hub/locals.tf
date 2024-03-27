@@ -121,8 +121,12 @@ locals {
     var.network_watcher_name != null ? var.network_watcher_name : "network-watcher-${var.location}"
   ) : null
 
+  create_network_watcher_resource_group = var.enable_network_watcher ? (
+    var.network_watcher_resource_group_name != null ? false : var.create_network_watcher_resource_group
+  ) : false
+
   network_watcher_resource_group_name = var.enable_network_watcher ? (
-    var.network_watcher_resource_group_name != null ? var.network_watcher_resource_group_name : var.resource_group_name
+    var.network_watcher_resource_group_name != null ? (local.create_network_watcher_resource_group ? azurerm_resource_group.network_watcher.name : var.network_watcher_resource_group_name) : azurerm_resource_group.main.name
   ) : null
 
   ############

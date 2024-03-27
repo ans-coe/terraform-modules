@@ -7,7 +7,7 @@
 # If network_watcher_resource_group is unspecified = spoke resource group
 
 resource "azurerm_resource_group" "network_watcher" {
-  count = var.network_watcher_resource_group_name != null ? 1 : 0
+  count = local.create_network_watcher_resource_group ? 1 : 0
 
   name     = var.network_watcher_resource_group_name
   location = var.location

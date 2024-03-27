@@ -435,6 +435,12 @@ variable "enable_network_watcher" {
   default     = true
 }
 
+variable "create_network_watcher_resource_group" {
+  description = "Do we want to create a network watcher resource group"
+  type        = bool
+  default     = true
+}
+
 variable "network_watcher_name" {
   description = "Name of the Network Watcher"
   type        = string
