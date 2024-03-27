@@ -27,7 +27,7 @@ module "network_security_group" {
   rules_outbound = var.nsg_rules_outbound
 
   enable_flow_log = var.flow_log != null
-  flow_log = var.flow_log != null ? {
+  flow_log_config = var.flow_log != null ? {
     name                                = try(var.flow_log.name, "")
     storage_account_id                  = local.flow_log_sa_id
     network_watcher_name                = local.network_watcher_name
