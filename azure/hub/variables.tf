@@ -99,8 +99,8 @@ variable "subnets" {
 variable "private_endpoint_subnet" {
   description = "Configuration for the Private Endpoint subnet."
   type = object({
-    subnet_name   = optional(string, "snet-pe")
-    subnet_prefix = string
+    subnet_name    = optional(string, "snet-pe")
+    address_prefix = string
     service_endpoints = optional(list(string), [
       "Microsoft.AzureActiveDirectory", "Microsoft.AzureCosmosDB",
       "Microsoft.ContainerRegistry", "Microsoft.EventHub",
@@ -112,7 +112,7 @@ variable "private_endpoint_subnet" {
   default = null
 
   validation {
-    error_message = "private_endpoint_subnet.subnet_prefix must be a valid IPv4 CIDR."
+    error_message = "private_endpoint_subnet.address_prefix must be a valid IPv4 CIDR."
     condition = var.private_endpoint_subnet == null || can(cidrhost(var.private_endpoint_subnet.subnet_prefix, 0)
     )
   }
@@ -131,7 +131,7 @@ variable "firewall" {
   description = "Configuration for the firewall if enabled."
   type = object({
     name               = string
-    subnet_prefix      = string
+    address_prefix     = string
     public_ip_name     = optional(string)
     sku_tier           = optional(string, "Standard")
     zone_redundant     = optional(bool, true)
@@ -142,7 +142,7 @@ variable "firewall" {
   default = null
 
   validation {
-    error_message = "firewall.subnet_prefix must be a valid IPv4 CIDR."
+    error_message = "firewall.address_prefix must be a valid IPv4 CIDR."
     condition = var.firewall == null || can(cidrhost(var.firewall.subnet_prefix, 0)
     )
   }
@@ -161,7 +161,7 @@ variable "bastion" {
   type = object({
     name                        = string
     resource_group_name         = optional(string)
-    subnet_prefix               = string
+    address_prefix              = string
     public_ip_name              = optional(string)
     network_security_group_name = optional(string)
     whitelist_cidrs             = optional(list(string), ["Internet"])
@@ -169,7 +169,7 @@ variable "bastion" {
   default = null
 
   validation {
-    error_message = "bastion.subnet_prefix must be valid a IPv4 CIDR."
+    error_message = "bastion.address_prefix must be valid a IPv4 CIDR."
     condition = var.bastion == null || can(cidrhost(var.bastion.subnet_prefix, 0)
     )
   }
@@ -183,7 +183,7 @@ variable "virtual_network_gateway" {
   description = "Configuration for virtual network gateway if enabled."
   type = object({
     name           = string
-    subnet_prefix  = string
+    address_prefix = string
     public_ip_name = optional(string)
     generation     = optional(string, "Generation1")
     sku            = optional(string, "VpnGw1")
@@ -193,7 +193,7 @@ variable "virtual_network_gateway" {
   default = null
 
   validation {
-    error_message = "virtual_network_gateway.subnet_prefix must be a valid IPv4 CIDR."
+    error_message = "virtual_network_gateway.address_prefix must be a valid IPv4 CIDR."
     condition     = var.virtual_network_gateway == null || can(cidrhost(var.virtual_network_gateway.subnet_prefix, 0))
   }
 
@@ -259,23 +259,23 @@ variable "create_private_endpoint_private_dns_zones" {
 variable "private_resolver" {
   description = "Configuration for virtual network gateway if enabled."
   type = object({
-    name                   = string
-    inbound_endpoint_name  = optional(string)
-    inbound_subnet_name    = optional(string, "snet-dnspr-in")
-    inbound_subnet_prefix  = string
-    outbound_endpoint_name = optional(string)
-    outbound_subnet_name   = optional(string, "snet-dnspr-out")
-    outbound_subnet_prefix = string
+    name                    = string
+    inbound_endpoint_name   = optional(string)
+    inbound_subnet_name     = optional(string, "snet-dnspr-in")
+    inbound_address_prefix  = string
+    outbound_endpoint_name  = optional(string)
+    outbound_subnet_name    = optional(string, "snet-dnspr-out")
+    outbound_address_prefix = string
   })
   default = null
 
   validation {
-    error_message = "private_resolver.inbound_subnet_prefix must be a valid IPv4 CIDR."
+    error_message = "private_resolver.inbound_address_prefix must be a valid IPv4 CIDR."
     condition     = var.private_resolver == null || can(cidrhost(var.private_resolver.inbound_subnet_prefix, 0))
   }
 
   validation {
-    error_message = "private_resolver.outbound_subnet_prefix must be a valid IPv4 CIDR."
+    error_message = "private_resolver.outbound_address_prefix must be a valid IPv4 CIDR."
     condition     = var.private_resolver == null || can(cidrhost(var.private_resolver.outbound_subnet_prefix, 0))
   }
 }
@@ -451,16 +451,6 @@ variable "network_watcher_resource_group_name" {
   description = "Name of the Network Watcher Resourece Group"
   type        = string
   default     = null
-}
-
-###########
-# Features
-###########
-
-variable "create_network_watcher" {
-  description = "Enables Network Watcher for the region & subscription."
-  type        = bool
-  default     = true
 }
 
 ##########################

@@ -19,7 +19,7 @@ locals {
 
   enable_bastion              = var.bastion != null
   bastion                     = one(module.bastion)
-  bastion_resource_group_name = var.bastion.resource_group_name != null ? var.bastion.resource_group_name : azurerm_resource_group.main.name
+  bastion_resource_group_name = try(var.bastion.resource_group_name, null) != null ? var.bastion.resource_group_name : azurerm_resource_group.main.name
   bastion_subnet              = local.enable_bastion ? module.network.subnets["AzureBastionSubnet"] : null
 
   ##########################

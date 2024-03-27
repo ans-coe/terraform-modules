@@ -41,7 +41,7 @@ module "hub" {
 
   firewall = {
     name               = "fw-hub-${local.resource_prefix}"
-    subnet_prefix      = "10.0.15.192/26"
+    address_prefix     = "10.0.15.192/26"
     public_ip_name     = "fw-pip-hub-${local.resource_prefix}"
     route_table_name   = "rt-hub-${local.resource_prefix}"
     firewall_policy_id = module.firewall-policy.id
@@ -50,20 +50,20 @@ module "hub" {
   bastion = {
     name                = "bas-hub-${local.resource_prefix}"
     resource_group_name = "rg-bas-${local.resource_prefix}"
-    subnet_prefix       = "10.0.15.0/26"
+    address_prefix      = "10.0.15.0/26"
   }
 
   # Commented out as this takes ~30 mins to deploy.  Uncomment if specifically testing VNGs
 
   # virtual_network_gateway = {
   #   name          = "vpngw-hub-${local.resource_prefix}"
-  #   subnet_prefix = "10.0.15.128/26"
+  #   address_prefix = "10.0.15.128/26"
   # }
 
   private_resolver = {
-    name                   = "dnspr-hub-${local.resource_prefix}"
-    inbound_subnet_prefix  = "10.0.14.224/28"
-    outbound_subnet_prefix = "10.0.14.240/28"
+    name                    = "dnspr-hub-${local.resource_prefix}"
+    inbound_address_prefix  = "10.0.14.224/28"
+    outbound_address_prefix = "10.0.14.240/28"
   }
 
   create_private_endpoint_private_dns_zones = true

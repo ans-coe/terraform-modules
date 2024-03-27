@@ -35,26 +35,26 @@ module "hub" {
   }
 
   firewall = {
-    name          = "fw-hub-${local.resource_prefix}"
-    subnet_prefix = "10.0.15.192/26"
+    name           = "fw-hub-${local.resource_prefix}"
+    address_prefix = "10.0.15.192/26"
   }
 
   bastion = {
-    name          = "bas-hub-${local.resource_prefix}"
-    subnet_prefix = "10.0.15.0/26"
+    name           = "bas-hub-${local.resource_prefix}"
+    address_prefix = "10.0.15.0/26"
   }
 
   # Commented out as this takes ~30 mins to deploy.  Uncomment if specifically testing VNGs
 
   # virtual_network_gateway = {
   #   name          = "vpngw-hub-${local.resource_prefix}"
-  #   subnet_prefix = "10.0.15.128/26"
+  #   address_prefix = "10.0.15.128/26"
   # }
 
   private_resolver = {
-    name                   = "dnspr-hub-${local.resource_prefix}"
-    inbound_subnet_prefix  = "10.0.14.224/28"
-    outbound_subnet_prefix = "10.0.14.240/28"
+    name                    = "dnspr-hub-${local.resource_prefix}"
+    inbound_address_prefix  = "10.0.14.224/28"
+    outbound_address_prefix = "10.0.14.240/28"
   }
 
   network_watcher_config = {
