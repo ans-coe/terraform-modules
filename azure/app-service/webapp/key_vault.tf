@@ -14,13 +14,15 @@ resource "azurerm_key_vault" "main" {
 }
 
 resource "azurerm_key_vault_access_policy" "operator" {
+  // This will create an access policy for the first operator to run the Terraform code. This is needed for initial key vault creation.
+  // Subsequent management must be handled by adding more users to the Access Policy either outside of the module or via the Portal
   count = local.create_key_vault ? 1 : 0
 
   key_vault_id = azurerm_key_vault.main[0].id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
 
-  certificate_permissions = ["Create", "Delete", "Get", "List", "Update", "Recover", "Restore"]
+  certificate_permissions = ["Create", "Delete", "Get", "List", "Update", "Recover", "Restore", "Import"]
 
   key_permissions = ["Create", "Delete", "Get", "List", "Update", "Recover", "Restore"]
 

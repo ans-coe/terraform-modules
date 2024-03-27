@@ -37,16 +37,16 @@ output "slots" {
   description = "Object containing details for the created deployment slots."
   value       = local.app_service_slots
 }
-
-output "use_umid" {
-  value = local.use_umid
-}
 output "umid_name" {
-  value = local.umid_name
+  description = "Name of the UMID"
+  value       = local.umid_name
 }
-output "create_umid" {
-  value = local.create_umid
-}
+
 output "umid_id" {
-  value = local.umid_id
+  description = "AzureRM ID of the UMID"
+  value       = local.umid_id
+}
+output "umid_principal_id" {
+  description = "Principal ID of the Service Principal of the created UMID - Only set if UMID is created"
+  value       = local.umid_principal_id
 }

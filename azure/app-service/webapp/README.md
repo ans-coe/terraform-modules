@@ -66,16 +66,15 @@ Once deployed, management is expected to be through another medium, so changes t
 |------|-------------|
 | <a name="output_app_service"></a> [app\_service](#output\_app\_service) | Output containing the main app service. |
 | <a name="output_app_service_plan_id"></a> [app\_service\_plan\_id](#output\_app\_service\_plan\_id) | ID of the service plan. |
-| <a name="output_create_umid"></a> [create\_umid](#output\_create\_umid) | n/a |
 | <a name="output_fqdn"></a> [fqdn](#output\_fqdn) | Default FQDN of the app service. |
 | <a name="output_id"></a> [id](#output\_id) | ID of the app service. |
 | <a name="output_identity"></a> [identity](#output\_identity) | Identity of the app service. |
 | <a name="output_location"></a> [location](#output\_location) | Location of the app service. |
 | <a name="output_name"></a> [name](#output\_name) | Name of the app service. |
 | <a name="output_slots"></a> [slots](#output\_slots) | Object containing details for the created deployment slots. |
-| <a name="output_umid_id"></a> [umid\_id](#output\_umid\_id) | n/a |
-| <a name="output_umid_name"></a> [umid\_name](#output\_umid\_name) | n/a |
-| <a name="output_use_umid"></a> [use\_umid](#output\_use\_umid) | n/a |
+| <a name="output_umid_id"></a> [umid\_id](#output\_umid\_id) | AzureRM ID of the UMID |
+| <a name="output_umid_name"></a> [umid\_name](#output\_umid\_name) | Name of the UMID |
+| <a name="output_umid_principal_id"></a> [umid\_principal\_id](#output\_umid\_principal\_id) | Principal ID of the Service Principal of the created UMID - Only set if UMID is created |
 
 ## Resources
 
