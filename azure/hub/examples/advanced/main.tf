@@ -31,44 +31,46 @@ module "hub" {
   resource_group_name  = "rg-hub-${local.resource_prefix}"
   virtual_network_name = "vnet-hub-${local.resource_prefix}"
 
-  address_space = ["10.0.0.0/16"]
-  extra_subnets = {
+  address_space     = ["10.0.0.0/16"]
+  include_azure_dns = true
+  subnets = {
     "hub-net-default" = {
-      prefix = "10.0.0.0/24"
+      address_prefixes = ["10.0.0.0/24"]
     }
   }
 
-  firewall_config = {
+  firewall = {
     name               = "fw-hub-${local.resource_prefix}"
-    subnet_prefix      = "10.0.15.192/26"
+    address_prefix     = "10.0.15.192/26"
     public_ip_name     = "fw-pip-hub-${local.resource_prefix}"
     route_table_name   = "rt-hub-${local.resource_prefix}"
     firewall_policy_id = module.firewall-policy.id
   }
 
-  bastion_config = {
+  bastion = {
     name                = "bas-hub-${local.resource_prefix}"
     resource_group_name = "rg-bas-${local.resource_prefix}"
-    subnet_prefix       = "10.0.15.0/26"
+    address_prefix      = "10.0.15.0/26"
   }
 
   # Commented out as this takes ~30 mins to deploy.  Uncomment if specifically testing VNGs
 
-  # virtual_network_gateway_config = {
+  # virtual_network_gateway = {
   #   name          = "vpngw-hub-${local.resource_prefix}"
-  #   subnet_prefix = "10.0.15.128/26"
+  #   address_prefix = "10.0.15.128/26"
   # }
 
-  private_resolver_config = {
-    name                   = "dnspr-hub-${local.resource_prefix}"
-    inbound_subnet_prefix  = "10.0.14.224/28"
-    outbound_subnet_prefix = "10.0.14.240/28"
+  private_resolver = {
+    name                    = "dnspr-hub-${local.resource_prefix}"
+    inbound_address_prefix  = "10.0.14.224/28"
+    outbound_address_prefix = "10.0.14.240/28"
   }
 
-  network_watcher_config = {
-    name                = "nw_uks-${local.resource_prefix}"
-    resource_group_name = "rg-nw-${local.resource_prefix}"
-  }
+  create_private_endpoint_private_dns_zones = true
+
+  enable_network_watcher              = true
+  network_watcher_name                = "nw_uks-${local.resource_prefix}"
+  network_watcher_resource_group_name = "rg-nw-${local.resource_prefix}"
 }
 
 module "firewall-policy" {
@@ -116,6 +118,11 @@ module "spoke-mgmt" {
     }
   }
 
+  hub_peering = {
+    id                  = module.hub.id
+    use_remote_gateways = false
+  }
+
   network_security_group_name = "nsg-spoke-mgmt-${local.resource_prefix}"
   route_table_name            = "rt-spoke-mgmt-${local.resource_prefix}"
   default_route = {
@@ -129,7 +136,7 @@ resource "azurerm_resource_group" "prd" {
   tags     = local.tags
 }
 
-module "spoke-prd" {
+module "spoke_prd" {
   source = "../../../spoke"
 
   location = local.location
@@ -145,6 +152,11 @@ module "spoke-prd" {
     "snet-prd-tfmex-adv-spoke" = {
       address_prefixes = ["10.2.0.0/24"]
     }
+  }
+
+  hub_peering = {
+    id                  = module.hub.id
+    use_remote_gateways = false
   }
 
   network_security_group_name = "nsg-spoke-prd-${local.resource_prefix}"

@@ -33,7 +33,7 @@ No outputs.
 | <a name="module_firewall-policy"></a> [firewall-policy](#module\_firewall-policy) | ../../../firewall-policy | n/a |
 | <a name="module_hub"></a> [hub](#module\_hub) | ../../ | n/a |
 | <a name="module_spoke-mgmt"></a> [spoke-mgmt](#module\_spoke-mgmt) | ../../../spoke | n/a |
-| <a name="module_spoke-prd"></a> [spoke-prd](#module\_spoke-prd) | ../../../spoke | n/a |
+| <a name="module_spoke_prd"></a> [spoke\_prd](#module\_spoke\_prd) | ../../../spoke | n/a |
 <!-- END_TF_DOCS -->
 _______________
 | Classified  |
