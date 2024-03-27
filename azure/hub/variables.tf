@@ -182,14 +182,15 @@ variable "bastion" {
 variable "virtual_network_gateway" {
   description = "Configuration for virtual network gateway if enabled."
   type = object({
-    name                = string
-    address_prefix      = string
-    resource_group_name = optional(string)
-    public_ip_name      = optional(string)
-    generation          = optional(string, "Generation1")
-    sku                 = optional(string, "VpnGw1")
-    type                = optional(string, "Vpn")
-    vpn_type            = optional(string, "RouteBased")
+    name                  = string
+    address_prefix        = string
+    create_resource_group = optional(bool, true)
+    resource_group_name   = optional(string)
+    public_ip_name        = optional(string)
+    generation            = optional(string, "Generation1")
+    sku                   = optional(string, "VpnGw1")
+    type                  = optional(string, "Vpn")
+    vpn_type              = optional(string, "RouteBased")
   })
   default = null
 

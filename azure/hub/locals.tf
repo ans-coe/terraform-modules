@@ -28,6 +28,14 @@ locals {
 
   enable_virtual_network_gateway = var.virtual_network_gateway != null
   virtual_network_gateway        = one(azurerm_virtual_network_gateway.main)
+
+  create_virtual_network_gateway_resource_group = local.enable_virtual_network_gateway ? (
+    try(var.virtual_network_gateway["resource_group_name"], null) != null ? false : var.virtual_network_gateway["create_resource_group"]
+  ) : false
+
+  virtual_network_gateway_resource_group_name = local.enable_virtual_network_gateway ? (
+    try(var.virtual_network_gateway["resource_group_name"], null) != null ? (local.create_virtual_network_gateway_resource_group ? one(azurerm_resource_group.vgn[*].name) : var.virtual_network_gateway["resource_group_name"]) : azurerm_resource_group.main.name
+  ) : null
   virtual_network_gateway_subnet = local.enable_virtual_network_gateway ? module.network.subnets["GatewaySubnet"] : null
 
   ###################

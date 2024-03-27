@@ -2,6 +2,13 @@
 # Virtual Network Gateway
 ##########################
 
+resource "azurerm_resource_group" "vng" {
+  count = local.create_virtual_network_gateway_resource_group ? 1 : 0
+  name  = var.virtual_network_gateway["resource_group_name"]
+
+
+}
+
 resource "azurerm_public_ip" "virtual_network_gateway" {
   count = local.enable_virtual_network_gateway ? 1 : 0
 
