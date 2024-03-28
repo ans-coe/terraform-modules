@@ -29,11 +29,11 @@ variable "virtual_network_name" {
 
 variable "address_space" {
   description = "The address spaces of the virtual network."
-  type        = list(string)
+  type        = string
 
   validation {
     error_message = "Values for address_space must be valid IPv4 CIDR."
-    condition     = alltrue([for v in var.address_space : can(cidrhost(v, 0))])
+    condition     = can(cidrhost(var.address_space, 0))
   }
 }
 
@@ -100,8 +100,8 @@ variable "subnets" {
   default = {}
 
   validation {
-    error_message = "Values for address_prefixes must be valid IPv4 CIDR."
-    condition     = alltrue(flatten([for v in var.subnets : [for a in v.address_prefixes : can(cidrhost(a, 0))]]))
+    error_message = "Values for prefix must be valid IPv4 CIDR."
+    condition     = alltrue(flatten([for v in var.subnets : [for a in v.prefix : can(cidrhost(a, 0))]]))
   }
 }
 
