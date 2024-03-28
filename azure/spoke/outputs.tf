@@ -30,12 +30,12 @@ output "nsg_rules_outbound" {
 
 output "route_table" {
   description = "The output of the route table rsource."
-  value       = one(module.route-table)
+  value       = try(one(module.route-table), null)
 }
 
 output "routes" {
   description = "The output of all routes, default and custom."
-  value       = one(module.route-table).routes
+  value       = try(one(module.route-table).routes, null)
 }
 
 output "network_watcher" {

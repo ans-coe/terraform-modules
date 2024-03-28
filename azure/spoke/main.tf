@@ -31,7 +31,7 @@ resource "azurerm_subnet" "main" {
   virtual_network_name = module.network.name
   resource_group_name  = var.resource_group_name
 
-  address_prefixes = each.value["address_prefixes"]
+  address_prefixes = ["${each.value["prefix"]}"]
 
   service_endpoints                             = each.value["service_endpoints"]
   private_endpoint_network_policies_enabled     = each.value["private_endpoint_network_policies_enabled"]

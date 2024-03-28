@@ -84,7 +84,7 @@ variable "bgp_community" {
 variable "subnets" {
   description = "Subnets to create in this virtual network with the map name indicating the subnet name."
   type = map(object({
-    address_prefixes                              = list(string)
+    prefixs                                       = string
     service_endpoints                             = optional(list(string))
     private_endpoint_network_policies_enabled     = optional(bool)
     private_link_service_network_policies_enabled = optional(bool)
