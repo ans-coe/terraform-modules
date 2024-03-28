@@ -11,7 +11,7 @@ module "network" {
   resource_group_name = var.resource_group_name
   tags                = var.tags
 
-  address_space     = var.address_space
+  address_space     = [var.address_space]
   dns_servers       = var.dns_servers != "" ? var.dns_servers : []
   include_azure_dns = var.include_azure_dns
   private_dns_zones = var.private_dns_zones
