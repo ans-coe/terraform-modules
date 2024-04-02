@@ -54,5 +54,5 @@ output "private_resolver_outbound_endpoint" {
 
 output "network_watcher" {
   description = "Output of the network watcher."
-  value       = one(azurerm_network_watcher.main)
+  value       = one(azurerm_network_watcher.main[*])
 }
