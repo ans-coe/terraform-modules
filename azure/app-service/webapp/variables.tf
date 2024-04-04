@@ -88,6 +88,12 @@ variable "application_stack" {
   }
 }
 
+variable "client_affinity_enabled" {
+  description = "Should Client Affinity be enabled?"
+  type        = bool
+  default     = false
+}
+
 variable "virtual_application" {
   description = "Virtual application configuration for the app service."
   type = set(object({
