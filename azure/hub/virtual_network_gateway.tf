@@ -12,7 +12,12 @@ resource "azurerm_public_ip" "virtual_network_gateway" {
 
   sku               = "Standard"
   allocation_method = "Static"
-  zones             = var.virtual_network_gateway["public_ip_zones"] != null ? var.virtual_network_gateway["public_ip_zones"] : [for zone in data.azurerm_location.main.zone_mappings : zone.logical_zone]
+  zones = length(regexall("AZ$", var.virtual_network_gateway["sku"])) == 0 ? null : ( // if the sku doesn't end in AZ then the zones are not used
+    var.virtual_network_gateway["public_ip_zones"] != null ? (
+      var.virtual_network_gateway["public_ip_zones"]) : (
+      [for zone in data.azurerm_location.main.zone_mappings : zone.logical_zone]
+    )
+  )
 }
 
 resource "azurerm_route_table" "virtual_network_gateway" {
