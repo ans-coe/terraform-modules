@@ -20,6 +20,7 @@ resource "azurerm_public_ip" "virtual_network_gateway" {
 
   sku               = "Standard"
   allocation_method = "Static"
+  zones             = [for zone in data.azurerm_location.main.zone_mappings : zone.logical_zone]
 }
 
 resource "azurerm_route_table" "virtual_network_gateway" {
