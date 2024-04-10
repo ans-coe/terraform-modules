@@ -34,13 +34,13 @@ locals {
   enable_bastion = var.bastion != null
   bastion        = one(module.bastion)
 
-  create_bastion_resource_group = local.enable_bastion ? (
-    try(var.bastion["resource_group_name"], null) != null ? false : var.bastion["create_resource_group"]
-  ) : false
+  create_bastion_resource_group = local.enable_bastion ? var.bastion["create_resource_group"] : false
 
-  bastion_resource_group_name = local.enable_bastion ? (
-    try(var.bastion["resource_group_name"], null) != null ? (local.create_bastion_resource_group ? one(azurerm_resource_group.bastion[*].name) : var.bastion["resource_group_name"]) : azurerm_resource_group.main.name
-  ) : null
+  bastion_resource_group_name = local.create_bastion_resource_group ? (
+    one(azurerm_resource_group.bastion[*].name)
+    ) : (
+    try(var.bastion["resource_group_name"], null) != null ? var.bastion["resource_group_name"] : azurerm_resource_group.main.name
+  )
 
   bastion_subnet = local.enable_bastion ? module.network.subnets["AzureBastionSubnet"] : null
 
@@ -51,15 +51,13 @@ locals {
   enable_virtual_network_gateway = var.virtual_network_gateway != null
   virtual_network_gateway        = one(azurerm_virtual_network_gateway.main)
 
-  create_virtual_network_gateway_resource_group = local.enable_virtual_network_gateway ? (
-    try(var.virtual_network_gateway["resource_group_name"], null) != null ? false : var.virtual_network_gateway["create_resource_group"]
-  ) : false
+  create_virtual_network_gateway_resource_group = local.enable_virtual_network_gateway ? var.virtual_network_gateway["create_resource_group"] : false
 
-  virtual_network_gateway_resource_group_name = local.enable_virtual_network_gateway ? (
-    try(var.virtual_network_gateway["resource_group_name"], null) != null ? (
-      local.create_virtual_network_gateway_resource_group ? one(azurerm_resource_group.virtual_network_gateway[*].name) : var.virtual_network_gateway["resource_group_name"]
-    ) : azurerm_resource_group.main.name
-  ) : null
+  virtual_network_gateway_resource_group_name = local.create_virtual_network_gateway_resource_group ? (
+    one(azurerm_resource_group.virtual_network_gateway[*].name)
+    ) : (
+    try(var.virtual_network_gateway["resource_group_name"], null) != null ? var.virtual_network_gateway["resource_group_name"] : azurerm_resource_group.main.name
+  )
 
   virtual_network_gateway_subnet = local.enable_virtual_network_gateway ? module.network.subnets["GatewaySubnet"] : null
 
