@@ -13,6 +13,19 @@ locals {
   firewall             = one(module.firewall)
   firewall_route_table = one(azurerm_route_table.firewall)
 
+  ###########
+  # Route Table
+  ###########
+
+  default_route = var.create_default_route ? (        // create default route is false, don't create default route 
+    var.default_route != null ? var.default_route : ( // default route is set = use default route
+      local.enable_firewall ? {                       // default route is empty and azure firewall = use azure firewall
+        name = "default-route"
+        ip   = one(module.firewall.private_ip)
+      } : {} // default route is empty and no azure firewall = don't create default route
+    )
+  ) : {}
+
   ##########
   # Bastion
   ##########
@@ -70,13 +83,13 @@ locals {
     var.network_watcher_name != null ? var.network_watcher_name : "network-watcher-${var.location}"
   ) : null
 
-  create_network_watcher_resource_group = var.enable_network_watcher ? (
-    var.network_watcher_resource_group_name != null ? false : var.create_network_watcher_resource_group
-  ) : false
+  create_network_watcher_resource_group = var.enable_network_watcher ? var.create_network_watcher_resource_group : false
 
-  network_watcher_resource_group_name = var.enable_network_watcher ? (
-    var.network_watcher_resource_group_name != null ? (local.create_network_watcher_resource_group ? one(azurerm_resource_group.network_watcher[*].name) : var.network_watcher_resource_group_name) : azurerm_resource_group.main.name
-  ) : null
+  network_watcher_resource_group_name = local.create_network_watcher_resource_group ? (
+    one(azurerm_resource_group.network_watcher.name)
+    ) : (
+    var.network_watcher_resource_group_name != null ? var.network_watcher_resource_group_name : azurerm_resource_group.main.name
+  )
 
   ############
   # Flow Log

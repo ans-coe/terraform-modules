@@ -142,8 +142,6 @@ variable "firewall" {
     public_ip_name     = optional(string)
     sku_tier           = optional(string, "Standard")
     zone_redundant     = optional(bool, true)
-    route_table_name   = optional(string)
-    default_route_name = optional(string, "default")
     firewall_policy_id = optional(string)
   })
   default = null
@@ -391,20 +389,20 @@ variable "flow_log" {
 # Route Table
 ##############
 
-variable "create_default_route_table" {
-  description = "Create a route table to associate with all subnets."
-  type        = bool
-  default     = true
-}
-
 variable "route_table_name" {
   description = "Name of the default Route Table"
   type        = string
   default     = "default-rt"
 }
 
+variable "create_default_route" {
+  description = "create default route in the firewall"
+  type        = bool
+  default     = true
+}
+
 variable "default_route" {
-  description = "Configuration for the default route."
+  description = "Configuration for the default route. "
   type = object({
     name = optional(string, "default-route")
     ip   = string

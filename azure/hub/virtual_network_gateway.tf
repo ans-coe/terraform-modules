@@ -31,8 +31,8 @@ resource "azurerm_route_table" "virtual_network_gateway" {
   tags                = var.tags
 
   route = [for name, route in var.virtual_network_gateway.route_table.routes : {
-    name = name
-    address_prefix = route.address_prefix
+    name                   = name
+    address_prefix         = route.address_prefix
     next_hop_type          = route.next_hop_type
     next_hop_in_ip_address = route.next_hop_in_ip_address == "firewall" ? one(module.firewall[*].private_ip) : route.next_hop_in_ip_address
   }]

@@ -9,7 +9,7 @@
 resource "azurerm_resource_group" "network_watcher" {
   count = local.create_network_watcher_resource_group ? 1 : 0
 
-  name     = var.network_watcher_resource_group_name
+  name     = var.network_watcher_resource_group_name != null ? var.network_watcher_resource_group_name : "NetworkWatcherRG"
   location = var.location
   tags     = var.tags
 }
