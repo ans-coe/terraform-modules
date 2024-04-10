@@ -164,13 +164,13 @@ variable "firewall" {
 variable "bastion" {
   description = "Configuration for the bastion if enabled."
   type = object({
-    name                          = string
-    create_bastion_resource_group = optional(bool, true)
-    resource_group_name           = optional(string)
-    address_prefix                = string
-    public_ip_name                = optional(string)
-    network_security_group_name   = optional(string)
-    whitelist_cidrs               = optional(list(string), ["Internet"])
+    name                        = string
+    create_resource_group       = optional(bool, true)
+    resource_group_name         = optional(string)
+    address_prefix              = string
+    public_ip_name              = optional(string)
+    network_security_group_name = optional(string)
+    whitelist_cidrs             = optional(list(string), ["Internet"])
   })
   default = null
 
