@@ -24,7 +24,7 @@ output "firewall" {
 
 output "default_route_table" {
   description = "Default route table passing traffic through the firewall."
-  value       = local.firewall_route_table
+  value       = local.route_table
 }
 
 output "bastion" {

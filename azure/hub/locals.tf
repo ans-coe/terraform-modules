@@ -9,9 +9,8 @@ locals {
   # Firewall
   ###########
 
-  enable_firewall      = var.firewall != null
-  firewall             = one(module.firewall)
-  firewall_route_table = one(azurerm_route_table.firewall)
+  enable_firewall = var.firewall != null
+  firewall        = one(module.firewall)
 
   ###########
   # Route Table
@@ -21,10 +20,12 @@ locals {
     var.default_route != null ? var.default_route : ( // default route is set = use default route
       local.enable_firewall ? {                       // default route is empty and azure firewall = use azure firewall
         name = "default-route"
-        ip   = one(module.firewall.private_ip)
+        ip   = one(module.firewall[*].private_ip)
       } : {} // default route is empty and no azure firewall = don't create default route
     )
   ) : {}
+
+  route_table = module.route-table
 
   ##########
   # Bastion
@@ -86,7 +87,7 @@ locals {
   create_network_watcher_resource_group = var.enable_network_watcher ? var.create_network_watcher_resource_group : false
 
   network_watcher_resource_group_name = local.create_network_watcher_resource_group ? (
-    one(azurerm_resource_group.network_watcher.name)
+    one(azurerm_resource_group.network_watcher[*].name)
     ) : (
     var.network_watcher_resource_group_name != null ? var.network_watcher_resource_group_name : azurerm_resource_group.main.name
   )
@@ -112,7 +113,7 @@ locals {
     for k, v in var.subnets
     : k => merge(v, {
       associate_rt   = v.associate_rt != null ? v.associate_rt : local.enable_firewall
-      route_table_id = v.route_table_id != null ? v.route_table_id : one(azurerm_route_table.firewall[*].id)
+      route_table_id = v.route_table_id != null ? v.route_table_id : one(module.route-table.id)
       prefix         = v.address_prefix
     })
   }

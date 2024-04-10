@@ -35,7 +35,7 @@ module "hub" {
   include_azure_dns = true
   subnets = {
     "hub-net-default" = {
-      address_prefixes = ["10.0.0.0/24"]
+      address_prefix = "10.0.0.0/24"
     }
   }
 
@@ -65,8 +65,6 @@ module "hub" {
     inbound_address_prefix  = "10.0.14.224/28"
     outbound_address_prefix = "10.0.14.240/28"
   }
-
-  create_private_endpoint_private_dns_zones = true
 
   enable_network_watcher              = true
   network_watcher_name                = "nw_uks-${local.resource_prefix}"
@@ -118,9 +116,11 @@ module "spoke-mgmt" {
     }
   }
 
-  hub_peering = {
-    id                  = module.hub.id
-    use_remote_gateways = false
+  vnet_peering = {
+    hub = {
+      remote_vnet_id      = module.hub.id
+      use_remote_gateways = false
+    }
   }
 
   network_security_group_name = "nsg-spoke-mgmt-${local.resource_prefix}"
@@ -154,9 +154,11 @@ module "spoke_prd" {
     }
   }
 
-  hub_peering = {
-    id                  = module.hub.id
-    use_remote_gateways = false
+  vnet_peering = {
+    hub = {
+      remote_vnet_id      = module.hub.id
+      use_remote_gateways = false
+    }
   }
 
   network_security_group_name = "nsg-spoke-prd-${local.resource_prefix}"
@@ -193,15 +195,15 @@ resource "azurerm_virtual_network_peering" "hub-prd" {
   name                         = "peer-hub-prd-${local.resource_prefix}"
   resource_group_name          = module.hub.network.resource_group_name
   virtual_network_name         = module.hub.network.name
-  remote_virtual_network_id    = module.spoke-prd.id
+  remote_virtual_network_id    = module.spoke_prd.id
   allow_virtual_network_access = true
   allow_forwarded_traffic      = true
 }
 
 resource "azurerm_virtual_network_peering" "prd-hub" {
   name                         = "peer-prd-hub-${local.resource_prefix}"
-  resource_group_name          = module.spoke-prd.network.resource_group_name
-  virtual_network_name         = module.spoke-prd.network.name
+  resource_group_name          = module.spoke_prd.network.resource_group_name
+  virtual_network_name         = module.spoke_prd.network.name
   remote_virtual_network_id    = module.hub.id
   allow_virtual_network_access = true
   allow_forwarded_traffic      = true

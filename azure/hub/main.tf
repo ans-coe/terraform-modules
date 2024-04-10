@@ -61,7 +61,7 @@ module "network" {
       (var.private_resolver["inbound_subnet_name"]) = {
         prefix         = var.private_resolver["inbound_address_prefix"]
         associate_rt   = local.enable_firewall
-        route_table_id = one(azurerm_route_table.firewall[*].id)
+        route_table_id = module.route-table.id
         delegations = {
           private-resolver = {
             service = "Microsoft.Network/dnsResolvers"
@@ -72,7 +72,7 @@ module "network" {
       (var.private_resolver["outbound_subnet_name"]) = {
         prefix         = var.private_resolver["outbound_address_prefix"]
         associate_rt   = local.enable_firewall
-        route_table_id = one(azurerm_route_table.firewall[*].id)
+        route_table_id = module.route-table.id
         delegations = {
           private-resolver = {
             service = "Microsoft.Network/dnsResolvers"
