@@ -197,6 +197,7 @@ variable "virtual_network_gateway" {
     sku                   = optional(string, "VpnGw1")
     type                  = optional(string, "Vpn")
     vpn_type              = optional(string, "RouteBased")
+    public_ip_zones       = optional(list(string))
 
     route_table = optional(object({
       name = string
