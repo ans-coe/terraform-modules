@@ -121,7 +121,7 @@ resource "azurerm_virtual_machine_extension" "win-diag" {
 }
 
 resource "azurerm_virtual_machine_extension" "main_aadlogin" {
-  count = var.enable_aad_login ? 1 : 0
+  count = var.enable_aad_login && local.is_windows ? 1 : 0
 
   name               = "AADLoginForWindows"
   virtual_machine_id = local.virtual_machine.id
