@@ -2,20 +2,12 @@
 # Virtual Network Gateway
 ##########################
 
-resource "azurerm_resource_group" "virtual_network_gateway" {
-  count = local.create_virtual_network_gateway_resource_group ? 1 : 0
-
-  name     = var.virtual_network_gateway["resource_group_name"]
-  location = var.location
-  tags     = var.tags
-}
-
 resource "azurerm_public_ip" "virtual_network_gateway" {
   count = local.enable_virtual_network_gateway ? 1 : 0
 
   name                = var.virtual_network_gateway["public_ip_name"] == null ? format("pip-%s", var.virtual_network_gateway["name"]) : var.virtual_network_gateway["public_ip_name"]
   location            = var.location
-  resource_group_name = local.virtual_network_gateway_resource_group_name
+  resource_group_name = azurerm_resource_group.main.name
   tags                = var.tags
 
   sku               = "Standard"
@@ -27,7 +19,7 @@ resource "azurerm_route_table" "virtual_network_gateway" {
   count = local.use_virtual_network_gateway_route_table ? 1 : 0
 
   name                = var.virtual_network_gateway.route_table.name
-  resource_group_name = local.virtual_network_gateway_resource_group_name
+  resource_group_name = azurerm_resource_group.main.name
   location            = var.location
   tags                = var.tags
 
@@ -44,7 +36,7 @@ resource "azurerm_virtual_network_gateway" "main" {
 
   name                = var.virtual_network_gateway["name"]
   location            = var.location
-  resource_group_name = local.virtual_network_gateway_resource_group_name
+  resource_group_name = azurerm_resource_group.main.name
   tags                = var.tags
 
   generation = var.virtual_network_gateway["generation"]
