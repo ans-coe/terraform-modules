@@ -113,93 +113,96 @@ resource "azurerm_linux_function_app" "main" {
 
   public_network_access_enabled = var.public_network_access_enabled
 
-  dynamic "site_config" {
-    for_each = [var.site_config]
 
-    content {
-      worker_count           = lookup(site_config.value, "worker_count", 1)
-      app_scale_limit        = lookup(site_config.value, "app_scale_limit", null)
-      use_32_bit_worker      = lookup(site_config.value, "use_32_bit_worker", true)
-      always_on              = lookup(site_config.value, "always_on", false)
-      vnet_route_all_enabled = lookup(site_config.value, "vnet_route_all_enabled", false)
-      load_balancing_mode    = lookup(site_config.value, "load_balancing_mode", null)
 
-      minimum_tls_version     = "1.2"
-      scm_minimum_tls_version = "1.2"
-      http2_enabled           = lookup(site_config.value, "http2_enabled", false)
-      websockets_enabled      = lookup(site_config.value, "websockets_enabled", false)
-      default_documents       = var.default_documents
+  site_config {
+    always_on                                     = var.site_config.always_on
+    api_management_api_id                         = var.site_config.api_management_api_id
+    api_definition_url                            = var.site_config.api_definition_url
+    app_command_line                              = var.site_config.app_command_line
+    app_scale_limit                               = var.site_config.app_scale_limit
+    application_insights_key                      = var.site_config.application_insights_key
+    application_insights_connection_string        = var.site_config.application_insights_connection_string
+    container_registry_use_managed_identity       = var.site_config.container_registry_use_managed_identity
+    container_registry_managed_identity_client_id = var.site_config.container_registry_managed_identity_client_id
+    default_documents                             = var.site_config.default_documents
+    elastic_instance_minimum                      = var.site_config.elastic_instance_minimum
+    http2_enabled                                 = var.site_config.http2_enabled
+    scm_use_main_ip_restriction                   = var.site_config.scm_use_main_ip_restriction
+    load_balancing_mode                           = var.site_config.load_balancing_mode
+    managed_pipeline_mode                         = var.site_config.managed_pipeline_mode
+    pre_warmed_instance_count                     = var.site_config.pre_warmed_instance_count
+    remote_debugging_enabled                      = var.site_config.remote_debugging_enabled
+    remote_debugging_version                      = var.site_config.remote_debugging_version
+    runtime_scale_monitoring_enabled              = var.site_config.runtime_scale_monitoring_enabled
+    scm_type                                      = var.site_config.scm_type
+    use_32_bit_worker                             = var.site_config.use_32_bit_worker
+    websockets_enabled                            = var.site_config.websockets_enabled
+    ftps_state                                    = var.site_config.ftps_state
+    health_check_path                             = var.site_config.health_check_path
+    health_check_eviction_time_in_min             = var.site_config.health_check_eviction_time_in_min
+    worker_count                                  = var.site_config.worker_count
+    minimum_tls_version                           = var.site_config.minimum_tls_version
+    scm_minimum_tls_version                       = var.site_config.scm_minimum_tls_version
+    vnet_route_all_enabled                        = var.site_config.vnet_route_all_enabled
+    detailed_error_logging_enabled                = var.site_config.detailed_error_logging_enabled
+    linux_fx_version                              = var.site_config.linux_fx_version
 
-      api_definition_url    = lookup(site_config.value, "api_definition_url", null)
-      api_management_api_id = lookup(site_config.value, "api_management_api_id", null)
+    dynamic "ip_restriction" {
+      for_each = local.access_rules
+      content {
+        name     = ip_restriction.name
+        priority = ip_restriction.priority
+        action   = ip_restriction.action
 
-      health_check_path                 = lookup(site_config.value, "health_check_path", null)
-      health_check_eviction_time_in_min = lookup(site_config.value, "health_check_eviction_time_in_min", null)
+        ip_address                = ip_restriction.ip_address
+        service_tag               = ip_restriction.service_tag
+        virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
+        headers                   = ip_restriction.headers
+      }
+    }
+    dynamic "scm_ip_restriction" {
+      for_each = local.access_rules
+      content {
+        name     = scm_ip_restriction.name
+        priority = scm_ip_restriction.priority
+        action   = scm_ip_restriction.action
 
-      application_insights_key               = var.create_application_insights ? one(azurerm_application_insights.main[*].instrumentation_key) : lookup(site_config.value, "application_insights_key", null)
-      application_insights_connection_string = var.create_application_insights ? one(azurerm_application_insights.main[*].connection_string) : lookup(site_config.value, "application_insights_connection_string", null)
+        ip_address                = scm_ip_restriction.ip_address
+        service_tag               = scm_ip_restriction.service_tag
+        virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
+        headers                   = scm_ip_restriction.headers
+      }
+    }
 
-      container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
-      container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
-      remote_debugging_enabled                      = lookup(site_config.value, "remote_debugging_enabled", false)
-      remote_debugging_version                      = lookup(site_config.value, "remote_debugging_version", null)
+    dynamic "cors" {
+      for_each = var.cors == null ? [] : [1]
+      content {
+        allowed_origins     = lookup(var.cors, "allowed_origins", null)
+        support_credentials = lookup(var.cors, "support_credentials", null)
+      }
+    }
 
-      dynamic "ip_restriction" {
-        for_each = local.access_rules
+    application_stack {
+      dynamic "docker" {
+        for_each = lookup(var.application_stack, "docker_image", null) == null ? [] : [1]
         content {
-          name     = ip_restriction.name
-          priority = ip_restriction.priority
-          action   = ip_restriction.action
-
-          ip_address                = ip_restriction.ip_address
-          service_tag               = ip_restriction.service_tag
-          virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
-          headers                   = ip_restriction.headers
+          registry_url = lookup(var.application_stack, "docker_registry", null)
+          image_name   = lookup(var.application_stack, "docker_image", null)
+          image_tag    = lookup(var.application_stack, "docker_image_tag", null)
         }
       }
-      dynamic "scm_ip_restriction" {
-        for_each = local.access_rules
-        content {
-          name     = scm_ip_restriction.name
-          priority = scm_ip_restriction.priority
-          action   = scm_ip_restriction.action
+      use_dotnet_isolated_runtime = lookup(var.application_stack, "use_dotnet_isolated_runtime", null)
+      dotnet_version              = lookup(var.application_stack, "dotnet_version", null)
+      java_version                = lookup(var.application_stack, "java_version", null)
+      node_version                = lookup(var.application_stack, "node_version", null)
+      python_version              = lookup(var.application_stack, "python_version", null)
+      powershell_core_version     = lookup(var.application_stack, "powershell_core_version", null)
+    }
 
-          ip_address                = scm_ip_restriction.ip_address
-          service_tag               = scm_ip_restriction.service_tag
-          virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
-          headers                   = scm_ip_restriction.headers
-        }
-      }
-
-      dynamic "cors" {
-        for_each = var.cors == null ? [] : [1]
-        content {
-          allowed_origins     = lookup(var.cors, "allowed_origins", null)
-          support_credentials = lookup(var.cors, "support_credentials", null)
-        }
-      }
-
-      application_stack {
-        dynamic "docker" {
-          for_each = lookup(var.application_stack, "docker_image", null) == null ? [] : [1]
-          content {
-            registry_url = lookup(var.application_stack, "docker_registry", null)
-            image_name   = lookup(var.application_stack, "docker_image", null)
-            image_tag    = lookup(var.application_stack, "docker_image_tag", null)
-          }
-        }
-        use_dotnet_isolated_runtime = lookup(var.application_stack, "use_dotnet_isolated_runtime", null)
-        dotnet_version              = lookup(var.application_stack, "dotnet_version", null)
-        java_version                = lookup(var.application_stack, "java_version", null)
-        node_version                = lookup(var.application_stack, "node_version", null)
-        python_version              = lookup(var.application_stack, "python_version", null)
-        powershell_core_version     = lookup(var.application_stack, "powershell_core_version", null)
-      }
-
-      app_service_logs {
-        disk_quota_mb         = lookup(site_config.value, "log_disk_quota_mb", 25)
-        retention_period_days = lookup(site_config.value, "log_retention_days", 7)
-      }
+    app_service_logs {
+      disk_quota_mb         = lookup(site_config.value, "log_disk_quota_mb", 25)
+      retention_period_days = lookup(site_config.value, "log_retention_days", 7)
     }
   }
 
@@ -255,92 +258,89 @@ resource "azurerm_linux_function_app_slot" "main" {
   storage_account_name       = azurerm_storage_account.app.name
   storage_account_access_key = azurerm_storage_account.app.primary_access_key
 
-  dynamic "site_config" {
-    for_each = [var.site_config]
-    content {
-      worker_count           = lookup(site_config.value, "worker_count", 1)
-      app_scale_limit        = lookup(site_config.value, "app_scale_limit", null)
-      use_32_bit_worker      = lookup(site_config.value, "use_32_bit_worker", null)
-      always_on              = lookup(site_config.value, "always_on", false)
-      vnet_route_all_enabled = lookup(site_config.value, "vnet_route_all_enabled", null)
-      load_balancing_mode    = lookup(site_config.value, "load_balancing_mode", null)
+  site_config {
+    always_on                                     = var.site_config.always_on
+    api_management_api_id                         = var.site_config.api_management_api_id
+    api_definition_url                            = var.site_config.api_definition_url
+    app_command_line                              = var.site_config.app_command_line
+    app_scale_limit                               = var.site_config.app_scale_limit
+    application_insights_key                      = var.site_config.application_insights_key
+    application_insights_connection_string        = var.site_config.application_insights_connection_string
+    container_registry_use_managed_identity       = var.site_config.container_registry_use_managed_identity
+    container_registry_managed_identity_client_id = var.site_config.container_registry_managed_identity_client_id
+    default_documents                             = var.site_config.default_documents
+    elastic_instance_minimum                      = var.site_config.elastic_instance_minimum
+    http2_enabled                                 = var.site_config.http2_enabled
+    scm_use_main_ip_restriction                   = var.site_config.scm_use_main_ip_restriction
+    load_balancing_mode                           = var.site_config.load_balancing_mode
+    managed_pipeline_mode                         = var.site_config.managed_pipeline_mode
+    pre_warmed_instance_count                     = var.site_config.pre_warmed_instance_count
+    remote_debugging_enabled                      = var.site_config.remote_debugging_enabled
+    remote_debugging_version                      = var.site_config.remote_debugging_version
+    runtime_scale_monitoring_enabled              = var.site_config.runtime_scale_monitoring_enabled
+    scm_type                                      = var.site_config.scm_type
+    use_32_bit_worker                             = var.site_config.use_32_bit_worker
+    websockets_enabled                            = var.site_config.websockets_enabled
+    ftps_state                                    = var.site_config.ftps_state
+    health_check_path                             = var.site_config.health_check_path
+    health_check_eviction_time_in_min             = var.site_config.health_check_eviction_time_in_min
+    worker_count                                  = var.site_config.worker_count
+    minimum_tls_version                           = var.site_config.minimum_tls_version
+    scm_minimum_tls_version                       = var.site_config.scm_minimum_tls_version
+    vnet_route_all_enabled                        = var.site_config.vnet_route_all_enabled
+    detailed_error_logging_enabled                = var.site_config.detailed_error_logging_enabled
+    linux_fx_version                              = var.site_config.linux_fx_version
 
-      minimum_tls_version     = "1.2"
-      scm_minimum_tls_version = "1.2"
-      http2_enabled           = lookup(site_config.value, "http2_enabled", false)
-      websockets_enabled      = lookup(site_config.value, "websockets_enabled", false)
-      default_documents       = var.default_documents
+    dynamic "ip_restriction" {
+      for_each = local.access_rules
+      content {
+        name     = ip_restriction.name
+        priority = ip_restriction.priority
+        action   = ip_restriction.action
 
-      api_definition_url    = lookup(site_config.value, "api_definition_url", null)
-      api_management_api_id = lookup(site_config.value, "api_management_api_id", null)
+        ip_address                = ip_restriction.ip_address
+        service_tag               = ip_restriction.service_tag
+        virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
+        headers                   = ip_restriction.headers
+      }
+    }
+    dynamic "scm_ip_restriction" {
+      for_each = local.scm_access_rules
+      content {
+        name     = scm_ip_restriction.name
+        priority = scm_ip_restriction.priority
+        action   = scm_ip_restriction.action
 
-      health_check_path                 = lookup(site_config.value, "health_check_path", null)
-      health_check_eviction_time_in_min = lookup(site_config.value, "health_check_eviction_time_in_min", null)
+        ip_address                = scm_ip_restriction.ip_address
+        service_tag               = scm_ip_restriction.service_tag
+        virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
+        headers                   = scm_ip_restriction.headers
+      }
+    }
 
-      application_insights_key               = var.create_application_insights ? one(azurerm_application_insights.main[*].instrumentation_key) : lookup(site_config.value, "application_insights_key", null)
-      application_insights_connection_string = var.create_application_insights ? one(azurerm_application_insights.main[*].connection_string) : lookup(site_config.value, "application_insights_connection_string", null)
+    dynamic "cors" {
+      for_each = var.cors == null ? [] : [1]
+      content {
+        allowed_origins     = lookup(var.cors, "allowed_origins", null)
+        support_credentials = lookup(var.cors, "support_credentials", null)
+      }
+    }
 
-      container_registry_use_managed_identity       = lookup(site_config.value, "container_registry_use_managed_identity", true)
-      container_registry_managed_identity_client_id = lookup(site_config.value, "container_registry_managed_identity_client_id", null)
-      remote_debugging_enabled                      = lookup(site_config.value, "remote_debugging_enabled", false)
-      remote_debugging_version                      = lookup(site_config.value, "remote_debugging_version", null)
-
-      dynamic "ip_restriction" {
-        for_each = local.access_rules
+    application_stack {
+      dynamic "docker" {
+        for_each = lookup(var.application_stack, "docker_image", null) == null ? [] : [1]
         content {
-          name     = ip_restriction.name
-          priority = ip_restriction.priority
-          action   = ip_restriction.action
-
-          ip_address                = ip_restriction.ip_address
-          service_tag               = ip_restriction.service_tag
-          virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
-          headers                   = ip_restriction.headers
+          registry_url = lookup(var.application_stack, "docker_registry", null)
+          image_name   = lookup(var.application_stack, "docker_image", null)
+          image_tag    = lookup(var.application_stack, "docker_image_tag", null)
         }
       }
-      dynamic "scm_ip_restriction" {
-        for_each = local.scm_access_rules
-        content {
-          name     = scm_ip_restriction.name
-          priority = scm_ip_restriction.priority
-          action   = scm_ip_restriction.action
-
-          ip_address                = scm_ip_restriction.ip_address
-          service_tag               = scm_ip_restriction.service_tag
-          virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
-          headers                   = scm_ip_restriction.headers
-        }
-      }
-
-      dynamic "cors" {
-        for_each = var.cors == null ? [] : [1]
-        content {
-          allowed_origins     = lookup(var.cors, "allowed_origins", null)
-          support_credentials = lookup(var.cors, "support_credentials", null)
-        }
-      }
-
-      application_stack {
-        dynamic "docker" {
-          for_each = lookup(var.application_stack, "docker_image", null) == null ? [] : [1]
-          content {
-            registry_url = lookup(var.application_stack, "docker_registry", null)
-            image_name   = lookup(var.application_stack, "docker_image", null)
-            image_tag    = lookup(var.application_stack, "docker_image_tag", null)
-          }
-        }
-        use_dotnet_isolated_runtime = lookup(var.application_stack, "use_dotnet_isolated_runtime", null)
-        dotnet_version              = lookup(var.application_stack, "dotnet_version", null)
-        java_version                = lookup(var.application_stack, "java_version", null)
-        node_version                = lookup(var.application_stack, "node_version", null)
-        python_version              = lookup(var.application_stack, "python_version", null)
-        powershell_core_version     = lookup(var.application_stack, "powershell_core_version", null)
-      }
-
-      app_service_logs {
-        disk_quota_mb         = lookup(site_config.value, "log_disk_quota_mb", 25)
-        retention_period_days = lookup(site_config.value, "log_retention_days", 0)
-      }
+      use_dotnet_isolated_runtime = lookup(var.application_stack, "use_dotnet_isolated_runtime", null)
+      dotnet_version              = lookup(var.application_stack, "dotnet_version", null)
+      java_version                = lookup(var.application_stack, "java_version", null)
+      node_version                = lookup(var.application_stack, "node_version", null)
+      python_version              = lookup(var.application_stack, "python_version", null)
+      powershell_core_version     = lookup(var.application_stack, "powershell_core_version", null)
     }
   }
 
