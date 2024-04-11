@@ -187,3 +187,9 @@ variable "allowed_scm_service_tags" {
   type        = list(string)
   default     = []
 }
+
+variable "public_network_access_enabled" {
+  description = "Do you want to enable public access"
+  type        = bool
+  default     = true
+}
