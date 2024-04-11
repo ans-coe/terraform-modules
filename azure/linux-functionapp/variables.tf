@@ -30,9 +30,15 @@ variable "name" {
 }
 
 variable "storage_account_name" {
-  description = "The name of the function app's backing storage account."
+  description = "The name of the function app's backing storage account. Will be created if storage_account_access_key is null"
   type        = string
   default     = null
+}
+
+variable "storage_account_access_key" {
+  description = "Access key of existing storage account. Specifying this will expect existing storage account name too"
+  type = string
+  default = null
 }
 
 variable "plan" {

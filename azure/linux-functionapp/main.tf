@@ -69,6 +69,8 @@ locals {
 ##########
 
 resource "azurerm_storage_account" "app" {
+  count = var.storage_account_access_key == null ? 1 : 0
+
   name                = var.storage_account_name == null ? lower(replace("${var.name}fasa", "/[-_]/", "")) : var.storage_account_name
   location            = var.location
   resource_group_name = local.resource_group_name
@@ -108,8 +110,8 @@ resource "azurerm_linux_function_app" "main" {
   functions_extension_version     = var.functions_extension_version
   key_vault_reference_identity_id = var.key_vault_identity_id
 
-  storage_account_name       = azurerm_storage_account.app.name
-  storage_account_access_key = azurerm_storage_account.app.primary_access_key
+  storage_account_name       = var.storage_account_access_key != null ? var.storage_account_name : one(azurerm_storage_account.app[*].name)
+  storage_account_access_key = var.storage_account_access_key != null ? var.storage_account_access_key : one(azurerm_storage_account.app[*].primary_access_key)
 
   public_network_access_enabled = var.public_network_access_enabled
 
@@ -250,8 +252,8 @@ resource "azurerm_linux_function_app_slot" "main" {
   functions_extension_version     = var.functions_extension_version
   key_vault_reference_identity_id = var.key_vault_identity_id
 
-  storage_account_name       = azurerm_storage_account.app.name
-  storage_account_access_key = azurerm_storage_account.app.primary_access_key
+  storage_account_name       = var.storage_account_access_key != null ? var.storage_account_name : one(azurerm_storage_account.app[*].name)
+  storage_account_access_key = var.storage_account_access_key != null ? var.storage_account_access_key : one(azurerm_storage_account.app[*].primary_access_key)
 
   site_config {
     always_on                                     = var.site_config.always_on
