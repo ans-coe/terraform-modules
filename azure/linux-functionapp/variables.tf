@@ -97,7 +97,6 @@ variable "site_config" {
     worker_count                                  = optional(number)
     minimum_tls_version                           = optional(string)
     scm_minimum_tls_version                       = optional(string)
-    cors                                          = optional(list)
     vnet_route_all_enabled                        = optional(bool)
     detailed_error_logging_enabled                = optional(bool)
     linux_fx_version                              = optional(string)
