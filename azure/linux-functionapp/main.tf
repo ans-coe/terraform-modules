@@ -199,11 +199,6 @@ resource "azurerm_linux_function_app" "main" {
       python_version              = lookup(var.application_stack, "python_version", null)
       powershell_core_version     = lookup(var.application_stack, "powershell_core_version", null)
     }
-
-    app_service_logs {
-      disk_quota_mb         = lookup(site_config.value, "log_disk_quota_mb", 25)
-      retention_period_days = lookup(site_config.value, "log_retention_days", 7)
-    }
   }
 
   app_settings = local.app_settings
