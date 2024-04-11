@@ -125,7 +125,7 @@ resource "azurerm_linux_function_app" "main" {
     application_insights_connection_string        = var.site_config.application_insights_connection_string
     container_registry_use_managed_identity       = var.site_config.container_registry_use_managed_identity
     container_registry_managed_identity_client_id = var.site_config.container_registry_managed_identity_client_id
-    default_documents                             = var.site_config.default_documents
+    default_documents                             = var.default_documents
     elastic_instance_minimum                      = var.site_config.elastic_instance_minimum
     http2_enabled                                 = var.site_config.http2_enabled
     scm_use_main_ip_restriction                   = var.site_config.scm_use_main_ip_restriction
@@ -263,7 +263,7 @@ resource "azurerm_linux_function_app_slot" "main" {
     application_insights_connection_string        = var.site_config.application_insights_connection_string
     container_registry_use_managed_identity       = var.site_config.container_registry_use_managed_identity
     container_registry_managed_identity_client_id = var.site_config.container_registry_managed_identity_client_id
-    default_documents                             = var.site_config.default_documents
+    default_documents                             = var.default_documents
     elastic_instance_minimum                      = var.site_config.elastic_instance_minimum
     http2_enabled                                 = var.site_config.http2_enabled
     scm_use_main_ip_restriction                   = var.site_config.scm_use_main_ip_restriction
