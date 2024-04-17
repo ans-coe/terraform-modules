@@ -103,7 +103,7 @@ locals {
     for k, v in var.subnets
     : k => merge(v, {
       associate_rt   = v.associate_rt != null ? v.associate_rt : local.enable_firewall
-      route_table_id = v.route_table_id != null ? v.route_table_id : one(module.route-table.id)
+      route_table_id = v.route_table_id != null ? v.route_table_id : one(module.route-table.route_table.id)
       prefix         = v.address_prefix
     })
   }
