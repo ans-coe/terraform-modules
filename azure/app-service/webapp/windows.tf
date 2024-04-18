@@ -85,34 +85,35 @@ resource "azurerm_windows_web_app" "main" {
           }
         }
       }
-
     }
+
+    ip_restriction_default_action = length(local.access_rules) > 0 ? "Deny" : null
 
     dynamic "ip_restriction" {
       for_each = local.access_rules
       content {
-        name     = ip_restriction.name
-        priority = ip_restriction.priority
-        action   = ip_restriction.action
+        name     = ip_restriction.value.name
+        priority = ip_restriction.value.priority
+        action   = ip_restriction.value.action
 
-        ip_address                = ip_restriction.ip_address
-        service_tag               = ip_restriction.service_tag
-        virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
-        headers                   = ip_restriction.headers
+        ip_address                = ip_restriction.value.ip_address
+        service_tag               = ip_restriction.value.service_tag
+        virtual_network_subnet_id = ip_restriction.value.virtual_network_subnet_id
+        headers                   = ip_restriction.value.headers
       }
     }
 
     dynamic "scm_ip_restriction" {
       for_each = local.scm_access_rules
       content {
-        name     = scm_ip_restriction.name
-        priority = scm_ip_restriction.priority
-        action   = scm_ip_restriction.action
+        name     = scm_ip_restriction.value.name
+        priority = scm_ip_restriction.value.priority
+        action   = scm_ip_restriction.value.action
 
-        ip_address                = scm_ip_restriction.ip_address
-        service_tag               = scm_ip_restriction.service_tag
-        virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
-        headers                   = scm_ip_restriction.headers
+        ip_address                = scm_ip_restriction.value.ip_address
+        service_tag               = scm_ip_restriction.value.service_tag
+        virtual_network_subnet_id = scm_ip_restriction.value.virtual_network_subnet_id
+        headers                   = scm_ip_restriction.value.headers
       }
     }
   }
@@ -230,30 +231,32 @@ resource "azurerm_windows_web_app_slot" "main" {
       websockets_enabled                            = var.site_config.websockets_enabled
       worker_count                                  = var.site_config.worker_count
 
+      ip_restriction_default_action = length(local.access_rules) > 0 ? "Deny" : null
+
       dynamic "ip_restriction" {
         for_each = local.access_rules
         content {
-          name     = ip_restriction.name
-          priority = ip_restriction.priority
-          action   = ip_restriction.action
+          name     = ip_restriction.value.name
+          priority = ip_restriction.value.priority
+          action   = ip_restriction.value.action
 
-          ip_address                = ip_restriction.ip_address
-          service_tag               = ip_restriction.service_tag
-          virtual_network_subnet_id = ip_restriction.virtual_network_subnet_id
-          headers                   = ip_restriction.headers
+          ip_address                = ip_restriction.value.ip_address
+          service_tag               = ip_restriction.value.service_tag
+          virtual_network_subnet_id = ip_restriction.value.virtual_network_subnet_id
+          headers                   = ip_restriction.value.headers
         }
       }
       dynamic "scm_ip_restriction" {
         for_each = local.access_rules
         content {
-          name     = scm_ip_restriction.name
-          priority = scm_ip_restriction.priority
-          action   = scm_ip_restriction.action
+          name     = scm_ip_restriction.value.name
+          priority = scm_ip_restriction.value.priority
+          action   = scm_ip_restriction.value.action
 
-          ip_address                = scm_ip_restriction.ip_address
-          service_tag               = scm_ip_restriction.service_tag
-          virtual_network_subnet_id = scm_ip_restriction.virtual_network_subnet_id
-          headers                   = scm_ip_restriction.headers
+          ip_address                = scm_ip_restriction.value.ip_address
+          service_tag               = scm_ip_restriction.value.service_tag
+          virtual_network_subnet_id = scm_ip_restriction.value.virtual_network_subnet_id
+          headers                   = scm_ip_restriction.value.headers
         }
       }
 
