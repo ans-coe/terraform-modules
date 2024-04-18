@@ -85,8 +85,9 @@ resource "azurerm_windows_web_app" "main" {
           }
         }
       }
-
     }
+
+    ip_restriction_default_action = length(local.access_rules) > 0 ? "Deny" : null
 
     dynamic "ip_restriction" {
       for_each = local.access_rules
@@ -229,6 +230,8 @@ resource "azurerm_windows_web_app_slot" "main" {
       vnet_route_all_enabled                        = var.site_config.vnet_route_all_enabled
       websockets_enabled                            = var.site_config.websockets_enabled
       worker_count                                  = var.site_config.worker_count
+
+      ip_restriction_default_action = length(local.access_rules) > 0 ? "Deny" : null
 
       dynamic "ip_restriction" {
         for_each = local.access_rules
