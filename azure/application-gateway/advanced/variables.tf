@@ -124,7 +124,7 @@ variable "key_vault_user_assigned_identity_name" {
 }
 
 variable "key_vault_public_access" {
-  description = "Disable Key Vault Public Access - Should only be set if setting up Private Endpoint"
+  description = "Enable Key Vault Public Access - Should only be set false if setting up Private Endpoint. Only applies to Key Vault created within Module."
   type        = bool
   default     = true
 }
