@@ -123,6 +123,12 @@ variable "key_vault_user_assigned_identity_name" {
   default     = null
 }
 
+variable "key_vault_public_access" {
+  description = "Disable Key Vault Public Access - Should only be set if setting up Private Endpoint"
+  type        = bool
+  default     = true
+}
+
 variable "http_listeners" {
   description = "Map of HTTP Listeners"
   type = map(object({
