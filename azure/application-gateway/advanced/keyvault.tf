@@ -3,14 +3,15 @@ data "azurerm_client_config" "current" {}
 resource "azurerm_key_vault" "main" {
   count = local.create_key_vault ? 1 : 0
 
-  name                       = var.key_vault_name != null ? var.key_vault_name : "kv-${var.name}"
-  resource_group_name        = var.resource_group_name
-  location                   = var.location
-  tags                       = var.tags
-  soft_delete_retention_days = 7
-  purge_protection_enabled   = true
-  sku_name                   = "standard"
-  tenant_id                  = data.azurerm_client_config.current.tenant_id
+  name                          = var.key_vault_name != null ? var.key_vault_name : "kv-${var.name}"
+  resource_group_name           = var.resource_group_name
+  location                      = var.location
+  tags                          = var.tags
+  soft_delete_retention_days    = 7
+  purge_protection_enabled      = true
+  sku_name                      = "standard"
+  public_network_access_enabled = var.key_vault_public_access
+  tenant_id                     = data.azurerm_client_config.current.tenant_id
 }
 
 resource "azurerm_key_vault_access_policy" "main_user" {
