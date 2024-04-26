@@ -99,7 +99,7 @@ resource "azurerm_network_watcher" "main" {
 resource "azurerm_virtual_network_peering" "main" {
   for_each = var.vnet_peering
 
-  name                      = format("%s_to_%s", module.network.name, each.key)
+  name                      = format("%s-to-%s", module.network.name, each.key)
   virtual_network_name      = module.network.name
   resource_group_name       = module.network.resource_group_name
   remote_virtual_network_id = each.value["remote_vnet_id"]
