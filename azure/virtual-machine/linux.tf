@@ -11,8 +11,8 @@ resource "azurerm_linux_virtual_machine" "main" {
   admin_password = var.password
 
   disable_password_authentication = nonsensitive(var.password) == null
-  dynamic "admin_ssh_key" {
-    for_each = nonsensitive(var.password) == null ? [1] : []
+  dynamic "admin_ssh_key" { 
+    for_each = nonsensitive(var.public_key) != null ? [1] : []
     content {
       username   = var.username
       public_key = var.public_key
