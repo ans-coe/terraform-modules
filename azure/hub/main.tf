@@ -104,7 +104,7 @@ resource "azurerm_private_dns_zone" "main" {
   resource_group_name = each.value["resource_group_name"] != null ? each.value["resource_group_name"] : azurerm_resource_group.main.name
   tags                = var.tags
   dynamic "soa_record" {
-    for_each = each.value.soa_record # != null ? each.value.soa_record : {}
+    for_each = each.value.soa_record
     content {
       email        = soa_record.email
       expire_time  = soa_record.expire_time
