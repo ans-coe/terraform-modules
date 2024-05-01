@@ -239,16 +239,16 @@ variable "virtual_network_gateway" {
   }
 }
 
-##############
-# Private DNS
-##############
+####################
+# Private DNS Zones
+####################
 
 variable "private_dns_zones" {
   description = "A set of private domains to configure."
   type = map(object({
     resource_group_name  = optional(string)
-    registration_enabled = optional(string)
-    soa_record = optional(object({
+    registration_enabled = optional(string, false)
+    soa_record = optional(map(object({
       email        = string
       expire_time  = optional(number, 2419200)
       minimum_ttl  = optional(number, 10)
@@ -256,9 +256,26 @@ variable "private_dns_zones" {
       retry_time   = optional(number, 300)
       ttl          = optional(number, 3600)
       tags         = optional(map(string))
-    }), null)
+    })), {})
   }))
   default = {}
+}
+
+
+###############################
+# Private Endpoint Private DNS 
+###############################
+
+variable "create_private_endpoint_private_dns_zones" {
+  description = "Add the list of private endpoint private dns zones to the list of private dns zones to create."
+  type = bool
+  default = false
+}
+
+variable "private_endpoint_private_dns_zone_resource_group_name" {
+  description = "The name of the PE PDNS Resource Group."
+  type = string
+  default = null
 }
 
 ###################
@@ -294,7 +311,7 @@ variable "private_resolver" {
 #########################
 
 variable "create_default_network_security_group" {
-  description = "Create a Network Security Group to associate with all subnets."
+  description = "Create a Network Security Group to associate with all user defined subnets."
   type        = bool
   default     = true
 }

@@ -53,7 +53,7 @@ locals {
 
   virtual_network_gateway_subnet = local.enable_virtual_network_gateway ? module.network.subnets["GatewaySubnet"] : null
 
-  use_virtual_network_gateway_route_table = var.virtual_network_gateway["route_table"] != null
+  use_virtual_network_gateway_route_table = var.virtual_network_gateway != null ? var.virtual_network_gateway["route_table"] != null : false
 
   ###################
   # Private Resolver
@@ -119,4 +119,79 @@ locals {
     : module.network.subnets[k].id
     if s.associate_default_route_table
   ]
-}
+
+#################################
+# Private Endpoint Private DNS Zones
+#################################
+
+
+  private_endpoint_private_dns_zones = var.create_private_endpoint_private_dns_zones ? toset([
+    "privatelink.adf.azure.com",
+    "privatelink.afs.azure.net",
+    "privatelink.agentsvc.azure-automation.net",
+    "privatelink.analysis.windows.net",
+    "privatelink.api.azureml.ms",
+    "privatelink.azconfig.io",
+    "privatelink.azure-api.net",
+    "privatelink.azure-automation.net",
+    "privatelink.azure-devices-provisioning.net",
+    "privatelink.azure-devices.net",
+    "privatelink.azurecr.io",
+    "privatelink.azurehdinsight.net",
+    "privatelink.azurehealthcareapis.com",
+    "privatelink.azurestaticapps.net",
+    "privatelink.azuresynapse.net",
+    "privatelink.batch.azure.com",
+    "privatelink.azurewebsites.net",
+    "privatelink.blob.core.windows.net",
+    "privatelink.cassandra.cosmos.azure.com",
+    "privatelink.cognitiveservices.azure.com",
+    "privatelink.database.windows.net",
+    "privatelink.datafactory.azure.net",
+    "privatelink.dev.azuresynapse.net",
+    "privatelink.developer.azure-api.net",
+    "privatelink.dfs.core.windows.net",
+    "privatelink.dicom.azurehealthcareapis.com",
+    "privatelink.digitaltwins.azure.net",
+    "privatelink.directline.botframework.com",
+    "privatelink.documents.azure.com",
+    "privatelink.eventgrid.azure.net",
+    "privatelink.file.core.windows.net",
+    "privatelink.gremlin.cosmos.azure.com",
+    "privatelink.guestconfiguration.azure.com",
+    "privatelink.his.arc.azure.com",
+    "privatelink.kubernetesconfiguration.azure.com",
+    "privatelink.managedhsm.azure.net",
+    "privatelink.mariadb.database.azure.com",
+    "privatelink.mongo.cosmos.azure.com",
+    "privatelink.media.azure.net",
+    "privatelink.monitor.azure.com",
+    "privatelink.mysql.database.azure.com",
+    "privatelink.notebooks.azure.net",
+    "privatelink.ods.opinsights.azure.com",
+    "privatelink.oms.opinsights.azure.com",
+    "privatelink.pbidedicated.windows.net",
+    "privatelink.postgres.database.azure.com",
+    "privatelink.prod.migration.windowsazure.com",
+    "privatelink.purview.azure.com",
+    "privatelink.purviewstudio.azure.com",
+    "privatelink.queue.core.windows.net",
+    "privatelink.redis.cache.windows.net",
+    "privatelink.redisenterprise.cache.azure.net",
+    "privatelink.search.windows.net",
+    "privatelink.service.signalr.net",
+    "privatelink.servicebus.windows.net",
+    "privatelink.siterecovery.windowsazure.com",
+    "privatelink.sql.azuresynapse.net",
+    "privatelink.table.core.windows.net",
+    "privatelink.table.cosmos.azure.com",
+    "privatelink.tip1.powerquery.microsoft.com",
+    "privatelink.token.botframework.com",
+    "privatelink.uks.backup.windowsazure.com",
+    "privatelink.uksouth.azmk8s.io",
+    "privatelink.uksouth.kusto.windows.net",
+    "privatelink.vaultcore.azure.net",
+    "privatelink.web.core.windows.net",
+    "privatelink.webpubsub.azure.com"
+  ]) : []
+} 

@@ -85,8 +85,8 @@ module "network" {
   )
 
   private_dns_zones = {
-    for name, zone in azurerm_private_dns_zone.main
-    : name => {
+    for k, zone in var.private_dns_zones
+    : k => {
       resource_group_name  = zone.resource_group_name != null ? zone.resource_group_name : azurerm_resource_group.main.name
       registration_enabled = zone.registration_enabled
     }
@@ -104,7 +104,7 @@ resource "azurerm_private_dns_zone" "main" {
   resource_group_name = each.value["resource_group_name"] != null ? each.value["resource_group_name"] : azurerm_resource_group.main.name
   tags                = var.tags
   dynamic "soa_record" {
-    for_each = each.value.soa_record
+    for_each = each.value.soa_record # != null ? each.value.soa_record : {}
     content {
       email        = soa_record.email
       expire_time  = soa_record.expire_time
@@ -115,4 +115,16 @@ resource "azurerm_private_dns_zone" "main" {
       tags         = soa_record.tags
     }
   }
+}
+
+#################################
+# Private Endpoint Private DNS Zones
+#################################
+
+  resource "azurerm_private_dns_zone" "pe_pdns" {
+  for_each = local.private_endpoint_private_dns_zones
+
+  name                = each.key
+  resource_group_name = var.private_endpoint_private_dns_zone_resource_group_name != null ? var.private_endpoint_private_dns_zone_resource_group_name : azurerm_resource_group.main.name
+  tags                = var.tags
 }
