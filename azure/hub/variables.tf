@@ -179,6 +179,11 @@ variable "bastion" {
     condition = var.bastion == null || can(cidrhost(var.bastion.address_prefix, 0)
     )
   }
+  
+  validation {
+    error_message = "If var.bastion.create_resource_group is true (default) then a Resource Group name must be specified var.bastion.resource_group_name."
+    condition = var.bastion == null || var.bastion.create_resource_group ? var.bastion.resource_group_name != null : true 
+  }
 }
 
 ##########################
