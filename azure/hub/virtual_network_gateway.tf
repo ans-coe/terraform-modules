@@ -54,4 +54,9 @@ resource "azurerm_virtual_network_gateway" "main" {
     subnet_id            = local.virtual_network_gateway_subnet.id
     public_ip_address_id = azurerm_public_ip.virtual_network_gateway[count.index].id
   }
+  timeouts {
+    create = "1h"
+    update = "1h"
+    delete = "1h"
+  }
 }

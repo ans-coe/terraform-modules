@@ -127,4 +127,8 @@ resource "azurerm_private_dns_zone" "main" {
   name                = each.key
   resource_group_name = var.private_endpoint_private_dns_zone_resource_group_name != null ? var.private_endpoint_private_dns_zone_resource_group_name : azurerm_resource_group.main.name
   tags                = var.tags
+
+  lifecycle {
+    ignore_changes = [ tags["DateCreated"] ]
+  }
 }
