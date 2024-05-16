@@ -231,3 +231,9 @@ variable "autoshutdown" {
   })
   default = null
 }
+
+variable "zone" {
+  description = "The availability zone for the virtual machine"
+  type = number
+  default = null
+}

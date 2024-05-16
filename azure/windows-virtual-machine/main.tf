@@ -73,6 +73,8 @@ resource "azurerm_windows_virtual_machine" "main" {
   network_interface_ids = [azurerm_network_interface.main.id]
   boot_diagnostics {}
 
+  zone = var.zone
+
   patch_assessment_mode = var.patch_assessment_mode
 
   os_disk {
