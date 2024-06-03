@@ -143,6 +143,7 @@ variable "firewall" {
     sku_tier           = optional(string, "Standard")
     zone_redundant     = optional(bool, true)
     firewall_policy_id = optional(string)
+    route_table_name   = optional(string)
   })
   default = null
 
