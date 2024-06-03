@@ -21,6 +21,7 @@ locals {
       local.enable_firewall ? {                       // default route is empty and azure firewall = use azure firewall
         name = "default-route"
         ip   = one(module.firewall[*].private_ip)
+        next_hop_type = "Internet"
       } : {} // default route is empty and no azure firewall = don't create default route
     )
   ) : {}
