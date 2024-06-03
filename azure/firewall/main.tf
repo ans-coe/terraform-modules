@@ -52,7 +52,7 @@ module "route-table" {
   resource_group_name = var.resource_group_name
   tags                = var.tags
 
-  subnet_ids = azurerm_subnet.main.id
+  subnet_ids = [azurerm_subnet.main.id]
 
   routes = {
     (var.default_route_name) = {
