@@ -16,6 +16,8 @@ locals {
   # Route Table
   ###########
 
+  create_route_table = var.route_table_name != null
+
   default_route = var.create_default_route ? (        // create default route is false, don't create default route 
     var.default_route != null ? var.default_route : ( // default route is set = use default route
       local.enable_firewall ? {                       // default route is empty and azure firewall = use azure firewall
@@ -25,7 +27,7 @@ locals {
     )
   ) : {}
 
-  route_table = module.route-table
+  route_table = one(module.route-table[*])
 
   ##########
   # Bastion

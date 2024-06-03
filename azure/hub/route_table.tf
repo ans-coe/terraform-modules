@@ -1,5 +1,6 @@
 module "route-table" {
   source = "../route-table"
+  count  = local.create_route_table ? 1 : 0
 
   name                = var.route_table_name != null ? var.route_table_name : "rt-hub-${module.network.name}"
   location            = var.location

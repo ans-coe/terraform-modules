@@ -56,3 +56,8 @@ output "network_watcher" {
   description = "Output of the network watcher."
   value       = one(azurerm_network_watcher.main[*])
 }
+
+output "route_table" {
+  description = "Output of the route table created in this module."
+  value       = local.route_table
+}

@@ -414,11 +414,11 @@ variable "flow_log" {
 variable "route_table_name" {
   description = "Name of the default Route Table"
   type        = string
-  default     = "default-rt"
+  default     = null
 }
 
 variable "create_default_route" {
-  description = "create default route in the firewall"
+  description = "Create default route in the firewall"
   type        = bool
   default     = true
 }
