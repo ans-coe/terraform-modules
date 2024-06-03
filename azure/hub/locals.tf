@@ -19,8 +19,8 @@ locals {
   default_route = var.create_default_route ? (        // create default route is false, don't create default route 
     var.default_route != null ? var.default_route : ( // default route is set = use default route
       local.enable_firewall ? {                       // default route is empty and azure firewall = use azure firewall
-        name = "default-route"
-        ip   = one(module.firewall[*].private_ip)
+        name          = "default-route"
+        ip            = one(module.firewall[*].private_ip)
         next_hop_type = "Internet"
       } : {} // default route is empty and no azure firewall = don't create default route
     )
