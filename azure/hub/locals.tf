@@ -108,11 +108,11 @@ locals {
     })
   }
 
-  subnet_assoc_network_security_group = [
+  subnet_assoc_network_security_group = concat([
     for k, s in var.subnets
     : module.network.subnets[k].id
     if s.associate_default_network_security_group
-  ]
+  ], [one(module.firewall[*].subnet.id)])
 
   subnet_assoc_route_table = concat([
     for k, s in var.subnets
