@@ -179,10 +179,10 @@ variable "bastion" {
     condition = var.bastion == null || can(cidrhost(var.bastion.address_prefix, 0)
     )
   }
-  
+
   validation {
     error_message = "If var.bastion.create_resource_group is true (default) then a Resource Group name must be specified var.bastion.resource_group_name."
-    condition = var.bastion == null || var.bastion.create_resource_group ? var.bastion.resource_group_name != null : true 
+    condition     = var.bastion == null || var.bastion.create_resource_group ? var.bastion.resource_group_name != null : true
   }
 }
 
@@ -273,14 +273,14 @@ variable "private_dns_zones" {
 
 variable "create_private_endpoint_private_dns_zones" {
   description = "Add the list of private endpoint private dns zones to the list of private dns zones to create."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "private_endpoint_private_dns_zone_resource_group_name" {
   description = "The name of the PE PDNS Resource Group."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 ###################
@@ -381,7 +381,7 @@ variable "flow_log" {
     name                 = string
     storage_account_name = optional(string)
     storage_account_id   = optional(string)
-    retention_days       = optional(number)
+    retention_days       = optional(number, 90)
 
     enable_analytics             = optional(bool)
     log_analytics_workspace_name = optional(string)

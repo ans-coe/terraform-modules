@@ -120,9 +120,9 @@ locals {
     if s.associate_default_route_table
   ]
 
-#################################
-# Private Endpoint Private DNS Zones
-#################################
+  #################################
+  # Private Endpoint Private DNS Zones
+  #################################
 
 
   private_endpoint_private_dns_zones = var.create_private_endpoint_private_dns_zones ? toset([

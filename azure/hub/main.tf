@@ -121,7 +121,7 @@ resource "azurerm_private_dns_zone" "main" {
 # Private Endpoint Private DNS Zones
 #################################
 
-  resource "azurerm_private_dns_zone" "pe_pdns" {
+resource "azurerm_private_dns_zone" "pe_pdns" {
   for_each = local.private_endpoint_private_dns_zones
 
   name                = each.key
@@ -129,6 +129,6 @@ resource "azurerm_private_dns_zone" "main" {
   tags                = var.tags
 
   lifecycle {
-    ignore_changes = [ tags["DateCreated"] ]
+    ignore_changes = [tags["DateCreated"]]
   }
 }

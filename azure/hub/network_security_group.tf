@@ -57,6 +57,8 @@ resource "azurerm_storage_account" "flow_log_sa" {
 
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  min_tls_version = "TLS1_2"
 }
 
 ###############
@@ -71,6 +73,6 @@ resource "azurerm_log_analytics_workspace" "flow_log_law" {
   resource_group_name = local.network_watcher_resource_group_name
   tags                = var.tags
 
-  retention_in_days = 30
+  retention_in_days = var.flow_log.retention_days
   daily_quota_gb    = 1
 }
