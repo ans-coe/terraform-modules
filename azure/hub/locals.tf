@@ -114,11 +114,11 @@ locals {
     if s.associate_default_network_security_group
   ]
 
-  subnet_assoc_route_table = [
+  subnet_assoc_route_table = concat([
     for k, s in var.subnets
     : module.network.subnets[k].id
     if s.associate_default_route_table
-  ]
+  ], [module.firewall.subnet.id])
 
   #################################
   # Private Endpoint Private DNS Zones
