@@ -20,5 +20,5 @@ output "private_ip" {
 
 output "subnet" {
   description = "The attributes of the created subnet"
-  value = azurerm_subnet.main.id
+  value = azurerm_subnet.main
 }
