@@ -20,5 +20,10 @@ output "private_ip" {
 
 output "subnet" {
   description = "The attributes of the created subnet"
-  value = azurerm_subnet.main
+  value       = azurerm_subnet.main
+}
+
+output "route_table" {
+  description = "The attributes of the route table."
+  value       = one(module.route-table[*])
 }

@@ -94,18 +94,18 @@ variable "firewall_policy_id" {
 
 variable "zone_redundant" {
   description = "Specifies whether or not the Firewall is Zone Redundant."
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
 
 variable "route_table_name" {
   description = "The name of the route table to be created for the AzureFirewallSubnet."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "default_route_name" {
   description = "The name of the default route."
-  type = string
-  default = "default-route"
+  type        = string
+  default     = "default-route"
 }
