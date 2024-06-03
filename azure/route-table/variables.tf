@@ -67,8 +67,9 @@ variable "routes" {
 variable "default_route" {
   description = "Configuration for the default route."
   type = object({
-    name = optional(string, "default-route")
-    ip   = string
+    name          = optional(string, "default-route")
+    next_hop_type = optional(string, "VirtualAppliance")
+    ip            = string
   })
   default = null
 
