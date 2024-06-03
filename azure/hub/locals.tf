@@ -118,7 +118,7 @@ locals {
     for k, s in var.subnets
     : module.network.subnets[k].id
     if s.associate_default_route_table
-  ], [module.firewall.subnet.id])
+  ], [one(module.firewall[*].subnet.id)])
 
   #################################
   # Private Endpoint Private DNS Zones
