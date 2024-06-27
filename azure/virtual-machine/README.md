@@ -18,7 +18,7 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.0 |
 
 ## Inputs
@@ -30,7 +30,7 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID of the virtual machine. | `string` | n/a | yes |
 | <a name="input_autoshutdown"></a> [autoshutdown](#input\_autoshutdown) | Describes the autoshutdown configuration of this virtual machine with time being 24h format and timezone being a supported timezone. Set to an empty map to enable. | <pre>object({<br>    time     = optional(string, "2200")<br>    timezone = optional(string, "UTC")<br>    email    = optional(string)<br>  })</pre> | `null` | no |
 | <a name="input_availability_set_id"></a> [availability\_set\_id](#input\_availability\_set\_id) | Availability set ID to add this virtual machine to. | `string` | `null` | no |
-| <a name="input_backend_address_pool_ids"></a> [backend\_address\_pool\_ids](#input\_backend\_address\_pool\_ids) | IDs of load balancer backends to assign this virtual machine's primary NIC to. | `set(string)` | `[]` | no |
+| <a name="input_backend_address_pool_ids"></a> [backend\_address\_pool\_ids](#input\_backend\_address\_pool\_ids) | IDs of load balancer backends to assign this virtual machine's primary NIC to. | `list(string)` | `[]` | no |
 | <a name="input_backup_config"></a> [backup\_config](#input\_backup\_config) | Configuration of the backup. | <pre>object({<br>    backup_policy_id  = string<br>    include_disk_luns = optional(set(number))<br>    exclude_disk_luns = optional(set(number))<br>  })</pre> | `null` | no |
 | <a name="input_boot_diagnostics_storage_account_uri"></a> [boot\_diagnostics\_storage\_account\_uri](#input\_boot\_diagnostics\_storage\_account\_uri) | Storage account blob endpoint to use for boot diagnostics. | `string` | `null` | no |
 | <a name="input_computer_name"></a> [computer\_name](#input\_computer\_name) | The OS-level computer name of the virtual machine. | `string` | `null` | no |
@@ -42,13 +42,13 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_enable_data_collection"></a> [enable\_data\_collection](#input\_enable\_data\_collection) | Enable data collection association. | `bool` | `false` | no |
 | <a name="input_enable_dependency_agent"></a> [enable\_dependency\_agent](#input\_enable\_dependency\_agent) | Enable Azure Monitor Dependency Agent extension. | `bool` | `false` | no |
 | <a name="input_enable_encryption_at_host"></a> [enable\_encryption\_at\_host](#input\_enable\_encryption\_at\_host) | Adds the option of adding enabling encryption at host | `bool` | `null` | no |
-| <a name="input_enable_ip_forwarding"></a> [enable\_ip\_forwarding](#input\_enable\_ip\_forwarding) | Enable IP forwarding on the virtual machine NIC. | `bool` | `false` | no |
 | <a name="input_enable_network_security_group"></a> [enable\_network\_security\_group](#input\_enable\_network\_security\_group) | Assign a network security group. | `bool` | `false` | no |
 | <a name="input_enable_network_watcher"></a> [enable\_network\_watcher](#input\_enable\_network\_watcher) | Enable Network Watcher extension. | `bool` | `false` | no |
 | <a name="input_enable_public_ip"></a> [enable\_public\_ip](#input\_enable\_public\_ip) | Enable public IP. | `bool` | `false` | no |
 | <a name="input_hotpatching_enabled"></a> [hotpatching\_enabled](#input\_hotpatching\_enabled) | Should the VM be patched without requiring a reboot?  Hotpatching can only be enabled if the patch\_mode is set to AutomaticByPlatform, the provision\_vm\_agent is set to true, your source\_image\_reference references a hotpatching enabled image, and the VM's size is set to a Azure generation 2 VM. | `string` | `false` | no |
 | <a name="input_identity_ids"></a> [identity\_ids](#input\_identity\_ids) | User assigned identity IDs to append to this virtual machine. | `list(string)` | `[]` | no |
 | <a name="input_ip_address"></a> [ip\_address](#input\_ip\_address) | Private IP address of the virtual machine NIC. | `string` | `null` | no |
+| <a name="input_ip_forwarding_enabled"></a> [ip\_forwarding\_enabled](#input\_ip\_forwarding\_enabled) | Enable IP forwarding on the virtual machine NIC. | `bool` | `false` | no |
 | <a name="input_license_type"></a> [license\_type](#input\_license\_type) | License type of the virtual machine. | `string` | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_network_interface_name"></a> [network\_interface\_name](#input\_network\_interface\_name) | Name of the network interface. | `string` | `null` | no |
@@ -69,7 +69,7 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |
 | <a name="input_user_data"></a> [user\_data](#input\_user\_data) | User data of the virtual machine. | `string` | `null` | no |
 | <a name="input_username"></a> [username](#input\_username) | Username of the virtual machine. | `string` | `"vmadmin"` | no |
-| <a name="input_zone"></a> [zone](#input\_zone) | Specifies the Availability Zone in which this Windows Virtual Machine should be located. | `list(string)` | `null` | no |
+| <a name="input_zone"></a> [zone](#input\_zone) | Specifies the Availability Zone in which this Windows Virtual Machine should be located. | `string` | `null` | no |
 
 ## Outputs
 

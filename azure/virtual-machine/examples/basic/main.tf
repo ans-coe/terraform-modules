@@ -18,10 +18,10 @@ variable "password" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "virtual-machine"
-    example = "basic"
-    usage   = "demo"
-    owner   = "Dee Vops"
+    module     = "virtual-machine"
+    example    = "basic"
+    usage      = "demo"
+    owner      = "Dee Vops"
     department = "CoE"
   }
   resource_prefix = "vm-bas-demo-uks-03"

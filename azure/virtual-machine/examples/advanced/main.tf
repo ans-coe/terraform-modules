@@ -12,10 +12,10 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "virtual-machine"
-    example = "advanced"
-    usage   = "demo"
-    owner   = "Dee Vops"
+    module     = "virtual-machine"
+    example    = "advanced"
+    usage      = "demo"
+    owner      = "Dee Vops"
     department = "CoE"
   }
   resource_prefix = "vm-adv-demo-uks-03"
