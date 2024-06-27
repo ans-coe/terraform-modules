@@ -27,6 +27,18 @@ variable "password" {
   sensitive   = true
 }
 
+locals {
+  location = "uksouth"
+  tags = {
+    module     = "virtual-machine"
+    example    = "basic"
+    usage      = "demo"
+    owner      = "Dee Vops"
+    department = "CoE"
+  }
+  resource_prefix = "vm-bas-demo-uks-03"
+}
+
 resource "azurerm_resource_group" "vm" {
   name     = "rg-${local.resource_prefix}"
   location = local.location

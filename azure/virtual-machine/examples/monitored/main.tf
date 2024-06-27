@@ -18,9 +18,11 @@ variable "password" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "virtual-machine"
-    example = "monitored"
-    usage   = "demo"
+    module     = "virtual-machine"
+    example    = "monitored"
+    usage      = "demo"
+    owner      = "Dee Vops"
+    department = "CoE"
   }
   resource_prefix = "vm-mon-demo-uks-03"
 }
@@ -129,6 +131,8 @@ module "vm" {
   enable_public_ip = true
 
   size = "Standard_B2s"
+
+  enable_encryption_at_host = true
 
   source_image_reference = {
     publisher = "MicrosoftWindowsServer"

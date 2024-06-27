@@ -12,9 +12,11 @@ provider "azurerm" {
 locals {
   location = "uksouth"
   tags = {
-    module  = "virtual-machine"
-    example = "advanced"
-    usage   = "demo"
+    module     = "virtual-machine"
+    example    = "advanced"
+    usage      = "demo"
+    owner      = "Dee Vops"
+    department = "CoE"
   }
   resource_prefix = "vm-adv-demo-uks-03"
 }
@@ -123,6 +125,8 @@ module "vm" {
   os_disk = {
     caching = "ReadOnly"
   }
+
+  enable_encryption_at_host = true
 
   source_image_reference = {
     publisher = "Canonical"

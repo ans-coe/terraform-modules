@@ -105,7 +105,7 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "enable_ip_forwarding" {
+variable "ip_forwarding_enabled" {
   description = "Enable IP forwarding on the virtual machine NIC."
   type        = bool
   default     = false
@@ -155,7 +155,7 @@ variable "public_ip_hostname" {
 
 variable "backend_address_pool_ids" {
   description = "IDs of load balancer backends to assign this virtual machine's primary NIC to."
-  type        = set(string)
+  type        = list(string)
   default     = []
 }
 
