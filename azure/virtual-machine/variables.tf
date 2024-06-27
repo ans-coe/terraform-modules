@@ -107,8 +107,8 @@ variable "enable_ip_forwarding" {
 
 variable "enable_accelerated_networking" {
   description = "Should Accelerated Networking be enabled?"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "ip_address" {
@@ -297,26 +297,26 @@ variable "autoshutdown" {
 
 variable "enable_encryption_at_host" {
   description = "Adds the option of adding enabling encryption at host"
-  type = bool
-  default = null 
+  type        = bool
+  default     = null
 }
 
 variable "enable_keyvault_extension" {
   description = "Enable the Microsoft.Insights.VMDiagnosticsSettings Extention"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "keyvault_extension_settings" {
   description = "Key Vault Extension settings. (json)"
-  type = any
-  default = null
+  type        = any
+  default     = null
 }
 
 variable "enable_vm_diagnostics" {
   description = "Enable the Microsoft.Insights.VMDiagnosticsSettings (Windows) or LinuxDiagnostic Extention"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "diagnostics_storage_account_name" {

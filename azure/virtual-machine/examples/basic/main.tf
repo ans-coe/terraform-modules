@@ -9,12 +9,6 @@ provider "azurerm" {
   }
 }
 
-# variable "password" {
-#   description = "VM Password."
-#   type        = string
-#   sensitive   = true
-# }
-
 locals {
   location = "uksouth"
   tags = {
@@ -25,6 +19,12 @@ locals {
     owner      = "Dee Vops"
   }
   resource_prefix = "vm-bas-demo-uks-03"
+}
+
+variable "password" {
+  description = "VM Password."
+  type        = string
+  sensitive   = true
 }
 
 resource "azurerm_resource_group" "vm" {
@@ -59,7 +59,7 @@ module "vm" {
   tags                = local.tags
 
   computer_name = "vm"
-  password      = "ASfdskjh3&^"
+  password      = var.password
   subnet_id     = azurerm_subnet.vm.id
   size          = "Standard_B2s"
 

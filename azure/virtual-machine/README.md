@@ -35,18 +35,26 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_boot_diagnostics_storage_account_uri"></a> [boot\_diagnostics\_storage\_account\_uri](#input\_boot\_diagnostics\_storage\_account\_uri) | Storage account blob endpoint to use for boot diagnostics. | `string` | `null` | no |
 | <a name="input_computer_name"></a> [computer\_name](#input\_computer\_name) | The OS-level computer name of the virtual machine. | `string` | `null` | no |
 | <a name="input_data_collection_rule_id"></a> [data\_collection\_rule\_id](#input\_data\_collection\_rule\_id) | Data collection rule ID to associate to this virtual machine. | `string` | `null` | no |
+| <a name="input_diagnostics_storage_account_name"></a> [diagnostics\_storage\_account\_name](#input\_diagnostics\_storage\_account\_name) | Name of the Storage Account in which store boot diagnostics and for legacy monitoring agent. | `string` | `null` | no |
 | <a name="input_disk_attachments"></a> [disk\_attachments](#input\_disk\_attachments) | Disks to attach to this VM. | <pre>map(object({<br>    id      = string<br>    lun     = number<br>    caching = optional(string, "None")<br>  }))</pre> | `{}` | no |
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | The DNS servers to use with this virtual network. | `list(string)` | `null` | no |
+| <a name="input_enable_aad_login"></a> [enable\_aad\_login](#input\_enable\_aad\_login) | Enable AAD Login extension. | `bool` | `true` | no |
+| <a name="input_enable_accelerated_networking"></a> [enable\_accelerated\_networking](#input\_enable\_accelerated\_networking) | Should Accelerated Networking be enabled? | `bool` | `false` | no |
 | <a name="input_enable_azure_monitor"></a> [enable\_azure\_monitor](#input\_enable\_azure\_monitor) | Enable Azure Monitor extension. | `bool` | `false` | no |
 | <a name="input_enable_azure_policy"></a> [enable\_azure\_policy](#input\_enable\_azure\_policy) | Enable Azure Policy extension. | `bool` | `false` | no |
 | <a name="input_enable_data_collection"></a> [enable\_data\_collection](#input\_enable\_data\_collection) | Enable data collection association. | `bool` | `false` | no |
 | <a name="input_enable_dependency_agent"></a> [enable\_dependency\_agent](#input\_enable\_dependency\_agent) | Enable Azure Monitor Dependency Agent extension. | `bool` | `false` | no |
+| <a name="input_enable_encryption_at_host"></a> [enable\_encryption\_at\_host](#input\_enable\_encryption\_at\_host) | Adds the option of adding enabling encryption at host | `bool` | `null` | no |
 | <a name="input_enable_ip_forwarding"></a> [enable\_ip\_forwarding](#input\_enable\_ip\_forwarding) | Enable IP forwarding on the virtual machine NIC. | `bool` | `false` | no |
+| <a name="input_enable_keyvault_extension"></a> [enable\_keyvault\_extension](#input\_enable\_keyvault\_extension) | Enable the Microsoft.Insights.VMDiagnosticsSettings Extention | `bool` | `false` | no |
 | <a name="input_enable_network_security_group"></a> [enable\_network\_security\_group](#input\_enable\_network\_security\_group) | Assign a network security group. | `bool` | `false` | no |
 | <a name="input_enable_network_watcher"></a> [enable\_network\_watcher](#input\_enable\_network\_watcher) | Enable Network Watcher extension. | `bool` | `false` | no |
 | <a name="input_enable_public_ip"></a> [enable\_public\_ip](#input\_enable\_public\_ip) | Enable public IP. | `bool` | `false` | no |
+| <a name="input_enable_vm_diagnostics"></a> [enable\_vm\_diagnostics](#input\_enable\_vm\_diagnostics) | Enable the Microsoft.Insights.VMDiagnosticsSettings (Windows) or LinuxDiagnostic Extention | `bool` | `false` | no |
+| <a name="input_hotpatching_enabled"></a> [hotpatching\_enabled](#input\_hotpatching\_enabled) | Should the VM be patched without requiring a reboot?  Hotpatching can only be enabled if the patch\_mode is set to AutomaticByPlatform, the provision\_vm\_agent is set to true, your source\_image\_reference references a hotpatching enabled image, and the VM's size is set to a Azure generation 2 VM. | `string` | `false` | no |
 | <a name="input_identity_ids"></a> [identity\_ids](#input\_identity\_ids) | User assigned identity IDs to append to this virtual machine. | `list(string)` | `[]` | no |
 | <a name="input_ip_address"></a> [ip\_address](#input\_ip\_address) | Private IP address of the virtual machine NIC. | `string` | `null` | no |
+| <a name="input_keyvault_extension_settings"></a> [keyvault\_extension\_settings](#input\_keyvault\_extension\_settings) | Key Vault Extension settings. (json) | `any` | `null` | no |
 | <a name="input_license_type"></a> [license\_type](#input\_license\_type) | License type of the virtual machine. | `string` | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_network_interface_name"></a> [network\_interface\_name](#input\_network\_interface\_name) | Name of the network interface. | `string` | `null` | no |
@@ -96,10 +104,14 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | [azurerm_network_interface_security_group_association.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_security_group_association) | resource |
 | [azurerm_public_ip.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
 | [azurerm_virtual_machine_data_disk_attachment.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_data_disk_attachment) | resource |
+| [azurerm_virtual_machine_extension.keyvault](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
+| [azurerm_virtual_machine_extension.lin-diag](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
+| [azurerm_virtual_machine_extension.main_aadlogin](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_machine_extension.main_azdependencyagent](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_machine_extension.main_azmonitor](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_machine_extension.main_aznetworkwatcheragent](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_virtual_machine_extension.main_azpolicy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
+| [azurerm_virtual_machine_extension.win-diag](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_extension) | resource |
 | [azurerm_windows_virtual_machine.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/windows_virtual_machine) | resource |
 
 ## Modules
