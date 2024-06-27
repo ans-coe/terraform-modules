@@ -111,7 +111,7 @@ variable "ip_forwarding_enabled" {
   default     = false
 }
 
-variable "enable_accelerated_networking" {
+variable "accelerated_networking_enabled" {
   description = "Should Accelerated Networking be enabled?"
   type        = bool
   default     = false
