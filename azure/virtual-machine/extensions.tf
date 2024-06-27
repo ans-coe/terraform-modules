@@ -96,30 +96,6 @@ resource "azurerm_virtual_machine_extension" "keyvault" {
   settings = jsonencode(var.keyvault_extension_settings)
 }
 
-resource "azurerm_virtual_machine_extension" "win-diag" {
-  count = var.enable_vm_diagnostics && local.is_windows ? 1 : 0
-
-  name                       = "Microsoft.Insights.VMDiagnosticsSettings"
-  tags                       = var.tags
-  publisher                  = "Microsoft.Azure.Diagnostics"
-  type                       = "IaaSDiagnostics"
-  type_handler_version       = "1.22"
-  auto_upgrade_minor_version = "true"
-
-  virtual_machine_id = local.virtual_machine.id
-
-  settings = templatefile(format("%s/diag-settings/win-diag-settings.json", path.module), {
-    vm_id        = local.virtual_machine.id
-    storage_name = var.diagnostics_storage_account_name
-  })
-
-  protected_settings = <<PROTECTED_SETTINGS
-    {
-      "storageAccountName": "${var.diagnostics_storage_account_name}"
-    }
-  PROTECTED_SETTINGS
-}
-
 resource "azurerm_virtual_machine_extension" "main_aadlogin" {
   count = var.enable_aad_login && local.is_windows ? 1 : 0
 
@@ -134,14 +110,59 @@ resource "azurerm_virtual_machine_extension" "main_aadlogin" {
   automatic_upgrade_enabled  = false
 }
 
-#########################
-# This requires Python 2
-#########################
+###############
+# Windows Diag
+###############
 
-// TODO - Add Python 2 to Linux VM if diag is enabled 
+resource "azurerm_virtual_machine_extension" "win-diag" {
+  count = var.enable_vm_diagnostics && local.is_windows ? 1 : 0
+
+  name                       = "Microsoft.Insights.VMDiagnosticsSettings"
+  tags                       = var.tags
+  publisher                  = "Microsoft.Azure.Diagnostics"
+  type                       = "IaaSDiagnostics"
+  type_handler_version       = "1.22"
+  auto_upgrade_minor_version = "true"
+
+  virtual_machine_id = local.virtual_machine.id
+
+  settings = templatefile(format("%s/diag-config/windows/win-diag-settings.json", path.module), {
+    vm_id        = local.virtual_machine.id
+    storage_name = var.diagnostics_storage_account_name
+  })
+
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "storageAccountName": "${var.diagnostics_storage_account_name}"
+    }
+  PROTECTED_SETTINGS
+}
+
+#############
+# Linux Diag
+#############
+
+resource "azurerm_virtual_machine_extension" "lin-diag-py2-install" {
+  count = var.enable_vm_diagnostics && (local.is_windows == false) ? 1 : 0
+
+  name                 = "Install-Python2"
+  tags                 = var.tags
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+  virtual_machine_id   = local.virtual_machine.id
+
+  settings = <<SETTINGS
+  {
+    "commandToExecute": "apt-get -y update && apt-get install -y python2"
+  }
+  SETTINGS
+}
 
 resource "azurerm_virtual_machine_extension" "lin-diag" {
   count = var.enable_vm_diagnostics && (local.is_windows == false) ? 1 : 0
+
+  depends_on = [azurerm_virtual_machine_extension.lin-diag-py2-install]
 
   name                       = "LinuxDiagnostic"
   tags                       = var.tags
@@ -152,14 +173,47 @@ resource "azurerm_virtual_machine_extension" "lin-diag" {
 
   virtual_machine_id = local.virtual_machine.id
 
-  settings = templatefile(format("%s/.diag-settings/lin-diag-settings.json", path.module), {
-    vm_id        = local.virtual_machine.id
-    storage_name = var.diagnostics_storage_account_name
-  })
+  settings = <<SETTINGS
+    {
+      "StorageAccount": "${var.diagnostics_storage_account_name}",
+      "ladCfg": {
+        "diagnosticMonitorConfiguration": {
+          "eventVolume": "Medium", 
+          "metrics": {
+          "metricAggregation": [
+            {
+              "scheduledTransferPeriod": "PT1H"
+            }, 
+            {
+              "scheduledTransferPeriod": "PT1M"
+            }
+          ], 
+          "resourceId": "${var.diagnostics_storage_account_name}"
+        },
+        "performanceCounters": ${format("%s/diag-config/linux/performancecounters.json", path.module)},
+        "syslogEvents": ${format("%s/diag-config/linux/syslogevents.json", path.module)}
+        },   
+      "sampleRateInSeconds": 15
+      }
+    }
+  SETTINGS
 
-  protected_settings = <<PROTECTED_SETTINGS
+  protected_settings = <<SETTINGS
     {
       "storageAccountName": "${var.diagnostics_storage_account_name}"
+      "storageAccountEndPoint": "https://core.windows.net",
+      "sinksConfig": {
+        "sink": [
+        {
+          "name": "SyslogJsonBlob",
+          "type": "JsonBlob"
+        },
+        {
+          "name": "LinuxCpuJsonBlob",
+          "type": "JsonBlob"
+        }
+      ]
     }
-  PROTECTED_SETTINGS
+  }
+  SETTINGS
 }
