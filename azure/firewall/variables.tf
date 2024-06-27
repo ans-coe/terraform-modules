@@ -109,3 +109,23 @@ variable "default_route_name" {
   type        = string
   default     = "default-route"
 }
+
+variable "extra_routes" {
+  description = "Routes to add to a custom route table."
+  type = map(object({
+    address_prefix         = string
+    next_hop_type          = optional(string, "VirtualAppliance")
+    next_hop_in_ip_address = optional(string)
+  }))
+  default = {}
+
+  validation {
+    error_message = "Value for next_hop_in_ip_address be valid IPv4 CIDR."
+    condition     = alltrue([for v in var.extra_routes : can(cidrhost(v.address_prefix, 0))])
+  }
+
+  validation {
+    error_message = "Value for next_hop_in_ip_address must be a valid IPv4 address."
+    condition     = alltrue([for v in var.extra_routes : can(cidrhost("${v.next_hop_in_ip_address}/32", 0))])
+  }
+}

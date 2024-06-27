@@ -72,7 +72,7 @@ variable "bgp_community" {
   default     = null
 }
 
-variable "subnets" {
+variable "extra_subnets" {
   description = "Subnets to create in this virtual network with the map name indicating the subnet name."
   type = map(object({
     address_prefix                                = string
@@ -88,8 +88,8 @@ variable "subnets" {
         actions = list(string)
       })
     ), {})
-    associate_default_route_table            = optional(bool, true)
-    associate_default_network_security_group = optional(bool, true)
+    associate_extra_subnets_route_table            = optional(bool, true)
+    associate_extra_subnets_network_security_group = optional(bool, true)
   }))
   default = {}
 
@@ -316,13 +316,13 @@ variable "private_resolver" {
 # Network Security Group
 #########################
 
-variable "create_default_network_security_group" {
+variable "create_extra_subnets_network_security_group" {
   description = "Create a Network Security Group to associate with all user defined subnets."
   type        = bool
-  default     = true
+  default     = false
 }
 
-variable "network_security_group_name" {
+variable "extra_subnets_network_security_group_name" {
   description = "Name of the default Network Security Group"
   type        = string
   default     = "default-nsg"
@@ -411,16 +411,16 @@ variable "flow_log" {
 # Route Table
 ##############
 
-variable "route_table_name" {
-  description = "Name of the default Route Table"
-  type        = string
-  default     = null
-}
-
-variable "create_default_route" {
+variable "create_extra_subnets_default_route" {
   description = "Create default route in the firewall"
   type        = bool
   default     = true
+}
+
+variable "extra_subnets_route_table_name" {
+  description = "Name of the default Route Table"
+  type        = string
+  default     = null
 }
 
 variable "default_route" {

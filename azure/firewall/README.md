@@ -42,6 +42,7 @@ Things to update:
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | n/a | yes |
 | <a name="input_virtual_network_name"></a> [virtual\_network\_name](#input\_virtual\_network\_name) | Name of your Azure Virtual Network | `string` | n/a | yes |
 | <a name="input_default_route_name"></a> [default\_route\_name](#input\_default\_route\_name) | The name of the default route. | `string` | `"default-route"` | no |
+| <a name="input_extra_routes"></a> [extra\_routes](#input\_extra\_routes) | Routes to add to a custom route table. | <pre>map(object({<br>    address_prefix         = string<br>    next_hop_type          = optional(string, "VirtualAppliance")<br>    next_hop_in_ip_address = optional(string)<br>  }))</pre> | `{}` | no |
 | <a name="input_firewall_dns_servers"></a> [firewall\_dns\_servers](#input\_firewall\_dns\_servers) | List of DNS Servers for Firewall config | `list(string)` | `null` | no |
 | <a name="input_firewall_policy_id"></a> [firewall\_policy\_id](#input\_firewall\_policy\_id) | The ID of the Firewall Policy applied to this Firewall | `string` | `null` | no |
 | <a name="input_firewall_sku_name"></a> [firewall\_sku\_name](#input\_firewall\_sku\_name) | Properties relating to the SKU Name of the Firewall | `string` | `"AZFW_VNet"` | no |

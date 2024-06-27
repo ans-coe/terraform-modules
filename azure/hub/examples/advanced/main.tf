@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.7.0"
+  required_version = ">= 1.8.0"
 
   required_providers {
     random = {
@@ -94,13 +94,13 @@ module "hub" {
     "test.com" = {}
   }
 
-  subnets = {
-    "sn-hub-${local.resource_prefix}" = {
+  extra_subnets = {
+    "sn-hub-keyvault-${local.resource_prefix}" = {
       address_prefix = "10.0.2.0/24"
     }
   }
 
-  network_security_group_name = "nsg-hub-${local.resource_prefix}"
+  extra_subnets_network_security_group_name = "nsg-hub-keyvault-${local.resource_prefix}"
   nsg_rules_inbound = [
     {
       rule     = "https"

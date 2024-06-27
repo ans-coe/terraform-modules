@@ -16,18 +16,18 @@ locals {
   # Route Table
   ###########
 
-  create_route_table = var.route_table_name != null
+  create_extra_subnets_route_table = var.extra_subnets_route_table_name != null
 
-  default_route = var.create_default_route ? (        // create default route is false, don't create default route 
+  default_route = var.create_extra_subnets_default_route ? (        // create default route is false, don't create default route 
     var.default_route != null ? var.default_route : ( // default route is set = use default route
       local.enable_firewall ? {                       // default route is empty and azure firewall = use azure firewall
-        name = "default-route"
-        ip   = one(module.firewall[*].private_ip)
+        name                   = "default-route"
+        next_hop_in_ip_address = one(module.firewall[*].private_ip)
       } : {} // default route is empty and no azure firewall = don't create default route
     )
   ) : {}
 
-  route_table = one(module.route-table[*])
+  extra_subnets_route_table = one(module.route_table[*])
 
   ##########
   # Bastion
@@ -84,6 +84,13 @@ locals {
     var.network_watcher_resource_group_name != null ? var.network_watcher_resource_group_name : azurerm_resource_group.main.name
   )
 
+  #######################################
+  # Extra Subnets Network Security Group
+  #######################################
+
+  create_extra_subnets_network_security_group = var.extra_subnets_network_security_group_name != null
+  extra_subnets_network_security_group = one(module.extra_subnets_network_security_group)
+
   ############
   # Flow Log
   ############
@@ -97,29 +104,29 @@ locals {
 
   flow_log_workspace_resource_id = local.create_flow_log_log_analytics_workspace ? azurerm_log_analytics_workspace.flow_log_law[0].id : try(var.flow_log.workspace_resource_id, null)
 
-  ##################################
-  # Subnets
-  ##################################
+  ################
+  # Extra Subnets
+  ################
 
-  subnets = {
-    for k, v in var.subnets
+  extra_subnets = {
+    for k, v in var.extra_subnets
     : k => merge(v, {
       associate_rt   = v.associate_rt != null ? v.associate_rt : local.enable_firewall
-      route_table_id = v.route_table_id != null ? v.route_table_id : module.route-table.route_table.id
+      route_table_id = v.route_table_id != null ? v.route_table_id : module.route_table.id
       prefix         = v.address_prefix
     })
   }
 
   subnet_assoc_network_security_group = [
-    for k, s in var.subnets
+    for k, s in var.extra_subnets
     : module.network.subnets[k].id
-    if s.associate_default_network_security_group
+    if s.associate_extra_subnets_network_security_group
   ]
 
   subnet_assoc_route_table = [
-    for k, s in var.subnets
+    for k, s in var.extra_subnets
     : module.network.subnets[k].id
-    if s.associate_default_route_table
+    if s.associate_extra_subnets_route_table
   ]
 
   #################################

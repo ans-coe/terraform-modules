@@ -12,11 +12,11 @@
 # If var.flow_log is set AND var.flow_log.log_analytics_workspace_name is set, a Log Analytics Workspace is created
 #   If var.flow_log.log_analytics_workspace_name is not specified, workspace_id and workspace_resource_id must be given. 
 
-module "network_security_group" {
-  count  = var.create_default_network_security_group ? 1 : 0
+module "extra_subnets_network_security_group" {
+  count  = var.create_extra_subnets_network_security_group ? 1 : 0
   source = "../network-security-group"
 
-  name                = var.network_security_group_name
+  name                = var.extra_subnets_network_security_group_name
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
@@ -50,7 +50,7 @@ module "network_security_group" {
 resource "azurerm_storage_account" "flow_log_sa" {
   count = local.create_flow_log_storage_account ? 1 : 0
 
-  name                = var.flow_log.storage_account_name != null ? var.flow_log.storage_account_name : lower(replace("${module.network_security_group.name}flsa1", "/[-_]/", ""))
+  name                = var.flow_log.storage_account_name != null ? var.flow_log.storage_account_name : lower(replace("${module.extra_subnets_network_security_group.name}flsa1", "/[-_]/", ""))
   location            = var.location
   resource_group_name = local.network_watcher_resource_group_name
   tags                = var.tags

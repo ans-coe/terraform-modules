@@ -54,10 +54,10 @@ module "route-table" {
 
   subnet_ids = [azurerm_subnet.main.id]
 
-  routes = {
-    (var.default_route_name) = {
-      address_prefix = "0.0.0.0/0"
-      next_hop_type  = "Internet"
-    }
+  default_route = {
+    name          = var.default_route_name
+    next_hop_type = "Internet"
   }
+
+  routes = var.extra_routes
 }
