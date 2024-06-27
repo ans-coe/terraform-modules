@@ -2,12 +2,14 @@
 
 #### Table of Contents
 
-1. [Usage](#usage)
-2. [Requirements](#requirements)
-3. [Inputs](#inputs)
-4. [Outputs](#outputs)
-5. [Resources](#resources)
-6. [Modules](#modules)
+- [Terraform (Module) - AzureRM - Virtual Machine](#terraform-module---azurerm---virtual-machine)
+      - [Table of Contents](#table-of-contents)
+  - [Usage](#usage)
+  - [Requirements](#requirements)
+  - [Inputs](#inputs)
+  - [Outputs](#outputs)
+  - [Resources](#resources)
+  - [Modules](#modules)
 
 ## Usage
 
@@ -50,7 +52,6 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_enable_network_security_group"></a> [enable\_network\_security\_group](#input\_enable\_network\_security\_group) | Assign a network security group. | `bool` | `false` | no |
 | <a name="input_enable_network_watcher"></a> [enable\_network\_watcher](#input\_enable\_network\_watcher) | Enable Network Watcher extension. | `bool` | `false` | no |
 | <a name="input_enable_public_ip"></a> [enable\_public\_ip](#input\_enable\_public\_ip) | Enable public IP. | `bool` | `false` | no |
-| <a name="input_enable_vm_diagnostics"></a> [enable\_vm\_diagnostics](#input\_enable\_vm\_diagnostics) | Enable the Microsoft.Insights.VMDiagnosticsSettings (Windows) or LinuxDiagnostic Extention | `bool` | `false` | no |
 | <a name="input_hotpatching_enabled"></a> [hotpatching\_enabled](#input\_hotpatching\_enabled) | Should the VM be patched without requiring a reboot?  Hotpatching can only be enabled if the patch\_mode is set to AutomaticByPlatform, the provision\_vm\_agent is set to true, your source\_image\_reference references a hotpatching enabled image, and the VM's size is set to a Azure generation 2 VM. | `string` | `false` | no |
 | <a name="input_identity_ids"></a> [identity\_ids](#input\_identity\_ids) | User assigned identity IDs to append to this virtual machine. | `list(string)` | `[]` | no |
 | <a name="input_ip_address"></a> [ip\_address](#input\_ip\_address) | Private IP address of the virtual machine NIC. | `string` | `null` | no |
@@ -75,11 +76,13 @@ This configuration creates a Linux or Windows VM with some simple extensions for
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | `null` | no |
 | <a name="input_user_data"></a> [user\_data](#input\_user\_data) | User data of the virtual machine. | `string` | `null` | no |
 | <a name="input_username"></a> [username](#input\_username) | Username of the virtual machine. | `string` | `"vmadmin"` | no |
+| <a name="input_zone"></a> [zone](#input\_zone) | Specifies the Availability Zone in which this Windows Virtual Machine should be located. | `list(string)` | `null` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| <a name="output_attached_luns"></a> [attached\_luns](#output\_attached\_luns) | A map of the lun for each data disk attachment |
 | <a name="output_computer_name"></a> [computer\_name](#output\_computer\_name) | The OS-level computer name of the virtual machine. |
 | <a name="output_fqdn"></a> [fqdn](#output\_fqdn) | FQDN of the virtual machine, |
 | <a name="output_id"></a> [id](#output\_id) | ID of the virtual machine. |

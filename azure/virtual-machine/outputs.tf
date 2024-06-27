@@ -47,3 +47,10 @@ output "identity" {
   description = "ID of the virtual machine."
   value       = one(local.virtual_machine.identity)
 }
+output "attached_luns" {
+  description = "A map of the lun for each data disk attachment"
+  value = {
+    for k, d in azurerm_virtual_machine_data_disk_attachment.main
+    : k => d.lun
+  }
+}
