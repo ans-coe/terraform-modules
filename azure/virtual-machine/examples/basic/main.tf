@@ -7,7 +7,7 @@ terraform {
       version = "~> 3.0"
     }
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
       version = "~> 3.0"
     }
   }
@@ -78,8 +78,8 @@ module "vm" {
   computer_name = "vm"
   password      = var.password
 
-  subnet_id                      = azurerm_subnet.vm.id
-  size = "Standard_B2s_v2"
+  subnet_id = azurerm_subnet.vm.id
+  size      = "Standard_B2s_v2"
 
   enable_vm_diagnostics            = true
   diagnostics_storage_account_name = azurerm_storage_account.diag.name
