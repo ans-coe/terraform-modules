@@ -21,6 +21,8 @@ locals {
     module  = "virtual-machine"
     example = "multi-disk"
     usage   = "demo"
+    owner   = "Dee Vops"
+    department = "CoE"
   }
   resource_prefix = "vm-md-demo-uks-03"
 }
@@ -73,6 +75,8 @@ module "vm" {
   password      = var.password
   subnet_id     = azurerm_subnet.vm.id
   size          = "Standard_B2s"
+
+  enable_encryption_at_host = true
 
   disk_attachments = {
     "datadisk_1" = {

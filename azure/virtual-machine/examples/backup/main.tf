@@ -21,6 +21,8 @@ locals {
     module  = "virtual-machine"
     example = "backup"
     usage   = "demo"
+    owner   = "Dee Vops"
+    department = "CoE"
   }
   resource_prefix = "vm-bak-demo-uks-03"
 }

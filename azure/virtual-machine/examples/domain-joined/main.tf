@@ -21,6 +21,8 @@ locals {
     module  = "virtual-machine"
     example = "domain-joined"
     usage   = "demo"
+    owner   = "Dee Vops"
+    department = "CoE"
   }
   resource_prefix = "vm-dj-demo-uks-03"
 }
