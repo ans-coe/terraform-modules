@@ -16,8 +16,9 @@ resource "azurerm_network_interface" "main" {
   resource_group_name = var.resource_group_name
   tags                = var.tags
 
-  enable_ip_forwarding = var.enable_ip_forwarding
-  dns_servers          = var.dns_servers
+  ip_forwarding_enabled = var.ip_forwarding_enabled
+
+  dns_servers = var.dns_servers
 
   ip_configuration {
     name                          = "primary"
@@ -29,11 +30,11 @@ resource "azurerm_network_interface" "main" {
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "main" {
-  for_each = var.backend_address_pool_ids
+  count = length(var.backend_address_pool_ids)
 
   ip_configuration_name   = one(azurerm_network_interface.main.ip_configuration[*].name)
   network_interface_id    = azurerm_network_interface.main.id
-  backend_address_pool_id = each.value
+  backend_address_pool_id = var.backend_address_pool_ids[count.index]
 }
 
 resource "azurerm_network_interface_security_group_association" "main" {
