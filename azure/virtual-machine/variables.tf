@@ -111,6 +111,12 @@ variable "ip_forwarding_enabled" {
   default     = false
 }
 
+variable "enable_accelerated_networking" {
+  description = "Should Accelerated Networking be enabled?"
+  type        = bool
+  default     = false
+}
+
 variable "ip_address" {
   description = "Private IP address of the virtual machine NIC."
   type        = string
@@ -299,4 +305,34 @@ variable "enable_encryption_at_host" {
   description = "Adds the option of adding enabling encryption at host"
   type        = bool
   default     = null
+}
+
+variable "enable_keyvault_extension" {
+  description = "Enable the Microsoft.Insights.VMDiagnosticsSettings Extention"
+  type        = bool
+  default     = false
+}
+
+variable "keyvault_extension_settings" {
+  description = "Key Vault Extension settings. (json)"
+  type        = any
+  default     = null
+}
+
+variable "enable_vm_diagnostics" {
+  description = "Enable the Microsoft.Insights.VMDiagnosticsSettings (Windows) or LinuxDiagnostic Extention"
+  type        = bool
+  default     = false
+}
+
+variable "diagnostics_storage_account_name" {
+  description = "Name of the Storage Account in which store boot diagnostics and for legacy monitoring agent."
+  type        = string
+  default     = null
+}
+
+variable "enable_aad_login" {
+  description = "Enable AAD Login extension."
+  type        = bool
+  default     = true
 }

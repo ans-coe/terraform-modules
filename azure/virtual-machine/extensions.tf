@@ -82,3 +82,84 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "main" {
     email   = var.autoshutdown["email"]
   }
 }
+
+resource "azurerm_virtual_machine_extension" "keyvault" {
+  count = var.enable_keyvault_extension ? 1 : 0
+
+  name                       = "KeyVaultForWindows"
+  virtual_machine_id         = local.virtual_machine.id
+  publisher                  = "Microsoft.Azure.KeyVault"
+  type                       = var.os_type == "Windows" ? "KeyVaultForWindows" : "KeyVaultForLinux"
+  type_handler_version       = "3.0"
+  auto_upgrade_minor_version = "true"
+
+  settings = jsonencode(var.keyvault_extension_settings)
+}
+
+resource "azurerm_virtual_machine_extension" "win-diag" {
+  count = var.enable_vm_diagnostics && local.is_windows ? 1 : 0
+
+  name                       = "Microsoft.Insights.VMDiagnosticsSettings"
+  tags                       = var.tags
+  publisher                  = "Microsoft.Azure.Diagnostics"
+  type                       = "IaaSDiagnostics"
+  type_handler_version       = "1.22"
+  auto_upgrade_minor_version = "true"
+
+  virtual_machine_id = local.virtual_machine.id
+
+  settings = templatefile(format("%s/diag-settings/win-diag-settings.json", path.module), {
+    vm_id        = local.virtual_machine.id
+    storage_name = var.diagnostics_storage_account_name
+  })
+
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "storageAccountName": "${var.diagnostics_storage_account_name}"
+    }
+  PROTECTED_SETTINGS
+}
+
+resource "azurerm_virtual_machine_extension" "main_aadlogin" {
+  count = var.enable_aad_login && local.is_windows ? 1 : 0
+
+  name               = "AADLoginForWindows"
+  virtual_machine_id = local.virtual_machine.id
+  tags               = var.tags
+
+  publisher                  = "Microsoft.Azure.ActiveDirectory"
+  type                       = "AADLoginForWindows"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = true
+  automatic_upgrade_enabled  = false
+}
+
+#########################
+# This requires Python 2
+#########################
+
+// TODO - Add Python 2 to Linux VM if diag is enabled 
+
+resource "azurerm_virtual_machine_extension" "lin-diag" {
+  count = var.enable_vm_diagnostics && (local.is_windows == false) ? 1 : 0
+
+  name                       = "LinuxDiagnostic"
+  tags                       = var.tags
+  publisher                  = "Microsoft.Azure.Diagnostics"
+  type                       = "LinuxDiagnostic"
+  type_handler_version       = "4.0"
+  auto_upgrade_minor_version = "true"
+
+  virtual_machine_id = local.virtual_machine.id
+
+  settings = templatefile(format("%s/.diag-settings/lin-diag-settings.json", path.module), {
+    vm_id        = local.virtual_machine.id
+    storage_name = var.diagnostics_storage_account_name
+  })
+
+  protected_settings = <<PROTECTED_SETTINGS
+    {
+      "storageAccountName": "${var.diagnostics_storage_account_name}"
+    }
+  PROTECTED_SETTINGS
+}
