@@ -24,7 +24,7 @@ locals {
     owner      = "Dee Vops"
     department = "CoE"
   }
-  resource_prefix = "vm-mon-demo-uks-03"
+  resource_prefix = "vm-mon-demo-uks-01"
 }
 
 resource "azurerm_resource_group" "vm" {

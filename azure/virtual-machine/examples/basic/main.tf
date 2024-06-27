@@ -1,3 +1,18 @@
+terraform {
+  required_version = ">= 1.8.4"
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+    random = {
+      source = "hashicorp/random"
+      version = "~> 3.0"
+    }
+  }
+}
+
 provider "azurerm" {
   features {
     resource_group {
@@ -18,25 +33,13 @@ locals {
     department = "technical"
     owner      = "Dee Vops"
   }
-  resource_prefix = "vm-bas-demo-uks-03"
+  resource_prefix = "vm-bas-demo-uks-01"
 }
 
 variable "password" {
   description = "VM Password."
   type        = string
   sensitive   = true
-}
-
-locals {
-  location = "uksouth"
-  tags = {
-    module     = "virtual-machine"
-    example    = "basic"
-    usage      = "demo"
-    owner      = "Dee Vops"
-    department = "CoE"
-  }
-  resource_prefix = "vm-bas-demo-uks-03"
 }
 
 resource "azurerm_resource_group" "vm" {
@@ -70,22 +73,29 @@ module "vm" {
   resource_group_name = azurerm_resource_group.vm.name
   tags                = local.tags
 
+  os_type = "Windows"
+
   computer_name = "vm"
   password      = var.password
-  subnet_id     = azurerm_subnet.vm.id
-  size          = "Standard_B2s"
 
-  enable_vm_diagnostics = true
+  subnet_id                      = azurerm_subnet.vm.id
+  size = "Standard_B2s_v2"
 
+  enable_vm_diagnostics            = true
   diagnostics_storage_account_name = azurerm_storage_account.diag.name
 }
 
 resource "azurerm_storage_account" "diag" {
-  name                     = "asfdgsdafgerfavavbad"
+  name                     = replace("st${module.vm.name}${random_integer.sa_name.result}", "/[_-]/", "")
   resource_group_name      = azurerm_resource_group.vm.name
   location                 = azurerm_resource_group.vm.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
   tags = local.tags
+}
+
+resource "random_integer" "sa_name" {
+  min = 100
+  max = 999
 }

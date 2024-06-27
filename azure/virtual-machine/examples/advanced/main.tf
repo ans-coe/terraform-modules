@@ -18,7 +18,7 @@ locals {
     owner      = "Dee Vops"
     department = "CoE"
   }
-  resource_prefix = "vm-adv-demo-uks-03"
+  resource_prefix = "vm-adv-demo-uks-01"
 }
 
 resource "tls_private_key" "vm" {
