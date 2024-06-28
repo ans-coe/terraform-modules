@@ -22,11 +22,11 @@ locals {
 
   network_watcher_name = var.enable_network_watcher ? (
     var.network_watcher_name != null ? var.network_watcher_name : "network-watcher-${var.location}"
-  ) : null
+  ) : var.network_watcher_name
 
   network_watcher_resource_group_name = var.enable_network_watcher ? (
     var.network_watcher_resource_group_name != null ? var.network_watcher_resource_group_name : var.resource_group_name
-  ) : null
+  ) : var.network_watcher_resource_group_name
 
   ############
   # Flow Log
