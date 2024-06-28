@@ -78,11 +78,11 @@ module "spoke" {
       prefix = "10.0.0.0/24"
     }
     snet-app1 = {
-      prefix                         = "10.0.1.0/24"
+      prefix                                   = "10.0.1.0/24"
       associate_default_network_security_group = false
     }
     snet-app2 = {
-      prefix              = "10.0.2.0/24"
+      prefix                        = "10.0.2.0/24"
       associate_default_route_table = false
     }
   }
