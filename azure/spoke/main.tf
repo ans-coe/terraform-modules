@@ -11,7 +11,7 @@ module "network" {
   resource_group_name = var.resource_group_name
   tags                = var.tags
 
-  address_space     = var.address_space
+  address_space     = [var.address_space]
   dns_servers       = var.dns_servers != "" ? var.dns_servers : []
   include_azure_dns = var.include_azure_dns
   private_dns_zones = var.private_dns_zones
@@ -31,7 +31,7 @@ resource "azurerm_subnet" "main" {
   virtual_network_name = module.network.name
   resource_group_name  = var.resource_group_name
 
-  address_prefixes = each.value["address_prefixes"]
+  address_prefixes = ["${each.value["prefix"]}"]
 
   service_endpoints                             = each.value["service_endpoints"]
   private_endpoint_network_policies_enabled     = each.value["private_endpoint_network_policies_enabled"]

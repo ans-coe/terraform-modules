@@ -69,20 +69,20 @@ module "spoke" {
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = "vnet-${local.resource_infix}"
 
-  address_space = ["10.0.0.0/16"]
+  address_space = "10.0.0.0/16"
 
   include_azure_dns = true
 
   subnets = {
     snet-prod = {
-      address_prefixes = ["10.0.0.0/24"]
+      prefix = "10.0.0.0/24"
     }
     snet-app1 = {
-      address_prefixes                         = ["10.0.1.0/24"]
+      prefix                                   = "10.0.1.0/24"
       associate_default_network_security_group = false
     }
     snet-app2 = {
-      address_prefixes              = ["10.0.2.0/24"]
+      prefix                        = "10.0.2.0/24"
       associate_default_route_table = false
     }
   }
