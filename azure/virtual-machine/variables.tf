@@ -334,5 +334,5 @@ variable "diagnostics_storage_account_name" {
 variable "enable_aad_login" {
   description = "Enable AAD Login extension."
   type        = bool
-  default     = true
+  default     = false
 }
