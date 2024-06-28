@@ -21,7 +21,7 @@ resource "azurerm_virtual_machine_extension" "main_azpolicy" {
 
   publisher                  = "Microsoft.GuestConfiguration"
   type                       = var.os_type == "Windows" ? "ConfigurationforWindows" : "ConfigurationforLinux"
-  type_handler_version       = "1.0"
+  type_handler_version       = "1.1"
   auto_upgrade_minor_version = true
   automatic_upgrade_enabled  = true
 }
