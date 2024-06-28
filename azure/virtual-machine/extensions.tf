@@ -7,7 +7,7 @@ resource "azurerm_virtual_machine_extension" "main_aznetworkwatcheragent" {
 
   publisher                  = "Microsoft.Azure.NetworkWatcher"
   type                       = var.os_type == "Windows" ? "NetworkWatcherAgentWindows" : "NetworkWatcherAgentLinux"
-  type_handler_version       = "1.0"
+  type_handler_version       = "1.4"
   auto_upgrade_minor_version = true
   automatic_upgrade_enabled  = true
 }
@@ -35,7 +35,7 @@ resource "azurerm_virtual_machine_extension" "main_azmonitor" {
 
   publisher                  = "Microsoft.Azure.Monitor"
   type                       = var.os_type == "Windows" ? "AzureMonitorWindowsAgent" : "AzureMonitorLinuxAgent"
-  type_handler_version       = "1.0"
+  type_handler_version       = "1.10"
   auto_upgrade_minor_version = true
   automatic_upgrade_enabled  = true
 }
@@ -49,7 +49,7 @@ resource "azurerm_virtual_machine_extension" "main_azdependencyagent" {
 
   publisher                  = "Microsoft.Azure.Monitoring.DependencyAgent"
   type                       = var.os_type == "Windows" ? "DependencyAgentWindows" : "DependencyAgentLinux"
-  type_handler_version       = "1.0"
+  type_handler_version       = "9.10"
   auto_upgrade_minor_version = true
   automatic_upgrade_enabled  = true
 
