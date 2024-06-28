@@ -123,6 +123,12 @@ variable "key_vault_user_assigned_identity_name" {
   default     = null
 }
 
+variable "key_vault_public_access" {
+  description = "Enable Key Vault Public Access - Should only be set false if setting up Private Endpoint. Only applies to Key Vault created within Module."
+  type        = bool
+  default     = true
+}
+
 variable "http_listeners" {
   description = "Map of HTTP Listeners"
   type = map(object({
@@ -137,6 +143,7 @@ variable "http_listeners" {
         paths                      = list(string)
         backend_address_pool_name  = string
         backend_http_settings_name = optional(string, "default_settings")
+        rewrite_rule_set_name      = optional(string)
       })))
       redirect_configuration = optional(object({
         redirect_type        = optional(string, "Permanent")
@@ -147,6 +154,7 @@ variable "http_listeners" {
       }))
       backend_address_pool_name  = optional(string)
       backend_http_settings_name = optional(string, "default_settings")
+      rewrite_rule_set_name      = optional(string)
       priority                   = optional(number, 100)
       })),
       {
@@ -222,6 +230,46 @@ variable "http_listeners" {
   }
 }
 
+variable "rewrite_rule_set" {
+  description = "Map of rewrite rule sets"
+  type = map( // key = rewrite_rule_set name
+    map(      // key rewrite_rule name
+      object({
+        rule_sequence = number
+        condition = optional(list(object({
+          variable    = string
+          pattern     = string
+          ignore_case = optional(bool)
+          negate      = optional(bool)
+        })), [])
+        request_header_configuration  = optional(map(string), {}) // key = header_name, value = header_value
+        response_header_configuration = optional(map(string), {}) // key = header_name, value = header_value
+        url = optional(list(object({
+          path         = optional(string)
+          query_string = optional(string)
+          reroute      = optional(bool)
+        })), [])
+      })
+    )
+  )
+  default = {}
+  validation {
+    condition = alltrue([
+      for k1, v1 in var.rewrite_rule_set
+      : alltrue([
+        for k2, v2 in v1
+        : length(v2.url) != 0 ?
+        alltrue([
+          for v3 in v2.url
+          : ((v3.path != null) || (v3.query_string != null))
+        ])
+        : true // set true if v2.url is an empty list.
+      ])
+    ])
+    error_message = "url.path or url.query_string (or both) must be set if url is used"
+  }
+}
+
 ## Backend Variables
 
 variable "backend_address_pools" {
@@ -243,16 +291,32 @@ variable "backend_http_settings" {
     host_name                      = optional(string)
     request_timeout                = optional(number, 30)
     trusted_root_certificate_names = optional(list(string))
+    // pick_host_name_from_backend_address only applies when host_name is null
+    pick_host_name_from_backend_address = optional(bool, true)
   }))
   default = {
     default_settings = {}
   }
 }
 
-variable "trusted_root_certificate" {
-  description = "Map of SSL Certs"
-  type        = map(string)
-  default     = {}
+variable "trusted_root_certificates" {
+  description = "Map of trusted root certificates to use with the backend."
+  type = map(object({
+    data                = optional(string)
+    key_vault_secret_id = optional(string)
+  }))
+  default = {}
+
+  validation {
+    error_message = "One of data or key_vault_secret_id must be specified for each certificate."
+    condition = alltrue([
+      for certificate in var.trusted_root_certificates
+      : anytrue([
+        certificate["data"] != null,
+        certificate["key_vault_secret_id"] != null,
+      ])
+    ])
+  }
 }
 
 variable "probe" {
@@ -282,16 +346,25 @@ variable "probe" {
 # WAF Variable
 
 variable "waf_configuration" {
-  description = "Rules Defining The WAF"
+  description = "Defining the WAF policy globally on the App Gateway"
   type = object({
-    policy_name      = string
-    firewall_mode    = optional(string, "Prevention")
-    rule_set_type    = optional(string, "OWASP")
-    rule_set_version = optional(string, "3.2")
-    rule_group_override = optional(map(map(object({
+    policy_name   = string
+    firewall_mode = optional(string, "Prevention")
+
+    enable_OWASP           = optional(bool, true)
+    OWASP_rule_set_version = optional(string, "3.2")
+    OWASP_rule_group_override = optional(map(map(object({
       enabled = optional(bool, true)
       action  = optional(string)
-    }))))
+    }))), {})
+
+    enable_Microsoft_BotManagerRuleSet           = optional(bool, false)
+    Microsoft_BotManagerRuleSet_rule_set_version = optional(string, "1.0")
+    Microsoft_BotManagerRuleSet_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
     file_upload_limit_mb     = optional(number, 500)
     max_request_body_size_kb = optional(number, 128)
     managed_rule_exclusion = optional(list(object({
@@ -316,4 +389,119 @@ variable "waf_configuration" {
     })), {})
   })
   default = null
+}
+
+variable "listener_waf_configuration" {
+  description = "Defining the WAF policy per listener"
+  type = map(object({ // Key = policy name
+    associated_listeners = list(string)
+    firewall_mode        = optional(string, "Prevention")
+
+    enable_OWASP           = optional(bool, true)
+    OWASP_rule_set_version = optional(string, "3.2")
+    OWASP_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
+    enable_Microsoft_BotManagerRuleSet           = optional(bool, false)
+    Microsoft_BotManagerRuleSet_rule_set_version = optional(string, "1.0")
+    Microsoft_BotManagerRuleSet_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
+    file_upload_limit_mb     = optional(number, 500)
+    max_request_body_size_kb = optional(number, 128)
+    managed_rule_exclusion = optional(list(object({
+      match_variable          = string
+      selector_match_operator = optional(string)
+      selector                = optional(string)
+    })), [])
+    custom_rules = optional(map(object({
+      priority = number
+      action   = optional(string, "Block")
+      match_conditions = list(object({
+        match_values       = list(string)
+        operator           = optional(string, "Contains")
+        negation_condition = optional(bool, true)
+        transforms         = optional(list(string))
+
+        match_variables = optional(list(object({
+          variable_name = string
+          selector      = optional(string)
+        })), [{ variable_name = "RemoteAddr" }])
+      }))
+    })), {})
+  }))
+  default = null
+
+  validation {
+    condition = (
+      length(flatten( // Get a list of all listeners
+        [for k, v in coalesce(var.listener_waf_configuration, {}) : v.associated_listeners]
+      )) ==                    // List of listeners must be equal to the lists of listeners with duplicates removed.
+      length(distinct(flatten( // Get a list of listeners with duplicates removed
+        [for k, v in coalesce(var.listener_waf_configuration, {}) : v.associated_listeners]
+      )))
+    )
+    error_message = "A listener is defined in multiple policies. This module only supports assigning a listener to a single policy."
+  }
+}
+
+variable "path_rule_waf_configuration" {
+  description = "Defining the WAF policy per path rule"
+  type = map(object({ // Key = policy name
+    associated_path_rules = list(string)
+    firewall_mode         = optional(string, "Prevention")
+
+    enable_OWASP           = optional(bool, true)
+    OWASP_rule_set_version = optional(string, "3.2")
+    OWASP_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
+    enable_Microsoft_BotManagerRuleSet           = optional(bool, false)
+    Microsoft_BotManagerRuleSet_rule_set_version = optional(string, "1.0")
+    Microsoft_BotManagerRuleSet_rule_group_override = optional(map(map(object({
+      enabled = optional(bool, true)
+      action  = optional(string)
+    }))), {})
+
+    file_upload_limit_mb     = optional(number, 500)
+    max_request_body_size_kb = optional(number, 128)
+    managed_rule_exclusion = optional(list(object({
+      match_variable          = string
+      selector_match_operator = optional(string)
+      selector                = optional(string)
+    })), [])
+    custom_rules = optional(map(object({
+      priority = number
+      action   = optional(string, "Block")
+      match_conditions = list(object({
+        match_values       = list(string)
+        operator           = optional(string, "Contains")
+        negation_condition = optional(bool, true)
+        transforms         = optional(list(string))
+
+        match_variables = optional(list(object({
+          variable_name = string
+          selector      = optional(string)
+        })), [{ variable_name = "RemoteAddr" }])
+      }))
+    })), {})
+  }))
+  default = null
+  validation {
+    condition = (
+      length(flatten( // Get a list of all path_rules
+        [for k, v in coalesce(var.path_rule_waf_configuration, {}) : v.associated_path_rules]
+      )) ==                    // List of path_rules must be equal to the lists of path_rules with duplicates removed.
+      length(distinct(flatten( // Get a list of path_rules with duplicates removed
+        [for k, v in coalesce(var.path_rule_waf_configuration, {}) : v.associated_path_rules]
+      )))
+    )
+    error_message = "A path_rule is defined in multiple policies. This module only supports assigning a path_rule to a single policy."
+  }
 }

@@ -111,6 +111,8 @@ resource "azurerm_linux_function_app" "main" {
   storage_account_name       = azurerm_storage_account.app.name
   storage_account_access_key = azurerm_storage_account.app.primary_access_key
 
+  public_network_access_enabled = var.public_network_access_enabled
+
   dynamic "site_config" {
     for_each = [var.site_config]
 

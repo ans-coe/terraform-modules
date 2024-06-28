@@ -17,6 +17,7 @@ module "firewall" {
 
   firewall_sku_name  = "AZFW_VNet"
   firewall_sku_tier  = var.firewall_config["sku_tier"]
+  zone_redundant     = var.firewall_config["zone_redundant"]
   firewall_policy_id = var.firewall_config["firewall_policy_id"]
 }
 

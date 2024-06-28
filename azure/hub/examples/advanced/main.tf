@@ -52,10 +52,12 @@ module "hub" {
     subnet_prefix       = "10.0.15.0/26"
   }
 
-  virtual_network_gateway_config = {
-    name          = "vpngw-hub-${local.resource_prefix}"
-    subnet_prefix = "10.0.15.128/26"
-  }
+  # Commented out as this takes ~30 mins to deploy.  Uncomment if specifically testing VNGs
+
+  # virtual_network_gateway_config = {
+  #   name          = "vpngw-hub-${local.resource_prefix}"
+  #   subnet_prefix = "10.0.15.128/26"
+  # }
 
   private_resolver_config = {
     name                   = "dnspr-hub-${local.resource_prefix}"
@@ -90,6 +92,12 @@ module "firewall-policy" {
 # Spokes
 #########
 
+resource "azurerm_resource_group" "mgmt" {
+  location = local.location
+  name     = "rg-spoke-mgmt-${local.resource_prefix}"
+  tags     = local.tags
+}
+
 module "spoke-mgmt" {
   source = "../../../spoke"
 
@@ -99,16 +107,26 @@ module "spoke-mgmt" {
   resource_group_name  = "rg-spoke-mgmt-${local.resource_prefix}"
   virtual_network_name = "vnet-spoke-mgmt-${local.resource_prefix}"
 
+  enable_network_watcher = false
+
   address_space = ["10.1.0.0/16"]
   subnets = {
     "snet-mgmt-tfmex-adv-hub" = {
-      prefix = "10.1.0.0/24"
+      address_prefixes = ["10.1.0.0/24"]
     }
   }
 
   network_security_group_name = "nsg-spoke-mgmt-${local.resource_prefix}"
   route_table_name            = "rt-spoke-mgmt-${local.resource_prefix}"
-  default_route_ip            = module.hub.firewall.private_ip
+  default_route = {
+    ip = module.hub.firewall.private_ip
+  }
+}
+
+resource "azurerm_resource_group" "prd" {
+  location = local.location
+  name     = "rg-spoke-prd-${local.resource_prefix}"
+  tags     = local.tags
 }
 
 module "spoke-prd" {
@@ -117,19 +135,23 @@ module "spoke-prd" {
   location = local.location
   tags     = local.tags
 
-  resource_group_name  = "rg-spoke-prd-${local.resource_prefix}"
+  resource_group_name  = azurerm_resource_group.prd.name
   virtual_network_name = "vnet-spoke-prd-${local.resource_prefix}"
+
+  enable_network_watcher = false
 
   address_space = ["10.2.0.0/16"]
   subnets = {
     "snet-prd-tfmex-adv-spoke" = {
-      prefix = "10.2.0.0/24"
+      address_prefixes = ["10.2.0.0/24"]
     }
   }
 
   network_security_group_name = "nsg-spoke-prd-${local.resource_prefix}"
   route_table_name            = "rt-spoke-prd-${local.resource_prefix}"
-  default_route_ip            = module.hub.firewall.private_ip
+  default_route = {
+    ip = module.hub.firewall.private_ip
+  }
 }
 
 ##########

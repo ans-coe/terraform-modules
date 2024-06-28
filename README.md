@@ -28,8 +28,12 @@ Below is a list of available modules linking directly to the root README.md.
 |-|-|
 |[_template](./_template/README.md)|repo template|
 |[application-gateway](./azure/application-gateway/README.md)|azure|
+|[app-service](./azure/app-service/README.md)|azure|
 |[bastion](https://github.com/ans-coe/terraform-azurerm-bastion/blob/main//README.md)|azure|
 |[container-registry](./azure/container-registry/README.md)|azure|
+|[firewall](./azure/firewall/README.md)|azure|
+|[firewall-policy](./azure/firewall-policy/README.md)|azure|
+|[hub](./azure/hub/README.md)|azure|
 |[kubernetes-service](./azure/kubernetes-service/README.md)|azure|
 |[linux-functionapp](./azure/linux-functionapp/README.md)|azure|
 |[linux-virtual-machine](./azure/linux-virtual-machine/README.md)|azure|
@@ -37,9 +41,14 @@ Below is a list of available modules linking directly to the root README.md.
 |[network-security-group](./azure/network-security-group/README.md)|azure|
 |[policy-baseline](./azure/policy-baseline/README.md)|azure|
 |[power-management](./azure/power-management/README.md)|azure|
+|[route-table](./azure/route-table/README.md)|azure|
+|[sentinel](./azure/sentinel/README.md)|azure|
+|[spoke](./azure/spoke/README.md)|azure|
 |[terraform-ops](./azure/terraform-ops/README.md)|azure|
+|[virtual-machine](./azure/virtual-machine/README.md)|azure|
 |[virtual-network](https://github.com/ans-coe/terraform-azurerm-virtual-network/blob/main/README.md)|azure|
 |[windows-virtual-machine](./azure/windows-virtual-machine/README.md)|azure|
+|[windows-web-app](./azure/windows-web-app/README.md)|azure|
 |[project](./azuredevops/project/README.md)|azuredevops|
 |[repository](./github/repository/README.md)|github|
 _______________

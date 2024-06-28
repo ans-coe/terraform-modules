@@ -41,13 +41,13 @@ Things to update:
 | <a name="input_subnet_address_prefixes"></a> [subnet\_address\_prefixes](#input\_subnet\_address\_prefixes) | The subnet used for the firewall must have the name `AzureFirewallSubnet` and a subnet mask of at least /26 | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags applied to created resources. | `map(string)` | n/a | yes |
 | <a name="input_virtual_network_name"></a> [virtual\_network\_name](#input\_virtual\_network\_name) | Name of your Azure Virtual Network | `string` | n/a | yes |
-| <a name="input_firewall_dns_servers"></a> [firewall\_dns\_servers](#input\_firewall\_dns\_servers) | List of DNS Servers for Firewall config | `list(string)` | `[]` | no |
+| <a name="input_firewall_dns_servers"></a> [firewall\_dns\_servers](#input\_firewall\_dns\_servers) | List of DNS Servers for Firewall config | `list(string)` | `null` | no |
 | <a name="input_firewall_policy_id"></a> [firewall\_policy\_id](#input\_firewall\_policy\_id) | The ID of the Firewall Policy applied to this Firewall | `string` | `null` | no |
 | <a name="input_firewall_sku_name"></a> [firewall\_sku\_name](#input\_firewall\_sku\_name) | Properties relating to the SKU Name of the Firewall | `string` | `"AZFW_VNet"` | no |
 | <a name="input_firewall_sku_tier"></a> [firewall\_sku\_tier](#input\_firewall\_sku\_tier) | Properties relating to the SKU Tier of the Firewall | `string` | `"Standard"` | no |
 | <a name="input_firewall_zones"></a> [firewall\_zones](#input\_firewall\_zones) | Specifies a list of Availability Zones in which this Azure Firewall should be located. | `list(string)` | `null` | no |
 | <a name="input_pip_name"></a> [pip\_name](#input\_pip\_name) | Name of the firewall's public IP | `string` | `null` | no |
-| <a name="input_private_ip_ranges"></a> [private\_ip\_ranges](#input\_private\_ip\_ranges) | A list of SNAT private CIDR IP ranges, or the special string IANAPrivateRanges, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918. | `list(string)` | `[]` | no |
+| <a name="input_private_ip_ranges"></a> [private\_ip\_ranges](#input\_private\_ip\_ranges) | A list of SNAT private CIDR IP ranges, or the special string IANAPrivateRanges, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918. | `list(string)` | `null` | no |
 
 ## Outputs
 

@@ -15,7 +15,7 @@ resource "azurerm_resource_group" "bastion" {
 ##########
 
 module "bastion" {
-  count  = local.enable_bastion ? 1 : 0
+  count   = local.enable_bastion ? 1 : 0
   source  = "ans-coe/bastion/azurerm"
   version = "1.0.0"
 

@@ -2,12 +2,14 @@
 
 #### Table of Contents
 
-1. [Usage](#usage)
-2. [Requirements](#requirements)
-3. [Inputs](#inputs)
-4. [Outputs](#outputs)
-5. [Resources](#resources)
-6. [Modules](#modules)
+- [Terraform (Module) - Azure - Firewall-Policy](#terraform-module---azure---firewall-policy)
+      - [Table of Contents](#table-of-contents)
+  - [Usage](#usage)
+  - [Requirements](#requirements)
+  - [Inputs](#inputs)
+  - [Outputs](#outputs)
+  - [Resources](#resources)
+  - [Modules](#modules)
 
 ## Usage
 
@@ -22,8 +24,8 @@ This document will describe what the module is for and what is contained in it. 
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.74 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 3.93 |
 
 ## Inputs
 
@@ -34,6 +36,7 @@ This document will describe what the module is for and what is contained in it. 
 | <a name="input_base_policy_id"></a> [base\_policy\_id](#input\_base\_policy\_id) | The ID of the base/parent Firewall Policy | `string` | `null` | no |
 | <a name="input_dns"></a> [dns](#input\_dns) | Whether to enable DNS proxy on Firewalls attached to this Firewall Policy and a list of custom DNS Server IPs | <pre>object({<br>    servers       = optional(list(string))<br>    proxy_enabled = optional(bool, true)<br>  })</pre> | `{}` | no |
 | <a name="input_insights"></a> [insights](#input\_insights) | Details for configuring a Log Analytics Workspace for the policy. | <pre>object({<br>    enabled   = optional(bool, false)<br>    id        = optional(string)<br>    retention = optional(number, 30)<br><br>    log_analytics_workspace = optional(map(string), {})<br>  })</pre> | `null` | no |
+| <a name="input_intrusion_detection"></a> [intrusion\_detection](#input\_intrusion\_detection) | Configuration details for IDPS | <pre>object({<br>    mode                = optional(string, "Alert")<br>    signature_overrides = optional(map(string), {})<br>    traffic_bypass = optional(map(object({<br>      description           = optional(string)<br>      protocol              = string<br>      destination_addresses = optional(list(string))<br>      destination_ip_groups = optional(list(string))<br>      destination_ports     = optional(list(string))<br>      source_addresses      = optional(list(string))<br>      source_ip_groups      = optional(list(string))<br>    })), {})<br>    private_ranges = optional(list(string))<br>  })</pre> | `null` | no |
 | <a name="input_intrusion_detection"></a> [intrusion\_detection](#input\_intrusion\_detection) | Configuration details for IDPS | <pre>object({<br>    mode                = optional(string, "Alert")<br>    signature_overrides = optional(map(string), {})<br>    traffic_bypass = optional(map(object({<br>      description           = optional(string)<br>      protocol              = string<br>      destination_addresses = optional(list(string))<br>      destination_ip_groups = optional(list(string))<br>      destination_ports     = optional(list(string))<br>      source_addresses      = optional(list(string))<br>      source_ip_groups      = optional(list(string))<br>    })), {})<br>    private_ranges = optional(list(string))<br>  })</pre> | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_rule_collection_groups"></a> [rule\_collection\_groups](#input\_rule\_collection\_groups) | Rule Collection Groups | <pre>map(object({<br>    priority = number<br><br>    application_rule_collections = optional(map(object({<br>      description = optional(string)<br>      action      = string<br>      priority    = number<br>      rules = map(object({<br>        protocols             = optional(map(string)) #Http, Https<br>        source_addresses      = optional(list(string))<br>        source_ip_groups      = optional(list(string))<br>        destination_addresses = optional(list(string))<br>        destination_urls      = optional(list(string))<br>        destination_fqdns     = optional(list(string))<br>        destination_fqdn_tags = optional(list(string))<br>      }))<br>    })), {})<br><br>    network_rule_collections = optional(map(object({<br>      description = optional(string)<br>      action      = string<br>      priority    = number<br>      rules = map(object({<br>        protocols             = list(string) #Any, TCP, UDP, ICMP<br>        source_addresses      = optional(list(string))<br>        source_ip_groups      = optional(list(string))<br>        destination_addresses = optional(list(string))<br>        destination_ip_groups = optional(list(string))<br>        destination_fqdns     = optional(list(string))<br>        destination_ports     = optional(list(string), [])<br>      }))<br>    })), {})<br><br>    nat_rule_collections = optional(map(object({<br>      description = optional(string)<br>      priority    = number<br>      action      = optional(string, "Dnat") #Dnat only<br>      rules = map(object({<br>        protocols           = list(string) #TCP or UDP<br>        source_addresses    = optional(list(string))<br>        source_ip_groups    = optional(list(string))<br>        destination_address = optional(string)<br>        destination_ports   = optional(list(number))<br>        translated_address  = optional(string)<br>        translated_fqdn     = optional(string)<br>        translated_port     = optional(number)<br>      }))<br>    })), {})<br>  }))</pre> | `{}` | no |

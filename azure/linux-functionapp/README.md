@@ -47,6 +47,7 @@ Once deployed, management is expected to be through another medium, so changes t
 | <a name="input_key_vault_identity_id"></a> [key\_vault\_identity\_id](#input\_key\_vault\_identity\_id) | The user managed identity used for key vault. | `string` | `null` | no |
 | <a name="input_location"></a> [location](#input\_location) | The location of created resources. | `string` | `"uksouth"` | no |
 | <a name="input_plan"></a> [plan](#input\_plan) | Object detailing the plan, if creating one with this module. | <pre>object({<br>    create         = optional(bool, true)<br>    id             = optional(string)<br>    name           = optional(string)<br>    sku_name       = optional(string, "Y1")<br>    zone_balancing = optional(bool, false)<br>  })</pre> | `{}` | no |
+| <a name="input_public_network_access_enabled"></a> [public\_network\_access\_enabled](#input\_public\_network\_access\_enabled) | Do you want to enable public access | `bool` | `true` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group this module will use. | `string` | `null` | no |
 | <a name="input_site_config"></a> [site\_config](#input\_site\_config) | A map with site config values. | `map(any)` | `{}` | no |
 | <a name="input_slots"></a> [slots](#input\_slots) | Names for slots that are clones of the app. | `set(string)` | `[]` | no |
