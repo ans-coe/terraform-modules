@@ -56,11 +56,6 @@ variable "routes" {
     next_hop_in_ip_address = optional(string)
   }))
   default = {}
-
-  validation {
-    error_message = "address_prefix must be valid IPv4 CIDR."
-    condition     = alltrue(flatten([for v in var.routes : can(cidrhost("${v.address_prefix}", 0))]))
-  }
 }
 
 
