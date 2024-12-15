@@ -145,6 +145,12 @@ variable "availability_set_id" {
   default     = null
 }
 
+variable "capacity_reservation_group_id" {
+  description = "Capacity Reservation Group ID to add this virtual machine to."
+  type        = string
+  default     = null
+}
+
 variable "source_image_id" {
   description = "Source image ID to use when creating the virtual machine."
   type        = string
