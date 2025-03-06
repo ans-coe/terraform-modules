@@ -1,13 +1,13 @@
-module "extra_subnets_route_table" {
+module "hub_route_table" {
   source = "../route-table"
-  count  = local.create_extra_subnets_route_table ? 1 : 0
+  count  = alltrue(local.enable_firewall, var.create_hub_hub_route_table) ? 1 : 0
 
-  name                = var.extra_subnets_route_table_name != null ? var.extra_subnets_route_table_name : "rt-hub-${module.network.name}"
+  name                = var.hub_route_table_name != null ? var.hub_route_table_name : "rt-hub-${module.network.name}"
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
 
-  disable_bgp_route_propagation = var.disable_bgp_route_propagation
+  bgp_route_propagation_enabled = var.bgp_route_propagation_enabled
 
   subnet_ids = local.subnet_assoc_route_table
 

@@ -52,12 +52,7 @@ output "network_watcher" {
   value       = one(azurerm_network_watcher.main[*])
 }
 
-output "extra_subnets_route_table" {
+output "hub_route_table" {
   description = "Details about the Route Table created for extra subnets."
-  value       = local.extra_subnets_route_table
-}
-
-output "extra_subnets_network_security_group" {
-  description = "Details about the NSG created for extra subnets."
-  value = local.extra_subnets_network_security_group
+  value       = one(azurerm_route_table.hub_route_table[*])
 }

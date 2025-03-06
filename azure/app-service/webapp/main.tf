@@ -80,28 +80,28 @@ resource "azurerm_monitor_autoscale_setting" "main" {
   name                = "autoscaleappservice"
   resource_group_name = var.resource_group_name
   location            = var.location
-  target_resource_id  = local.app_service.id
+  target_resource_id  = local.plan_id
   tags                = var.tags
 
   profile {
     name = "defaultProfile"
 
     capacity {
-      default = 1
-      minimum = 1
-      maximum = 3
+      default = 2
+      minimum = 2
+      maximum = 9
     }
 
     rule {
       metric_trigger {
         metric_name        = "CpuPercentage"
-        metric_resource_id = local.app_service.app_service_plan_id
+        metric_resource_id = local.plan_id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
         time_aggregation   = "Average"
         operator           = "GreaterThan"
-        threshold          = 50
+        threshold          = 40
         metric_namespace   = "Microsoft.Web/serverfarms"
       }
       scale_action {
@@ -114,13 +114,13 @@ resource "azurerm_monitor_autoscale_setting" "main" {
     rule {
       metric_trigger {
         metric_name        = "CpuPercentage"
-        metric_resource_id = local.app_service.app_service_plan_id
+        metric_resource_id = local.plan_id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
         time_aggregation   = "Average"
         operator           = "LessThan"
-        threshold          = 15
+        threshold          = 20
       }
 
       scale_action {

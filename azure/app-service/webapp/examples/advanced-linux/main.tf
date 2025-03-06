@@ -104,4 +104,13 @@ module "webapp" {
     retention_in_days       = 7
     retention_in_mb         = 50
   }
+  autoscaling = {
+    capacity = {
+      default = 2
+      minimum = 2
+      maximum = 9
+    }
+    cpu_greater_than = 40
+    cpu_less_than = 20
+  }
 }

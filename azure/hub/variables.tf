@@ -54,10 +54,10 @@ variable "include_azure_dns" {
   default     = false
 }
 
-variable "disable_bgp_route_propagation" {
-  description = "Disable Route Propagation. True = Disabled"
+variable "bgp_route_propagation_enabled" {
+  description = "Enable BGP Route Propagation."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "ddos_protection_plan_id" {
@@ -72,36 +72,36 @@ variable "bgp_community" {
   default     = null
 }
 
-variable "extra_subnets" {
-  description = "Subnets to create in this virtual network with the map name indicating the subnet name."
-  type = map(object({
-    address_prefix                                = string
-    service_endpoints                             = optional(list(string))
-    private_endpoint_network_policies_enabled     = optional(bool)
-    private_link_service_network_policies_enabled = optional(bool)
-    associate_rt                                  = optional(bool, false)
-    route_table_id                                = optional(string)
+# variable "extra_subnets" {
+#   description = "Subnets to create in this virtual network with the map name indicating the subnet name."
+#   type = map(object({
+#     address_prefix                                = string
+#     service_endpoints                             = optional(list(string))
+#     private_endpoint_network_policies_enabled     = optional(bool)
+#     private_link_service_network_policies_enabled = optional(bool)
+#     associate_rt                                  = optional(bool, false)
+#     route_table_id                                = optional(string)
 
-    delegations = optional(map(
-      object({
-        service = string
-        actions = list(string)
-      })
-    ), {})
-    associate_extra_subnets_route_table            = optional(bool, true)
-    associate_extra_subnets_network_security_group = optional(bool, true)
-  }))
-  default = {}
+#     delegations = optional(map(
+#       object({
+#         service = string
+#         actions = list(string)
+#       })
+#     ), {})
+#     associate_subnets_route_table            = optional(bool, true)
+#     associate_subnets_network_security_group = optional(bool, true)
+#   }))
+#   default = {}
 
-  validation {
-    error_message = "Values for address_prefix must be valid IPv4 CIDR."
-    condition     = alltrue([for v in var.subnets : can(cidrhost(v.address_prefix, 0))])
-  }
-  validation {
-    error_message = "If associate_rt is set, route_table_id must also be set"
-    condition     = alltrue([for v in var.subnets : v.associate_rt ? v.route_table_id != null : true])
-  }
-}
+#   validation {
+#     error_message = "Values for address_prefix must be valid IPv4 CIDR."
+#     condition     = alltrue([for v in var.subnets : can(cidrhost(v.address_prefix, 0))])
+#   }
+#   validation {
+#     error_message = "If associate_rt is set, route_table_id must also be set"
+#     condition     = alltrue([for v in var.subnets : v.associate_rt ? v.route_table_id != null : true])
+#   }
+# }
 
 variable "private_endpoint_subnet" {
   description = "Configuration for the Private Endpoint subnet."
@@ -316,13 +316,13 @@ variable "private_resolver" {
 # Network Security Group
 #########################
 
-variable "create_extra_subnets_network_security_group" {
+variable "create_subnets_network_security_group" {
   description = "Create a Network Security Group to associate with all user defined subnets."
   type        = bool
   default     = false
 }
 
-variable "extra_subnets_network_security_group_name" {
+variable "subnets_network_security_group_name" {
   description = "Name of the default Network Security Group"
   type        = string
   default     = "default-nsg"
@@ -411,13 +411,19 @@ variable "flow_log" {
 # Route Table
 ##############
 
-variable "create_extra_subnets_default_route" {
-  description = "Create default route in the firewall"
+variable "create_hub_route_table" {
+  description = "Create default route to the firewall"
   type        = bool
   default     = true
 }
 
-variable "extra_subnets_route_table_name" {
+variable "create_hub_default_route" {
+  description = "Create default route to the firewall"
+  type        = bool
+  default     = true
+}
+
+variable "hub_route_table_name" {
   description = "Name of the default Route Table"
   type        = string
   default     = null

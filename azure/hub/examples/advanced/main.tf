@@ -72,10 +72,10 @@ module "hub" {
 
   # Commented out as this takes ~30 mins to deploy.  Uncomment if specifically testing VNGs
 
-  virtual_network_gateway = {
-    name           = "vpngw-hub-${local.resource_prefix}"
-    address_prefix = "10.0.0.96/27"
-  }
+  # virtual_network_gateway = {
+  #   name           = "vpngw-hub-${local.resource_prefix}"
+  #   address_prefix = "10.0.0.96/27"
+  # }
 
   private_resolver = {
     name                    = "dnspr-hub-${local.resource_prefix}"
@@ -83,7 +83,7 @@ module "hub" {
     outbound_address_prefix = "10.0.0.144/28"
   }
 
-  create_private_endpoint_private_dns_zones = true
+  create_private_endpoint_private_dns_zones = false
 
   private_endpoint_subnet = {
     name           = "sn-pe-${local.resource_prefix}"
@@ -94,13 +94,13 @@ module "hub" {
     "test.com" = {}
   }
 
-  extra_subnets = {
+  subnets = {
     "sn-hub-keyvault-${local.resource_prefix}" = {
       address_prefix = "10.0.2.0/24"
     }
   }
 
-  extra_subnets_network_security_group_name = "nsg-hub-keyvault-${local.resource_prefix}"
+  subnets_network_security_group_name = "nsg-hub-keyvault-${local.resource_prefix}"
   nsg_rules_inbound = [
     {
       rule     = "https"

@@ -66,7 +66,7 @@ module "route-table" {
   resource_group_name = var.resource_group_name
   tags                = var.tags
 
-  disable_bgp_route_propagation = var.disable_bgp_route_propagation
+  bgp_route_propagation_enabled = var.bgp_route_propagation_enabled
 
   subnet_ids = local.subnet_assoc_route_table
 

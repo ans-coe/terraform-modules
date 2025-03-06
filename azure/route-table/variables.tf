@@ -38,10 +38,10 @@ variable "name" {
   type        = string
 }
 
-variable "disable_bgp_route_propagation" {
-  description = "Disable Route Propagation for the Route Table. True = Disabled"
+variable "bgp_route_propagation_enabled" {
+  description = "Enable BGP Route Propagation."
   type        = bool
-  default     = true
+  default     = false
 }
 
 #########
@@ -75,6 +75,6 @@ variable "default_route" {
 
   validation {
     error_message = "Must be a valid IPv4 address."
-    condition     = var.default_route != null ? can(cidrhost("${var.default_route.ip}/32", 0)) : true
+    condition     = var.default_route != null ? true : can(cidrhost("${var.default_route.ip}/32", 0))
   }
 }

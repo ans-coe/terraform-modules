@@ -26,5 +26,5 @@ output "subnets" {
 
 output "bgp_route_propagation_enabled" {
   description = "The output of whether BGP Route Propagation is enabled or not."
-  value       = azurerm_route_table.main.disable_bgp_route_propagation
+  value       = azurerm_route_table.main.bgp_route_propagation_enabled
 }

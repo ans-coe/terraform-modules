@@ -12,23 +12,6 @@ locals {
   enable_firewall = var.firewall != null
   firewall        = one(module.firewall)
 
-  ###########
-  # Route Table
-  ###########
-
-  create_extra_subnets_route_table = var.extra_subnets_route_table_name != null
-
-  default_route = var.create_extra_subnets_default_route ? (        // create default route is false, don't create default route 
-    var.default_route != null ? var.default_route : ( // default route is set = use default route
-      local.enable_firewall ? {                       // default route is empty and azure firewall = use azure firewall
-        name                   = "default-route"
-        next_hop_in_ip_address = one(module.firewall[*].private_ip)
-      } : {} // default route is empty and no azure firewall = don't create default route
-    )
-  ) : {}
-
-  extra_subnets_route_table = one(module.route_table[*])
-
   ##########
   # Bastion
   ##########
@@ -84,13 +67,6 @@ locals {
     var.network_watcher_resource_group_name != null ? var.network_watcher_resource_group_name : azurerm_resource_group.main.name
   )
 
-  #######################################
-  # Extra Subnets Network Security Group
-  #######################################
-
-  create_extra_subnets_network_security_group = var.extra_subnets_network_security_group_name != null
-  extra_subnets_network_security_group = one(module.extra_subnets_network_security_group)
-
   ############
   # Flow Log
   ############
@@ -108,31 +84,83 @@ locals {
   # Extra Subnets
   ################
 
-  extra_subnets = {
-    for k, v in var.extra_subnets
-    : k => merge(v, {
-      associate_rt   = v.associate_rt != null ? v.associate_rt : local.enable_firewall
-      route_table_id = v.route_table_id != null ? v.route_table_id : module.route_table.id
-      prefix         = v.address_prefix
-    })
-  }
+  subnets = merge(
+    local.enable_private_endpoint_subnet ? {
+      (var.private_endpoint_subnet["subnet_name"]) = {
+        prefix                                        = var.private_endpoint_subnet["address_prefix"]
+        service_endpoints                             = var.private_endpoint_subnet["service_endpoints"]
+        private_endpoint_network_policies_enabled     = false
+        private_link_service_network_policies_enabled = false
+      }
+    } : {},
 
-  subnet_assoc_network_security_group = [
-    for k, s in var.extra_subnets
-    : module.network.subnets[k].id
-    if s.associate_extra_subnets_network_security_group
-  ]
+    # The firewall subnet is managed by the module found in firewall.tf
+    #   count  = local.enable_firewall ? 1 : 0
+    #   subnet_address_prefixes = [var.firewall["address_prefix"]
+
+    local.enable_bastion ? {
+      "AzureBastionSubnet" = {
+        prefix = var.bastion["address_prefix"]
+      }
+    } : {},
+
+    local.enable_virtual_network_gateway ? {
+      "GatewaySubnet" = {
+        prefix         = var.virtual_network_gateway["address_prefix"]
+        associate_rt   = local.use_virtual_network_gateway_route_table ? true : null
+        route_table_id = local.use_virtual_network_gateway_route_table ? one(azurerm_route_table.virtual_network_gateway[*].id) : null
+      }
+    } : {},
+
+    local.enable_private_resolver ? {
+      (var.private_resolver["inbound_subnet_name"]) = {
+        prefix         = var.private_resolver["inbound_address_prefix"]
+        associate_rt   = local.enable_route_table
+        route_table_id = module.hub_route_table.id
+        delegations = {
+          private-resolver = {
+            service = "Microsoft.Network/dnsResolvers"
+            actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+          }
+        }
+      },
+      (var.private_resolver["outbound_subnet_name"]) = {
+        prefix         = var.private_resolver["outbound_address_prefix"]
+        associate_rt   = local.enable_route_table
+        route_table_id = module.hub_route_table.id
+        delegations = {
+          private-resolver = {
+            service = "Microsoft.Network/dnsResolvers"
+            actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+          }
+        }
+      },
+    } : {},
+  )
+
+  ###########
+  # Route Table
+  ###########
+
+  enable_route_table = var.create_hub_route_table
+  default_route = local.enable_route_table ? (        // create default route is false, don't create default route 
+    var.default_route != null ? var.default_route : ( // default route is set = use default route
+      local.enable_firewall ? {                       // default route is empty and azure firewall = use azure firewall
+        name                   = "default-route"
+        next_hop_in_ip_address = one(module.firewall[*].private_ip)
+      } : {} // default route is empty and no azure firewall = don't create default route
+    )
+  ) : {}
 
   subnet_assoc_route_table = [
-    for k, s in var.extra_subnets
+    for k, s in local.subnets
     : module.network.subnets[k].id
-    if s.associate_extra_subnets_route_table
+    if s.associate_subnets_route_table
   ]
 
   #################################
   # Private Endpoint Private DNS Zones
   #################################
-
 
   private_endpoint_private_dns_zones = var.create_private_endpoint_private_dns_zones ? toset([
     "privatelink.adf.azure.com",

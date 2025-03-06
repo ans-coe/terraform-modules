@@ -28,7 +28,7 @@ module "hub" {
   virtual_network_name = "vnet-hub-${local.resource_prefix}"
 
   address_space = ["10.0.0.0/16"]
-  extra_subnets = {
+  subnets = {
     "snet-hub" = {
       address_prefix = "10.0.1.0/24"
     }

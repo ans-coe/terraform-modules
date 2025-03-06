@@ -63,10 +63,10 @@ variable "private_dns_zones" {
   default = {}
 }
 
-variable "disable_bgp_route_propagation" {
+variable "bgp_route_propagation_enabled" {
   description = "Disable Route Propagation. True = Disabled"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "ddos_protection_plan_id" {
