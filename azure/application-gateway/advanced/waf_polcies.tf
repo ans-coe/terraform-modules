@@ -199,6 +199,7 @@ resource "azurerm_web_application_firewall_policy" "listener" {
     mode    = each.value.firewall_mode
     # Global parameters
     request_body_check          = true
+    request_body_enforcement    = each.value.request_body_enforcement
     max_request_body_size_in_kb = each.value.max_request_body_size_kb
     file_upload_limit_in_mb     = each.value.file_upload_limit_mb
   }

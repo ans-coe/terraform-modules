@@ -412,6 +412,7 @@ variable "listener_waf_configuration" {
     }))), {})
 
     file_upload_limit_mb     = optional(number, 500)
+    request_body_enforcement = optional(bool, true)
     max_request_body_size_kb = optional(number, 128)
     managed_rule_exclusion = optional(list(object({
       match_variable          = string

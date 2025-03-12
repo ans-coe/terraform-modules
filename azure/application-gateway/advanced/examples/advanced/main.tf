@@ -6,17 +6,31 @@ provider "azurerm" {
   }
 }
 
+terraform {
+  required_version = ">= 1.7.0"
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.93"
+    }
+  }
+}
+
 locals {
   tags = {
-    module  = "application-gateway"
-    example = "advanced"
-    usage   = "demo"
+    module     = "application-gateway"
+    example    = "advanced"
+    usage      = "demo"
+    owner      = "Dee Vops"
+    department = "CoE"
   }
 }
 
 resource "azurerm_resource_group" "example" {
   name     = "awg-rg"
   location = "uksouth"
+  tags     = local.tags
 }
 
 resource "azurerm_virtual_network" "example" {
@@ -149,7 +163,7 @@ module "example" {
       }
     }
     custom_rules = {
-      example_rule = {
+      "AllowClientIP" = {
         priority = 5
         match_conditions = [
           {
@@ -167,13 +181,14 @@ module "example" {
   // This is the listener waf_configurations, you can set multiple configurations and apply each one to multiple listeners.
   // However, a listener can itself only have 1 policy.
   listener_waf_configuration = {
-    "agw-waf-policy_https_listener" = {
-      associated_listeners   = ["https_listener"]
-      firewall_mode          = "Prevention"
-      enable_OWASP           = true // default value
-      OWASP_rule_set_version = "3.2"
+    "agw-waf-policy-https-listener" = {
+      associated_listeners     = ["https_listener"]
+      firewall_mode            = "Prevention"
+      enable_OWASP             = true // default value
+      OWASP_rule_set_version   = "3.2"
+      request_body_enforcement = false
       custom_rules = {
-        example_rule = {
+        "AllowClientIP" = {
           priority = 5
           match_conditions = [
             {
